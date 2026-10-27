@@ -18,3 +18,6 @@ configs/system_paths.config
 *.pptx
 ~$*.pptx
 .DS_Store
+
+# Local archive of the pre-pipeline state (duplicates git tag v0-flank15k)
+archive/
