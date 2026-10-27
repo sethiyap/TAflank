@@ -1,0 +1,423 @@
+# relBE MGE pipeline — implementation description
+
+How the pipeline is built, what each step does, how hits are filtered, how
+flanking sequence is retrieved, and what comes out.
+
+Companion documents, kept deliberately separate:
+
+| file | holds |
+|---|---|
+| `CLAUDE.md` | the project plan and conventions |
+| `PIPELINE.md` | the **scientific rationale** — why each filter exists (F1–F6), the MGE layers, the decision tree |
+| **`PIPELINE_DESCRIPTION.md`** (this file) | the **implementation** — what actually runs, with what parameters, producing what files |
+
+---
+
+## 1. What it does
+
+Takes a **bait** sequence, finds every copy of it in a set of genomes, works out
+whether each copy sits on a plasmid or a chromosome, cuts the neighbourhood out
+around it, and characterises the mobile genetic elements in that neighbourhood.
+
+The bait is a **parameter**. Nothing in the pipeline hardcodes relBE — point
+`--bait` at any gene and the whole chain works.
+
+```
+bait.fa ──► local BLAST ──► Tier A ──► fetch metadata ──► Tier B ──► ±20 kb windows
+ (any gene)   (vs a DB)    (sequence)    (batched)        (record)        │
+                                                                          ├─► IS elements (ISfinder)
+                                                                          ├─► replicon type (PlasmidFinder)
+                                                                          └─► collated tables
+```
+
+## 2. Quick start
+
+```bash
+./tools/nf run main.nf -profile local                      # plasmids (default)
+./tools/nf run main.nf -profile local --replicon_type chromosome
+./tools/nf run main.nf -profile local --replicon_type ''   # everything
+./tools/nf run main.nf -profile local --bait anchors/other_gene.fa --subregions ''
+```
+
+Use `./tools/nf`, not bare `nextflow` — see §8.
+
+---
+
+## 3. Stages
+
+### BUILD_DB — `scripts/build_blastdb.sh`
+
+Concatenates a directory of FASTAs and builds a nucleotide BLAST database with
+`-parse_seqids -hash_index`.
+
+`-parse_seqids` is not cosmetic. It is what makes **§6 sequence retrieval by
+accession and coordinate range** possible, and therefore what lets the pipeline
+scale past the point where you can keep every genome as a loose file.
+
+Emits a `.dbmeta.tsv` sidecar — source path, sha256, sequence count, total bp,
+BLAST version, build time. This exists because two earlier databases
+(`blastdb/all16`, `blastdb/tadb3_loci`) recorded their source as `/tmp` files
+that no longer exist, making them untraceable and, in one case, silently stale.
+
+### BAIT_SEARCH — `scripts/bait_search.py`  *(Tier A)*
+
+`blastn` of the bait against the database. **`-task blastn`** (word size 11),
+deliberately not megablast, which misses diverged copies at 85–92% identity.
+
+`--subregions relB:1-240,relE:240-527` names parts of the bait so that a
+half-length hit can be called an orphan antitoxin or an orphan toxin rather
+than lumped as "partial". Omit it for a bait with no meaningful internal parts.
+
+Emits `sacc`, not `sseqid`: with `-parse_seqids`, `sseqid` renders as
+`gb|CP018961.1|` and breaks every downstream join on accession.
+
+### FETCH_METADATA — `scripts/fetch_metadata.py`  *(Tier B input)*
+
+Batched NCBI `esummary`, written to a per-accession JSON cache under
+`data/metadata_cache/`. Split into a networked fetch and an `--offline`
+rebuild, because Gadi's standard compute queues have no outbound network.
+
+**Replicon classification** uses the structured `genome` field where present.
+That field is not always populated — CP021960 is a 5.6 Mb circular
+*K. pneumoniae* "complete genome" with `genome: None` — so it falls back to the
+submitter's title and records which route was taken in
+`replicon_type_evidence` (`esummary_genome` | `title` | `none`).
+
+There is deliberately **no size heuristic**: megaplasmids exceed 1 Mb and would
+be misassigned as chromosomes.
+
+Records NCBI cannot resolve get `replicon_type=unknown`, never forced into a
+bucket. PlasmidFinder gives independent evidence for those — a replicon hit
+says "plasmid" even when the metadata is silent.
+
+### SELECT_LOCI — `scripts/select_loci.py`  *(Tier B)*
+
+Joins hits to metadata, computes flank availability, applies the filters, and
+marks each hit `selected` yes/no with a `deselect_reason`. See §4 and §5.
+
+### EXTRACT_LOCI — `scripts/extract_loci.py` → `scripts/relbe_window.py`
+
+Cuts the ±`flank` window and reorients so the bait is on the `+` strand. See §6.
+
+### IS_SEARCH — `scripts/is_search.py`  *(PIPELINE.md layer 2 + F5)*
+
+`blastn` of each window against the ISfinder mirror, **with no length cutoff**.
+
+> `--min-length` defaults to 0 and the script **asserts** it is 0. The whole
+> ancestral-vehicle test depends on a ~64 bp ISEsa1 remnant, mirroring the
+> ~75 bp ISAba125 remnant that identified Tn125 for *bla*NDM. A length cutoff
+> anywhere in this layer destroys the key evidence.
+
+**Tiling** keeps the best-scoring HSPs, allowing `TOLERANCE = 30 bp` of overlap.
+Never zero: PIPELINE.md §4 records a real incident where a 3 bp overlap at zero
+tolerance discarded a 1,540 bp ISEsa1 alignment, making a near-complete element
+look like a bare stub and inverting the biological reading.
+
+**Coverage class** by subject coverage — `complete` ≥90%, `partial` 50–90%,
+`fragment` <50%. Fragments are kept; they are the evidence.
+
+**Nesting** (`nested_in` / `interrupts`) requires *both*:
+1. element B lies within the window span of element A, and
+2. A's own HSPs are **near-contiguous in subject coordinates** and sum to no
+   more than one copy length.
+
+Condition 2 is essential. Without it, several independent full-length copies of
+one element are misread as a single split copy and everything between the
+outermost two is falsely flagged as nested — which fired 8 false events on the
+IS26/IS15DI array in CP006642.
+
+### PLASMIDFINDER — `scripts/plasmidfinder.py`  *(layer 5)*
+
+Replicon (Inc) typing by plain `blastn` against the CGE PlasmidFinder FASTA.
+No conda, no CGE wrapper, no Docker — the database is plain FASTA and the
+native BLAST types it directly.
+
+Thresholds are Acman et al. 2022: **coverage ≥80%, identity ≥95%**, with
+overlapping hits on one replicon resolved in favour of the higher identity.
+
+Two things that are easy to get wrong and are handled explicitly:
+
+- Runs on the **whole parent replicon, not the window**. Inc *rep* genes are
+  rarely within 20 kb of the bait, so a window-only run returns empty for
+  nearly everything.
+- The replicon gene is the **query**, the replicon the **subject**, so coverage
+  is `qcovs` — coverage of the *rep gene*. Getting this backwards is the same
+  `qlen`-vs-`slen` trap that once misclassified all nine loci.
+
+> **Taxon scope.** PlasmidFinder ships databases for Enterobacteriales and
+> Gram-positives only. Records outside that scope must report
+> `NA_no_db_for_taxon`, **never `none`** — absence of a database is not absence
+> of a replicon. Relevant as soon as the TADB3 set (Cyanobacteria,
+> Actinobacteria, *Helicobacter*, *Caulobacter*) is added.
+
+### COLLATE — `scripts/collate.py`
+
+Gathers per-locus and per-record outputs into the deliverables, and attaches
+`lab_alias` from `assets/replicon_aliases.tsv` so tables carry **your** names as
+well as NCBI's — the deck calls LT991956 `JIE4345` and MF344582 `p525011-HI2`,
+where NCBI calls them `pC309-p2` and `pNY2385-HI2`.
+
+Every locus in `loci.tsv` appears in `summary.tsv` even if a layer produced
+nothing for it, so a silent drop shows up as a visible gap rather than a
+quietly smaller number.
+
+---
+
+## 4. On what basis hits are filtered
+
+Three tiers. Numbers are from the default plasmid run on the 16-record set.
+
+```
+blastn bait vs DB                                            15 HSPs
+      │
+TIER A  sequence only — free, from the BLAST output alone
+      │    FULL        pident ≥95 AND qcov ≥95                    14
+      │    ORPHAN_*    half hit, one named subregion ≥80% covered  0
+      │    PARTIAL     below qcov, no single subregion dominant    0
+      │    PARALOGUE   pident <85 → RelE/ParE superfamily          1
+      ▼
+TIER B  record metadata — batched esummary
+      │    replicon_type = plasmid        → dropped 7 chromosomes
+      │    tier_a        = FULL           → dropped 1 paralogue
+      │    flank availability             → min_flank=0, dropped none
+      │    is_complete                    → not required by default
+      ▼
+                                                              7 selected
+TIER C  context — needs the window (not yet implemented)
+           does the ISEsa1/ISEsa2 vehicle co-occur?
+           → COMPLETE / DECAYED / HALF-CORE / NO CORE
+```
+
+**Why Tier A carries the weight.** NCBI keyword searches for relB/relE return
+~419,000 and ~304,000 records, and ~188,000 for both together. Almost all of
+that is RelE/ParE superfamily background — chromosomes carry 5–12 copies each.
+Sequence identity, not annotation, is what separates the lineage from the
+background. This is also why the extended core anchor matters: the 527 bp seed
+alone cannot discriminate, but `ISEsa1–ISEsa2–relBE` can.
+
+**Nothing is deleted.** All 15 rows remain in `loci_selected.tsv` with
+`selected` and `deselect_reason`. You can always see what the filter removed
+and why. This is CLAUDE.md's "never silently drop" rule made mechanical.
+
+Every threshold is a parameter — see §9.
+
+---
+
+## 5. Flank availability, and why short flanks are kept
+
+A hit near the end of a record cannot give a full ±20 kb window. The default
+`min_flank = 0` **keeps** those loci and records how much was actually obtained.
+
+```
+circular, replicon big enough   → full flank both sides, window wraps the origin
+circular, replicon too small    → whole replicon emitted once, whole_replicon=yes
+linear                          → clamped at the ends; truncation is real
+```
+
+`flank_up`, `flank_dn`, `truncated_up`, `truncated_dn`, `wrapped` and
+`whole_replicon` are all recorded, **post-reorientation** — they describe the
+emitted sequence, not the replicon.
+
+> Truncation is itself a signal: an insertion hotspot breaks assemblies, and
+> the *bla*NDM study lost 2,269 contigs exactly this way. Dropping short-flank
+> loci discards that signal. It matters most for draft assemblies, where a hit
+> lands on a contig that may itself be shorter than the window.
+
+---
+
+## 6. How flanking sequence is retrieved
+
+Two mechanisms. The coordinate handling is identical; only the source differs.
+
+**Today — source FASTA.** `extract_loci.py` reads from `--fasta-dir`. Simple,
+and fine while every genome is on disk.
+
+**At sweep scale — `blastdbcmd`.** The BLAST database *already contains the
+full sequences*, and `-parse_seqids` makes them retrievable by accession and
+range:
+
+```bash
+blastdbcmd -db blastdb/public16 -entry CP018961.1 -range 237696-278222
+# → 40,527 bp, byte-identical to the pipeline's window
+```
+
+If you BLASTed against it, the flanking DNA is already local — **no second
+download, no network, no separate assembly fetch**. This is what makes a
+26,539-genome sweep tractable without keeping 26,539 loose files.
+
+`efetch` by accession and range is needed in exactly one case: a hit found by
+**remote** BLAST against a database you did not build. It needs network and is
+rate-limited.
+
+### The coordinate flow
+
+```
+blastn gives sstart/send on the subject
+   → convert to replicon coordinates, normalise orientation
+   → add ±flank, wrapping modulo replicon length if circular
+   → clamp if linear, and record what could not be obtained
+   → reverse-complement if the bait is on the minus strand
+   → cut from the retrieved sequence
+```
+
+**Reorientation is not optional.** The bait sits on the minus strand in some
+replicons and the plus strand in others. Without a common orientation every
+downstream offset is mirrored for half the loci and nothing lines up in the
+figure. All offsets assume the bait on `+`.
+
+---
+
+## 7. Outputs
+
+| file | one row per | key columns |
+|---|---|---|
+| `results/bait_hits.tsv` | BLAST HSP | `sacc, pident, qcov, strand, cov_*, tier_a, reason` |
+| `results/record_metadata.tsv` | source record | `replicon_type, replicon_name, genus, slen, topology, is_complete, replicon_type_evidence` |
+| `results/loci_selected.tsv` | hit | `locus_id, flank_up, flank_dn, truncated_*, wrapped, whole_replicon, selected, deselect_reason` |
+| `results/loci.tsv` | extracted window | `window_len, bait_in_window, reoriented, source_interval` |
+| `results/mge_hits.tsv` | IS call | `element, family, win_start, win_end, query_cov, cov_class, is_fragment, offset_from_bait, nested_in, interrupts` |
+| `results/replicons.tsv` | replicon hit | `accession, replicon, pident, qcovs, start, end` |
+| `results/summary.tsv` | locus | one line per locus joining all of the above, incl. `lab_alias`, `plasmidfinder_replicons`, `has_ISEsa1`, `has_ISEsa2`, `nested_events` |
+| `loci/plasmids/*.fa` | locus | the window itself; the FASTA header carries flank, truncation, wrap and bait position |
+
+`results/summary.tsv` is the table to read first.
+
+Every emitted table has a header. (`results/stage1_is_hits.tsv`, from the
+earlier hand-run work, is headerless raw BLAST in a non-standard column order
+and is retained only as a historical artefact.)
+
+---
+
+## 8. Profiles and portability
+
+| profile | tools from | for |
+|---|---|---|
+| `local` | **native arm64** binaries, **no containers** | the fast iterate-and-look loop |
+| `firefly` | **Apptainer** + biocontainers | annotation, big-database layers |
+| `gadi` | **Apptainer** + biocontainers, PBS Pro | the Stage 9 sweep only |
+
+The local profile is deliberately asymmetric: biocontainers are linux-amd64 and
+this machine's Docker daemon is off, so local runs use the native toolchain.
+
+**Apptainer is the real reason to move to Linux**, more than CPU or internet.
+`amrfinderplus` has *no macOS build at all* (bioconda or conda-forge, any
+architecture), so Bakta is impossible locally; `keras` has no osx-arm64, so
+geNomad is Rosetta-only. Both are fine in a linux-amd64 container.
+
+**Internet is needed only at the edges** — one-time database pulls, the
+metadata top-up (cacheable, `--offline_meta`), and the bulk sweep. Stages
+between are fully offline, which is what makes Gadi's network-less compute
+queues workable.
+
+### Why `./tools/nf` and not bare `nextflow`
+
+Three machine-specific traps, all encountered for real:
+
+1. JDKs here are keg-only, so `java` is not on `PATH`.
+2. The shell profile exports `JAVA_HOME=/opt/homebrew/opt/openjdk@17` — the
+   **arm64** Homebrew prefix — but Homebrew here is **x86_64** at `/usr/local`,
+   so that path does not exist. An inherited-but-broken `JAVA_HOME` is worse
+   than none, so the wrapper validates it rather than defaulting around it.
+3. **On arm64 the JVM's architecture leaks to child processes.** Running under
+   an x86_64 JDK makes every task x86_64, and `/usr/bin/python3` then dies with
+   `xcrun: unable to load libxcrun … need 'x86_64'` because CommandLineTools
+   here is arm64-only. The wrapper probes each candidate JDK's `os.arch` and
+   refuses a non-native one unless there is no alternative.
+
+Related: **do not `brew install` the bioinformatics stack on this machine.**
+Homebrew is x86_64/Rosetta here, so brew's BLAST would be a *downgrade* from
+the native arm64 BLAST 2.17.0 that produced every verified result.
+
+---
+
+## 9. Parameters
+
+All settable on the command line (`--flank 15000`) or in `nextflow.config`.
+
+| parameter | default | meaning |
+|---|---|---|
+| `bait` | `anchors/relBE_seed.fa` | the bait sequence — any gene |
+| `subregions` | `relB:1-240,relE:240-527` | named bait parts for orphan calls; `''` to disable |
+| `genome_dir` / `db_name` | `data/public_16/fasta` / `public16` | search space |
+| `full_pident` / `full_qcov` | 95 / 95 | Tier A FULL threshold |
+| `paralogue_max_pident` | 85 | below this is superfamily background |
+| `blast_task` | `blastn` | **not** megablast |
+| `tier_a` | `FULL` | Tier A classes to carry forward |
+| `replicon_type` | `plasmid` | `''` keeps all |
+| `min_flank` | 0 | 0 keeps short-flank loci and records them |
+| `flank` | 20000 | window half-width |
+| `is_min_length` | **0** | asserted to stay 0 |
+| `is_max_target` | 10000 | above the 5,970-sequence ISfinder db |
+| `pf_min_cov` / `pf_min_id` | 80 / 95 | Acman et al. 2022 |
+| `offline_meta` | false | rebuild metadata from cache, no network |
+
+---
+
+## 10. Validation
+
+The pipeline is gated against a result verified by hand before it existed.
+
+**Regression gate — CP018961 (pEC422_1).** All 7 rows of the archived
+`mge_hits.tsv` are reproduced with **identical `offset_from_bait`**, while
+`win_start`/`win_end` shift by exactly +5,000 — the expected consequence of
+moving from ±15 kb to ±20 kb. Specifically:
+
+- the **64 bp ISEsa1 fragment** is recovered at offset −6739;
+- **ISKpn21 is called nested in ISEsa1**, matching slide 13.
+
+**Negative controls.** CP006636 and CP018962 yield zero relBE, as documented.
+
+**Paralogue separation.** The one RelE/ParE superfamily hit in CP006642
+(67.7% identity, 90.6% of relE, 0.8% of relB) is classified `PARALOGUE` and
+reported rather than silently carried.
+
+**Window placement.** All 7 windows are 40,527 bp with the bait at exactly
+20001–20527. The three windows whose bait differs from the seed differ by 3, 1
+and 1 bases — exactly as their 99.43%, 99.81% and 99.81% identities predict.
+
+**Independent agreement with the deck.** Slide 13 states that pECL_A is a
+"variant FII FIB plasmid, own replicon types in PlasmidFinder". The pipeline
+independently typed LT991956 as `IncFIB(pECLA), IncFII(pECLA)` from sequence
+alone.
+
+**Unit tests.** `/usr/bin/python3 -I tests/test_relbe_window.py` — 25
+assertions covering circular wrap-around, the whole-replicon case, truncation
+coordinate frames, and an end-to-end check against the real CP018961 record.
+
+### Something the pipeline corrected
+
+PlasmidFinder reassigned two plasmids that `data/public_16/accessions.tsv`
+records as **IncFIB**:
+
+| plasmid | annotated | typed |
+|---|---|---|
+| CP028197 pGMI14-002_1 | IncFIB | **IncHI2, IncHI2A**, IncC |
+| CP028537 pQnrB4_020042 | IncFIB | **IncHI2, IncHI2A**, IncN |
+
+This matters for the slide-7 hypothesis (0/37 IncHI2 plasmids with relBE from
+*E. coli* vs 51/108 without), because it changes which plasmids sit in the
+IncHI2 denominator. CP018961 additionally types as **pNDM-MAR**, a direct link
+to the *bla*NDM literature the method is modelled on.
+
+---
+
+## 11. What is not built yet
+
+| step | status | note |
+|---|---|---|
+| Direct repeats / TSDs (F6) | **not built** | would restore the `DR_seq` column the archived table had. Slide 13 already holds the ground truth: a 16 bp `AGGAGAAGAAGGCCAT` family, plus `TTAA` (ISKpn38) and `GAG` (ISKpn28) |
+| Extended core anchor (Stage 2) | **not built** | `anchors/relBE_core.fa` does not exist. This is the gate before any expansion, and the reason a sweep cannot be keyword-led |
+| Uniform annotation + gene families (Stage 3) | **not built** | needs Bakta → Firefly. Supplies the gene track for the colour-block figure |
+| Context classification (Tier C) | **not built** | COMPLETE / DECAYED / HALF-CORE / NO CORE, currently only in the hand-made `nine_loci_classification.tsv` |
+| Structural-variant splitting (Stage 6) | **not built** | Acman's method. Do **not** vendor the reference implementation: its released `track_variants.R` sets `step <- 100`, which cannot resolve the 64 bp fragment the decisive test depends on |
+| Colour-block figure (Stage 7) | **not built** | needs Stage 3 for the gene track |
+| ISEScan, IntegronFinder, mob_suite, geNomad | **not built** | all reachable via Apptainer on Firefly |
+| NCBI sweep (Stage 9) | **not built** | gated on Stage 2; ~26,539 complete Enterobacterales assemblies |
+
+### Current scope
+
+Plasmids only, from the 16-record set — **7 loci**, which is 4 from the `nine`
+set plus 3 from `extra`. The extras arrived free with the bait search, and two
+of them (CP023893, LT991956) are the **pECL_A Class II** architecture that is
+absent from the nine, so the working set spans all three architecture classes
+rather than two.

@@ -48,10 +48,10 @@ def main():
         for r in read_tsv_skipcomments(a.aliases):
             alias[r['accession']] = r
 
+    # Match the exact infixes, not '*.tsv'. A loose glob silently double-counts
+    # if an earlier manual run left un-suffixed files beside the staged ones.
     is_rows = []
-    for f in sorted(glob.glob(os.path.join(a.is_dir, '*.tsv'))):
-        if f.endswith(('loci.tsv', 'summary.tsv')) or '.pf.' in f:
-            continue
+    for f in sorted(glob.glob(os.path.join(a.is_dir, '*.is.tsv'))):
         is_rows += read_tsv(f)
     pf_rows = []
     for f in sorted(glob.glob(os.path.join(a.pf_dir, '*.pf.tsv'))):

@@ -1,6 +1,0 @@
-locus_id	element	family	group	win_start	win_end	length	strand	pident	query_cov	cov_class	is_fragment	offset_from_bait	sub_start	sub_end	slen	nested_in	interrupts	evalue	bitscore
-CP028537__CP028537__1__minus	IS5075	IS110	IS1111	1	556	556	+	99.64	41.9	fragment	yes	-20000	772	1327	1327			0.0	994.0
-CP028537__CP028537__1__minus	IS26	IS6	unknown	2319	3138	820	-	100.0	100.0	complete	no	-17682	1	820	820			0.0	1480.0
-CP028537__CP028537__1__minus	IS26	IS6	unknown	6665	7484	820	-	100.0	100.0	complete	no	-13336	1	820	820			0.0	1480.0
-CP028537__CP028537__1__minus	ISEsa1	ISNCY	IS1202	14507	16102	1596	+	91.667	99.2	complete	no	-5494	1	1596	1609			0.0	2279.0
-CP028537__CP028537__1__minus	ISEsa2	IS110	unknown	16103	17595	1493	+	100.0	100.0	complete	no	-3898	1	1493	1493			0.0	2693.0
