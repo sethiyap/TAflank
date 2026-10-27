@@ -18,9 +18,18 @@ output with a `tier_a` call and, where rejected, a `reason`.
 """
 
 import argparse, os, subprocess, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from toolpath import resolve  # noqa: E402
 
-FMT = ('qseqid sacc pident length mismatch gapopen qstart qend '
-       'sstart send evalue bitscore qlen slen')
+FMT_BASE = ('qseqid sacc pident length mismatch gapopen qstart qend '
+            'sstart send evalue bitscore qlen slen stitle')
+# stitle comes free from any BLAST db and carries "... plasmid pX, complete
+# sequence". That is enough to call plasmid vs chromosome WITHOUT esummary,
+# which is what makes the search runnable on a compute node with no network
+# (Gadi's standard queues). staxids/sscinames additionally need the `taxdb`
+# files alongside the database -- NCBI ships them, so `update_blastdb.pl ...
+# taxdb` is worth including.
+FMT_TAX = ' staxids sscinames'
 # sacc, not sseqid: -parse_seqids makes sseqid 'gb|CP018961.1|', which
 # breaks every downstream join on accession.
 
@@ -51,30 +60,42 @@ def main():
     p.add_argument('--full-qcov', type=float, default=95.0)
     p.add_argument('--paralogue-max-pident', type=float, default=85.0)
     p.add_argument('--evalue', default='1e-5')
+    p.add_argument('--max-target-seqs', type=int, default=100000,
+                   help='NOT a top-N filter -- it prunes during search, so it '
+                        'must exceed the number of genuine hits expected')
+    p.add_argument('--taxonomy', action='store_true',
+                   help='also request staxids/sscinames; needs taxdb beside the db')
+    p.add_argument('--num-threads', type=int, default=1)
     p.add_argument('--task', default='blastn',
                    help='blastn (word size 11) not megablast -- megablast '
                         'misses diverged copies at 85-92%% identity')
     p.add_argument('--blast-bin',
-                   default=os.environ.get('BLAST_BIN',
-                                          '/Users/pooja/opt/ncbi-blast-2.17.0+/bin'))
+                   default=os.environ.get('BLAST_BIN', ''),
+                   help='dir holding blastn; empty => resolve from PATH')
     a = p.parse_args()
 
     subs = parse_subregions(a.subregions)
+    FMT = FMT_BASE + (FMT_TAX if a.taxonomy else '')
 
-    cmd = [os.path.join(a.blast_bin, 'blastn'),
+    cmd = [resolve('blastn', a.blast_bin),
            '-query', a.bait, '-db', a.db, '-task', a.task,
            '-evalue', a.evalue, '-outfmt', '6 ' + FMT,
-           '-max_target_seqs', '100000', '-dust', 'no', '-soft_masking', 'false']
+           '-max_target_seqs', str(a.max_target_seqs),
+           '-num_threads', str(a.num_threads),
+           '-dust', 'no', '-soft_masking', 'false']
     res = subprocess.run(cmd, capture_output=True, text=True)
     if res.returncode:
         sys.exit('blastn failed:\n' + res.stderr)
 
-    hdr = (FMT.split() + ['qcov', 'strand', 'hit_start', 'hit_end']
+    hdr = ([c for c in FMT.split()] + ['qcov', 'strand', 'hit_start', 'hit_end']
            + ['cov_' + s[0] for s in subs] + ['tier_a', 'reason'])
     rows, counts = [], {}
 
+    nfields = len(FMT.split())
     for line in res.stdout.splitlines():
         f = line.split('\t')
+        if len(f) > nfields:            # stitle may itself contain a tab
+            f = f[:nfields - 1] + ['\t'.join(f[nfields - 1:])]
         d = dict(zip(FMT.split(), f))
         pid = float(d['pident'])
         qs, qe = int(d['qstart']), int(d['qend'])
@@ -112,7 +133,8 @@ def main():
             reason = f'qcov {qcov} below {a.full_qcov}'
 
         counts[cls] = counts.get(cls, 0) + 1
-        rows.append(f + [qcov, strand, lo, hi] + subcov + [cls, reason])
+        rows.append([d.get(c, '') for c in FMT.split()]
+                    + [qcov, strand, lo, hi] + subcov + [cls, reason])
 
     with open(a.out, 'w') as fh:
         fh.write('\t'.join(hdr) + '\n')

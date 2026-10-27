@@ -20,29 +20,60 @@ qlen-vs-slen trap that once misclassified all nine loci.
 """
 
 import argparse, os, subprocess, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from toolpath import resolve  # noqa: E402
 
 FMT = 'qseqid qlen length pident sstart send evalue bitscore qcovs'
 
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument('--replicon', required=True)
+    p.add_argument('--replicon', default='',
+                   help='FASTA of the whole parent replicon')
+    p.add_argument('--blastdb', default='',
+                   help='pull the replicon from this BLAST db instead; needed '
+                        'for pre-formatted sets like nt_prok that ship no FASTAs')
     p.add_argument('--db', required=True)
     p.add_argument('--out', required=True)
     p.add_argument('--accession', default='')
     p.add_argument('--min-cov', type=float, default=80.0)
     p.add_argument('--min-id', type=float, default=95.0)
     p.add_argument('--blast-bin',
-                   default=os.environ.get('BLAST_BIN',
-                                          '/Users/pooja/opt/ncbi-blast-2.17.0+/bin'))
+                   default=os.environ.get('BLAST_BIN', ''),
+                   help='dir holding blastn; empty => resolve from PATH')
     a = p.parse_args()
 
     acc = a.accession or os.path.basename(a.replicon).split('.')[0]
-    cmd = [os.path.join(a.blast_bin, 'blastn'),
-           '-query', a.db, '-subject', a.replicon, '-task', 'blastn',
+
+    subject = a.replicon
+    tmp = ''
+    if not subject and a.blastdb:
+        # Materialise the replicon from the db just long enough to BLAST it.
+        if not acc:
+            sys.exit('--blastdb needs --accession')
+        r = subprocess.run([resolve('blastdbcmd', a.blast_bin), '-db', a.blastdb,
+                            '-entry', acc, '-outfmt', '%f'],
+                           capture_output=True, text=True)
+        if r.returncode or not r.stdout.strip():
+            r = subprocess.run([resolve('blastdbcmd', a.blast_bin), '-db', a.blastdb,
+                                '-entry', acc.split('.')[0], '-outfmt', '%f'],
+                               capture_output=True, text=True)
+        if r.returncode or not r.stdout.strip():
+            sys.exit(f'could not retrieve {acc} from {a.blastdb}')
+        tmp = f'_{acc}.replicon.fa'
+        with open(tmp, 'w') as fh:
+            fh.write(r.stdout)
+        subject = tmp
+    if not subject:
+        sys.exit('give --replicon or --blastdb')
+
+    cmd = [resolve('blastn', a.blast_bin),
+           '-query', a.db, '-subject', subject, '-task', 'blastn',
            '-evalue', '1e-10', '-outfmt', '6 ' + FMT,
            '-dust', 'no', '-soft_masking', 'false']
     r = subprocess.run(cmd, capture_output=True, text=True)
+    if tmp and os.path.exists(tmp):
+        os.remove(tmp)
     if r.returncode:
         sys.exit('blastn failed:\n' + r.stderr)
 

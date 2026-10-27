@@ -16,6 +16,8 @@ reading. Adjacent elements legitimately share a few bases at TSDs.
 """
 
 import argparse, os, re, subprocess, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from toolpath import resolve  # noqa: E402
 
 FMT = ('sseqid pident length qstart qend sstart send evalue bitscore slen')
 TOLERANCE = 30
@@ -38,8 +40,8 @@ def main():
     p.add_argument('--max-target', type=int, default=10000)
     p.add_argument('--tolerance', type=int, default=TOLERANCE)
     p.add_argument('--blast-bin',
-                   default=os.environ.get('BLAST_BIN',
-                                          '/Users/pooja/opt/ncbi-blast-2.17.0+/bin'))
+                   default=os.environ.get('BLAST_BIN', ''),
+                   help='dir holding blastn; empty => resolve from PATH')
     a = p.parse_args()
 
     assert a.min_length == 0, (
@@ -51,7 +53,7 @@ def main():
     bait = hdr_field(a.locus, 'bait', '1-1')
     bait_start = int(bait.split('-')[0])
 
-    cmd = [os.path.join(a.blast_bin, 'blastn'),
+    cmd = [resolve('blastn', a.blast_bin),
            '-query', a.locus, '-db', a.db, '-task', 'blastn',
            '-evalue', a.evalue, '-outfmt', '6 ' + FMT,
            '-max_target_seqs', str(a.max_target),

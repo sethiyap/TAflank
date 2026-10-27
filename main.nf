@@ -25,17 +25,23 @@ process BUILD_DB {
 process BAIT_SEARCH {
     publishDir params.outdir, mode: 'copy'
     label 'python'
+    cpus params.blast_cpus
+    // db_files is empty for a pre-formatted database: nt_prok is far too large
+    // to stage per task, so it is referenced by absolute path and left in place.
     input:  path bait
-            path db_files
+            tuple val(db), path(db_files)
     output: path 'bait_hits.tsv', emit: hits
     script:
+    def tax = params.taxonomy ? '--taxonomy' : ''
     """
     BLAST_BIN='${params.blast_bin}' ${PY()} ${projectDir}/scripts/bait_search.py \\
-        --bait ${bait} --db ${params.db_name} --out bait_hits.tsv \\
+        --bait ${bait} --db ${db} --out bait_hits.tsv \\
         --subregions '${params.subregions}' \\
         --full-pident ${params.full_pident} --full-qcov ${params.full_qcov} \\
         --paralogue-max-pident ${params.paralogue_max_pident} \\
-        --task ${params.blast_task} --evalue ${params.evalue}
+        --task ${params.blast_task} --evalue ${params.evalue} \\
+        --max-target-seqs ${params.max_target_seqs} \\
+        --num-threads ${task.cpus} ${tax}
     """
 }
 
@@ -45,11 +51,17 @@ process FETCH_METADATA {
     input:  path hits
     output: path 'record_metadata.tsv', emit: meta
     script:
-    def off = params.offline_meta ? '--offline' : ''
+    // 'blast'  -> derive from stitle/slen, NO network. Required on compute
+    //             nodes without outbound access, and the only workable mode
+    //             for a sweep where one esummary per hit is hopeless.
+    // 'cache'  -> rebuild from the on-disk cache, no network.
+    // 'ncbi'   -> batched esummary (default for small curated sets).
+    def mode = params.meta_source == 'blast' ? '--from-blast'
+             : params.meta_source == 'cache' ? '--offline' : ''
     """
     ${PY()} ${projectDir}/scripts/fetch_metadata.py \\
         --accessions ${hits} --col sacc --out record_metadata.tsv \\
-        --cache ${projectDir}/data/metadata_cache ${off}
+        --cache ${params.meta_cache} ${mode}
     """
 }
 
@@ -76,9 +88,11 @@ process EXTRACT_LOCI {
     output: path '*.fa',      emit: loci
             path 'loci.tsv',  emit: table
     script:
+    def src = params.genome_dir ? "--fasta-dir ${params.genome_dir}" : ''
+    def bdb = params.use_blastdb_seq ? "--blastdb ${params.blastdb_path}" : ''
     """
-    ${PY()} ${projectDir}/scripts/extract_loci.py \\
-        --selected ${sel} --fasta-dir ${params.genome_dir} \\
+    BLAST_BIN='${params.blast_bin}' ${PY()} ${projectDir}/scripts/extract_loci.py \\
+        --selected ${sel} ${src} ${bdb} \\
         --out-dir . --out-table loci.tsv --flank ${params.flank}
     """
 }
@@ -101,12 +115,17 @@ process IS_SEARCH {
 process PLASMIDFINDER {
     publishDir "${params.outdir}/pf", mode: 'copy'
     label 'python'
-    input:  tuple val(acc), path(replicon)
+    input:  val acc
     output: path "*.pf.tsv", emit: hits
     script:
+    // Whole parent replicon, never the window: Inc rep genes are rarely within
+    // 20 kb of the bait. Source is a FASTA if we have one, else the BLAST db.
+    def fa = file("${params.genome_dir}/${acc}.1.fna")
+    def src = (params.genome_dir && fa.exists()) ? "--replicon ${fa}"
+            : "--blastdb ${params.blastdb_path}"
     """
     BLAST_BIN='${params.blast_bin}' ${PY()} ${projectDir}/scripts/plasmidfinder.py \\
-        --replicon ${replicon} --db ${params.plasmidfinder_fa} \\
+        ${src} --db ${params.plasmidfinder_fa} \\
         --accession ${acc} --out ${acc}.pf.tsv \\
         --min-cov ${params.pf_min_cov} --min-id ${params.pf_min_id}
     """
@@ -131,11 +150,20 @@ process COLLATE {
 }
 
 workflow {
-    bait    = Channel.fromPath(params.bait,       checkIfExists: true)
-    gdir    = Channel.fromPath(params.genome_dir, checkIfExists: true, type: 'dir')
+    bait = Channel.fromPath(params.bait, checkIfExists: true)
 
-    db      = BUILD_DB(gdir)
-    hits    = BAIT_SEARCH(bait, db.db)
+    // Either build a db from local FASTAs, or point at a pre-formatted one
+    // (update_blastdb.pl nt_prok ...). A pre-formatted db is referenced by
+    // absolute path and never staged -- nt_prok is far too large to copy per
+    // task, and it already contains every sequence we need.
+    if (params.blastdb) {
+        db_ch = Channel.value(tuple(params.blastdb, []))
+    } else {
+        gdir  = Channel.fromPath(params.genome_dir, checkIfExists: true, type: 'dir')
+        db_ch = BUILD_DB(gdir).db.map { f -> tuple(params.db_name, f) }
+    }
+
+    hits    = BAIT_SEARCH(bait, db_ch)
     meta    = FETCH_METADATA(hits.hits)
     sel     = SELECT_LOCI(hits.hits, meta.meta)
     loci    = EXTRACT_LOCI(sel.sel)
@@ -145,10 +173,8 @@ workflow {
     // PlasmidFinder runs on the WHOLE PARENT REPLICON, not the window.
     rep_ch  = loci.table
                   .splitCsv(header: true, sep: '\t')
-                  .map { r -> tuple(r.accession,
-                                    file("${params.genome_dir}/${r.accession}.1.fna")) }
-                  .filter { it[1].exists() }
-                  .unique { it[0] }
+                  .map { r -> r.accession }
+                  .unique()
     pf_ch   = PLASMIDFINDER(rep_ch)
 
     COLLATE(is_ch.hits.collect(), pf_ch.hits.collect(), loci.table)

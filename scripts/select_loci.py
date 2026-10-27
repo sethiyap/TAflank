@@ -71,14 +71,23 @@ def main():
            'replicon_type', 'replicon_name', 'organism', 'genus',
            'replicon_len', 'topology', 'is_complete', 'replicon_type_evidence',
            'flank_up', 'flank_dn', 'truncated_up', 'truncated_dn',
-           'whole_replicon', 'window_len', 'selected', 'deselect_reason']
+           'whole_replicon', 'window_len', 'topology_evidence',
+           'selected', 'deselect_reason']
     rows = []
     percopy = {}
 
     for h in sorted(hits, key=lambda r: (r['sacc'], int(r['hit_start']))):
         acc = h['sacc']
         md = m.get(acc, {})
-        topo = md.get('topology', 'circular') or 'circular'
+        # Unknown topology defaults to LINEAR, deliberately.
+        # Treating an unknown record as circular would WRAP the window across
+        # the origin, splicing the end of the sequence onto the beginning and
+        # fabricating a junction that does not exist. Treating a circular one
+        # as linear merely clamps and records the lost flank. One error invents
+        # data; the other only loses context. BLAST output carries no topology,
+        # so this is the common case in a sweep.
+        topo = md.get('topology', '') or 'linear'
+        topo_evid = 'record' if md.get('topology') else 'assumed_linear'
         slen = int(md.get('slen') or h.get('slen') or 0)
         hs, he = int(h['hit_start']), int(h['hit_end'])
         up, dn, tu, td, whole = flanks(hs, he, slen, topo, a.flank)
@@ -106,7 +115,7 @@ def main():
                      md.get('replicon_type_evidence', ''),
                      up, dn, 'yes' if tu else 'no', 'yes' if td else 'no',
                      'yes' if whole else 'no',
-                     (he - hs + 1) + up + dn,
+                     (he - hs + 1) + up + dn, topo_evid,
                      'no' if why else 'yes', '; '.join(why)])
 
     with open(a.out, 'w') as fh:
@@ -115,6 +124,7 @@ def main():
             fh.write('\t'.join(str(v) for v in r) + '\n')
 
     sel = [r for r in rows if r[-2] == 'yes']
+    nassumed = sum(1 for r in sel if r[-3] == 'assumed_linear')
     print(f'{len(rows)} hits -> {len(sel)} selected -> {a.out}')
     for r in rows:
         if r[-2] == 'no':
@@ -122,6 +132,10 @@ def main():
     nt = sum(1 for r in sel if r[19] == 'yes' or r[20] == 'yes')
     if nt:
         print(f'  {nt} selected locus/loci have a short flank (kept, recorded)')
+    if nassumed:
+        print(f'  {nassumed} locus/loci had no topology in the metadata and were '
+              f'treated as LINEAR (no wrap); flanks may understate what a '
+              f'circular replicon could supply')
 
 
 if __name__ == '__main__':
