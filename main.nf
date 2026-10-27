@@ -1,6 +1,7 @@
 #!/usr/bin/env nextflow
 /*
- * relBE MGE pipeline -- bait-anchored discovery of mobile genetic elements.
+ * TAflank -- bait-anchored discovery of mobile genetic elements in
+ * gene flanking regions.
  *
  *   bait -> local BLAST -> Tier A (sequence) -> metadata -> Tier B (record)
  *        -> +/-flank windows -> IS homology + replicon typing

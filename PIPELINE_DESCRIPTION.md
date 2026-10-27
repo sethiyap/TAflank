@@ -1,4 +1,4 @@
-# relBE MGE pipeline — implementation description
+# TAflank — implementation description
 
 How the pipeline is built, what each step does, how hits are filtered, how
 flanking sequence is retrieved, and what comes out.
