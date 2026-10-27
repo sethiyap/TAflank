@@ -39,6 +39,14 @@ bait.fa ──► local BLAST ──► Tier A ──► fetch metadata ──�
 ./tools/nf run main.nf -profile local --bait anchors/other_gene.fa --subregions ''
 ```
 
+On a cluster against a pre-formatted database, with no network at all:
+
+```bash
+./tools/nf run main.nf -profile gadi \
+    --blastdb /scratch/$PROJECT/$USER/blastdb/nt_prok \
+    --genome_dir '' --meta_source blast --taxonomy
+```
+
 Use `./tools/nf`, not bare `nextflow` — see §8.
 
 ---
@@ -73,9 +81,18 @@ Emits `sacc`, not `sseqid`: with `-parse_seqids`, `sseqid` renders as
 
 ### FETCH_METADATA — `scripts/fetch_metadata.py`  *(Tier B input)*
 
-Batched NCBI `esummary`, written to a per-accession JSON cache under
-`data/metadata_cache/`. Split into a networked fetch and an `--offline`
-rebuild, because Gadi's standard compute queues have no outbound network.
+Three sources, chosen with `--meta_source`:
+
+| mode | source | network |
+|---|---|---|
+| `ncbi` | batched `esummary`, cached per accession | yes, once |
+| `cache` | the on-disk JSON cache | no |
+| `blast` | the `stitle` and `slen` columns of the BLAST output | **no** |
+
+`blast` mode is what makes the search runnable on a compute node with no
+outbound access, and it is the only workable mode for a large sweep, where one
+`esummary` per hit would be hopeless. Agreement with `esummary` on the
+16-record set is **14/14**.
 
 **Replicon classification** uses the structured `genome` field where present.
 That field is not always populated — CP021960 is a 5.6 Mb circular
@@ -83,8 +100,19 @@ That field is not always populated — CP021960 is a 5.6 Mb circular
 submitter's title and records which route was taken in
 `replicon_type_evidence` (`esummary_genome` | `title` | `none`).
 
+Before any chromosome rule there is a **draft-assembly guard**: titles
+containing *whole genome shotgun*, *WGS*, *scaffold*, *contig*, *unplaced* or
+*unlocalized* return `unknown`. `nt_prok` is full of these and they are
+genuinely neither a plasmid nor a chromosome. The guard runs first because such
+titles often still contain the word "genome".
+
 There is deliberately **no size heuristic**: megaplasmids exceed 1 Mb and would
 be misassigned as chromosomes.
+
+`replicon_type_evidence` records which rule fired — `esummary_genome`,
+`title_plasmid`, `title_chromosome`, `title_complete_genome`,
+`title_complete_sequence`, `title_draft_assembly` or `none` — so a structured
+call is always distinguishable from an inferred one.
 
 Records NCBI cannot resolve get `replicon_type=unknown`, never forced into a
 bucket. PlasmidFinder gives independent evidence for those — a replicon hit
@@ -218,6 +246,14 @@ linear                          → clamped at the ends; truncation is real
 `whole_replicon` are all recorded, **post-reorientation** — they describe the
 emitted sequence, not the replicon.
 
+> **Unknown topology defaults to `linear`, deliberately.** BLAST output carries
+> no topology field, so in a sweep it is usually unknown. Treating an unknown
+> record as circular would *wrap* the window across the origin, splicing the
+> end of the sequence onto its beginning and **fabricating a junction that does
+> not exist**. Treating a circular record as linear merely clamps and records
+> the lost flank. One error invents data; the other only loses context.
+> `topology_evidence` marks which records were assumed rather than known.
+
 > Truncation is itself a signal: an insertion hotspot breaks assemblies, and
 > the *bla*NDM study lost 2,269 contigs exactly this way. Dropping short-flank
 > loci discards that signal. It matters most for draft assemblies, where a hit
@@ -227,23 +263,32 @@ emitted sequence, not the replicon.
 
 ## 6. How flanking sequence is retrieved
 
-Two mechanisms. The coordinate handling is identical; only the source differs.
+Two mechanisms, **both implemented**. The coordinate handling is identical;
+only the source differs, and the outputs are byte-identical either way.
 
-**Today — source FASTA.** `extract_loci.py` reads from `--fasta-dir`. Simple,
-and fine while every genome is on disk.
+**From source FASTAs** — `--fasta-dir`. Natural for curated sets where every
+genome is already on disk.
 
-**At sweep scale — `blastdbcmd`.** The BLAST database *already contains the
-full sequences*, and `-parse_seqids` makes them retrievable by accession and
-range:
+**From the BLAST database** — `--blastdb`. The database *already contains the
+full sequences*, so a hit's flanking DNA is already local:
 
 ```bash
 blastdbcmd -db blastdb/public16 -entry CP018961.1 -range 237696-278222
 # → 40,527 bp, byte-identical to the pipeline's window
 ```
 
-If you BLASTed against it, the flanking DNA is already local — **no second
-download, no network, no separate assembly fetch**. This is what makes a
-26,539-genome sweep tractable without keeping 26,539 loose files.
+> **This is not an optimisation, it is a requirement for pre-formatted
+> databases.** `update_blastdb.pl nt_prok ...` ships no FASTAs at all, so
+> `--fasta-dir` has nothing to read. `extract_loci.py` and `plasmidfinder.py`
+> both fall back to `blastdbcmd` when a FASTA is unavailable.
+>
+> Verified: all 7 windows and all 17 replicon calls are identical whether
+> sourced from FASTAs or from the database.
+
+The database path is given as an **absolute path without file extensions**
+(`--blastdb /scratch/$PROJECT/$USER/blastdb/nt_prok`) and is referenced in
+place, never staged into the work directory — 127.7 GB cannot be copied per
+task.
 
 `efetch` by accession and range is needed in exactly one case: a hit found by
 **remote** BLAST against a database you did not build. It needs network and is
@@ -299,6 +344,16 @@ and is retained only as a historical artefact.)
 The local profile is deliberately asymmetric: biocontainers are linux-amd64 and
 this machine's Docker daemon is off, so local runs use the native toolchain.
 
+**No script contains a machine-specific path.** `scripts/toolpath.py` resolves
+each executable in the order `--blast-bin` → `$BLAST_BIN` → `PATH`, and raises
+an error naming all three if it fails. Local runs pass an explicit directory
+because BLAST+ here is a native arm64 build deliberately kept off `PATH`;
+cluster runs leave it empty and the binary comes from a container or module.
+
+> `firefly.config` and `gadi.config` are **not yet verified against the real
+> machines** — executor name, queue names and `-l storage` flags are
+> best-guess. `env/firefly_probe.sh` collects what is needed to firm them up.
+
 **Apptainer is the real reason to move to Linux**, more than CPU or internet.
 `amrfinderplus` has *no macOS build at all* (bioconda or conda-forge, any
 architecture), so Bakta is impossible locally; `keras` has no osx-arm64, so
@@ -308,6 +363,85 @@ geNomad is Rosetta-only. Both are fine in a linux-amd64 container.
 metadata top-up (cacheable, `--offline_meta`), and the bulk sweep. Stages
 between are fully offline, which is what makes Gadi's network-less compute
 queues workable.
+
+### Running on a cluster
+
+Three things differ from a local run, and the pipeline handles each with a
+parameter rather than a separate code path:
+
+| local | cluster |
+|---|---|
+| builds its own BLAST db from FASTAs | `--blastdb <abs path>` to a pre-formatted one; `BUILD_DB` is skipped |
+| reads sequence from `--fasta-dir` | reads it from the database via `blastdbcmd` |
+| `esummary` for record metadata | `--meta_source blast`, parsed from `stitle`, **no network** |
+
+A full no-network invocation:
+
+```bash
+./tools/nf run main.nf -profile gadi \
+    --blastdb /scratch/$PROJECT/$USER/blastdb/nt_prok \
+    --genome_dir '' --meta_source blast --taxonomy
+```
+
+`--taxonomy` additionally requests `staxids`/`sscinames`, which need the
+`taxdb` files sitting beside the database — a reason to include `taxdb` in the
+download even though it is tiny.
+
+### Databases: what to download and where to put it
+
+Sizes are from NCBI's own metadata, not estimates:
+
+| database | on disk | sequences | content |
+|---|---|---|---|
+| `nt_prok` | **127.7 GB** | 8.96 M | prokaryotic subset of nt, 503 Gbp |
+| `nt_viruses` | **68.7 GB** | — | viral subset |
+| `taxdb` | small | — | enables `staxids`/`sscinames` |
+
+`nt_prok taxdb` is the recommended pair. `nt_viruses` costs 68.7 GB for little
+benefit here — prophage context is better established with geNomad on the
+extracted windows than by BLASTing against viral sequence.
+
+> **The Gadi quota trap.** `$HOME` on Gadi is capped at **10 GiB per user**, and
+> `df` does not show it — `df` reports the shared filesystem, which looks like
+> tens of terabytes free. A download there fails with
+> `curl (23) Failed writing body`, which reads like a network fault but is the
+> write being refused. Check with `quota -s`, not `df`.
+
+Where it can go, measured on this account:
+
+| location | free | verdict |
+|---|---|---|
+| `$HOME` | 10 GiB cap | **no** — this is the trap above |
+| `/g/data/rg42` | 54 GiB | **no** — too small for 127.7 GB |
+| `/g/data/ei36` | 64 GiB | **no** — too small |
+| `/scratch/rg42` | ~9 TiB | **yes** |
+| `/scratch/ei36` | ~10 TiB | **yes** |
+
+> **`/scratch` is purged** — files not accessed for ~100 days are deleted.
+> Either re-touch the directory periodically or accept re-fetching. `/g/data`
+> is persistent but no allocation here is large enough, so `/scratch` is the
+> only option without a quota increase.
+
+`env/gadi_fetch_blastdb.sh` runs the download as a **`copyq`** job rather than
+on a login node: 127.7 GB is hours of transfer, and `copyq` is one of the few
+Gadi queues with outbound network — standard compute queues have none, which is
+also why `--meta_source blast` exists.
+
+### An already-present alternative on Gadi
+
+`/g/data/xe2/references/blastdb_nt_April_2026` is a working full-`nt` database
+(**125.7 M sequences, 3.70 Tbp**, April 2026), world-readable and verified with
+`blastdbcmd -db nt -info`. Zero download. Three caveats, the last probably
+decisive:
+
+- it is full `nt`, **7× larger** than `nt_prok` (3.70 Tbp vs 503 Gbp), and with
+  `-task blastn` that is a very different runtime;
+- it includes all eukaryotic sequence, which is noise here and adds to the
+  paralogue burden Tier A already works hard against;
+- `/g/data` is mounted on compute nodes only when declared with
+  `-l storage=gdata/xe2`, which NCI normally restricts to project members.
+  It is readable from a **login node**; that does not mean a `qsub` job can see
+  it. Verify before relying on it.
 
 ### Why `./tools/nf` and not bare `nextflow`
 
@@ -338,7 +472,13 @@ All settable on the command line (`--flank 15000`) or in `nextflow.config`.
 |---|---|---|
 | `bait` | `anchors/relBE_seed.fa` | the bait sequence — any gene |
 | `subregions` | `relB:1-240,relE:240-527` | named bait parts for orphan calls; `''` to disable |
-| `genome_dir` / `db_name` | `data/public_16/fasta` / `public16` | search space |
+| `genome_dir` / `db_name` | `data/public_16/fasta` / `public16` | build a db from these FASTAs |
+| `blastdb` | `''` | absolute path to a **pre-formatted** db (no extensions). Set it and `BUILD_DB` is skipped and the db is never staged |
+| `taxonomy` | false | also request `staxids`/`sscinames`; needs `taxdb` beside the db |
+| `max_target_seqs` | 100000 | **not** a top-N filter — it prunes during search, so it must exceed the hits you expect |
+| `blast_cpus` | 1 | threads for the bait search |
+| `meta_source` | `ncbi` | `ncbi` \| `cache` \| `blast`. **`blast` makes no network call at all** |
+| `meta_cache` | `data/metadata_cache` | per-accession JSON cache |
 | `full_pident` / `full_qcov` | 95 / 95 | Tier A FULL threshold |
 | `paralogue_max_pident` | 85 | below this is superfamily background |
 | `blast_task` | `blastn` | **not** megablast |
@@ -349,7 +489,7 @@ All settable on the command line (`--flank 15000`) or in `nextflow.config`.
 | `is_min_length` | **0** | asserted to stay 0 |
 | `is_max_target` | 10000 | above the 5,970-sequence ISfinder db |
 | `pf_min_cov` / `pf_min_id` | 80 / 95 | Acman et al. 2022 |
-| `offline_meta` | false | rebuild metadata from cache, no network |
+
 
 ---
 
@@ -379,6 +519,17 @@ and 1 bases — exactly as their 99.43%, 99.81% and 99.81% identities predict.
 "variant FII FIB plasmid, own replicon types in PlasmidFinder". The pipeline
 independently typed LT991956 as `IncFIB(pECLA), IncFII(pECLA)` from sequence
 alone.
+
+**Cluster mode equivalence.** The pipeline was re-run in the exact
+configuration a cluster uses — pre-formatted database, `--genome_dir ''`,
+`--meta_source blast`, no network — and compared against the FASTA + `esummary`
+run:
+
+- `mge_hits.tsv` — **identical** (45 IS calls)
+- replicon typing — **identical** (17 hits)
+- `loci.tsv` — 23 of 25 columns identical; the two that differ are `organism`
+  (two-word binomial from the title vs the fuller `esummary` string) and
+  `topology` (absent from BLAST output, so assumed — see §5)
 
 **Unit tests.** `/usr/bin/python3 -I tests/test_relbe_window.py` — 25
 assertions covering circular wrap-around, the whole-replicon case, truncation
