@@ -1,0 +1,3 @@
+accession	replicon	taxon_group	query_id	pident	qcovs	length	start	end	strand	bitscore
+CP018961	IncFIB(pNDM-Mar)	enterobacteriales	IncFIB(pNDM-Mar)_1__JN420336	99.317	100.0	439	32102	32540	+	779.0
+CP018961	IncHI1B(pNDM-MAR)	enterobacteriales	IncHI1B(pNDM-MAR)_1__JN420336	99.474	100.0	570	167535	168104	+	1015.0

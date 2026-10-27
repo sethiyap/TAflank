@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# Nextflow wrapper.
+#
+# Three reasons this exists, all learned the hard way on this machine:
+#  1. JDKs here are keg-only, so `java` is not on PATH.
+#  2. The shell profile exports JAVA_HOME=/opt/homebrew/opt/openjdk@17 -- the
+#     ARM64 Homebrew prefix -- but Homebrew here is x86_64 at /usr/local, so
+#     that path does not exist. An inherited-but-broken JAVA_HOME is worse than
+#     none, so it is validated rather than defaulted around.
+#  3. On arm64 the JVM's architecture LEAKS TO CHILD PROCESSES. Running
+#     Nextflow under the x86_64 JDK makes every task x86_64, and /usr/bin/python3
+#     then dies with "xcrun: unable to load libxcrun ... need 'x86_64'" because
+#     the CommandLineTools libs are arm64-only. So on arm64 we must pick a
+#     NATIVE JDK, not merely a working one.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+want_arch="$(uname -m)"
+jdk_arch() {   # echo the JDK's os.arch, or nothing
+  [[ -x "$1/bin/java" ]] || return 1
+  "$1/bin/java" -XshowSettings:properties -version 2>&1 \
+    | sed -n 's/.*os\.arch = //p' | tr -d ' '
+}
+native_ok() {
+  local a; a="$(jdk_arch "$1" || true)"
+  [[ -z "$a" ]] && return 1
+  case "$want_arch:$a" in
+    arm64:aarch64|arm64:arm64|x86_64:amd64|x86_64:x86_64) return 0 ;;
+  esac
+  return 1
+}
+
+CANDIDATES=(
+  "${JAVA_HOME:-}"
+  "$HOME"/opt/jdk-*/Contents/Home
+  "$HOME"/opt/jdk-*
+  /Library/Java/JavaVirtualMachines/*/Contents/Home
+  /usr/local/opt/openjdk@17 /usr/local/opt/openjdk
+  /opt/homebrew/opt/openjdk@17 /opt/homebrew/opt/openjdk
+)
+PICK=""; FALLBACK=""
+for c in "${CANDIDATES[@]}"; do
+  [[ -n "$c" && -x "$c/bin/java" ]] || continue
+  if native_ok "$c"; then PICK="$c"; break; fi
+  [[ -z "$FALLBACK" ]] && FALLBACK="$c"
+done
+
+if [[ -z "$PICK" ]]; then
+  if [[ -n "$FALLBACK" ]]; then
+    echo "tools/nf: WARNING -- no native $want_arch JDK found; using $FALLBACK." >&2
+    echo "          Tasks will run under Rosetta and arm64 tools may fail." >&2
+    PICK="$FALLBACK"
+  else
+    echo "tools/nf: no usable JDK found. Set JAVA_HOME or install one." >&2
+    exit 1
+  fi
+fi
+
+export JAVA_HOME="$PICK"
+export PATH="$JAVA_HOME/bin:$PATH"
+exec nextflow "$@"

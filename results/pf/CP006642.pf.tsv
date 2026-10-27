@@ -1,0 +1,4 @@
+accession	replicon	taxon_group	query_id	pident	qcovs	length	start	end	strand	bitscore
+CP006642	IncFIB(K)	enterobacteriales	IncFIB(K)_1__JN233704	98.929	100.0	560	300	859	-	984.0
+CP006642	IncN	enterobacteriales	IncN_1__AY046276	100.0	100.0	514	12140	12653	-	928.0
+CP006642	IncX1	enterobacteriales	IncX1_1__EU370913	98.93	100.0	374	70130	70503	+	657.0

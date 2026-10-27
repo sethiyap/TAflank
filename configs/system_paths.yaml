@@ -27,7 +27,7 @@ external_tools:
   # BLAST+ 2.17.0 arm64 NATIVE, deliberately NOT on PATH. The single most
   # important entry: brew's BLAST would be x86_64/Rosetta and a downgrade.
   blast_bin:        "/Users/pooja/opt/ncbi-blast-2.17.0+/bin"
-  java_home:        "/usr/local/opt/openjdk@17"   # keg-only; nextflow needs it
+  java_home:        "/Users/pooja/opt/jdk-17.0.21+9/Contents/Home"   # arm64 NATIVE (x86_64 JDK leaks its arch to tasks)
   python_exec:      "/usr/bin/python3"
   rscript:          "/usr/local/bin/Rscript"
 

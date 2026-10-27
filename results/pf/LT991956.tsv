@@ -1,0 +1,3 @@
+accession	replicon	taxon_group	query_id	pident	qcovs	length	start	end	strand	bitscore
+LT991956	IncFII(pECLA)	enterobacteriales	IncFII(pECLA)_1__CP001919	100.0	100.0	747	3	749	+	1348.0
+LT991956	IncFIB(pECLA)	enterobacteriales	IncFIB(pECLA)_1__CP001919	100.0	100.0	560	48370	48929	+	1011.0

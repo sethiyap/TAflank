@@ -21,3 +21,11 @@ configs/system_paths.config
 
 # Local archive of the pre-pipeline state (duplicates git tag v0-flank15k)
 archive/
+
+# Nextflow run state
+work/
+.nextflow/
+.nextflow.log*
+results/pipeline_info/
+db/plasmidfinder/_src/
+blastdb/
