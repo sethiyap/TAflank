@@ -422,10 +422,61 @@ Where it can go, measured on this account:
 > is persistent but no allocation here is large enough, so `/scratch` is the
 > only option without a quota increase.
 
+**How long it takes — measured on Gadi, not estimated.** GCP serves the
+database files uncompressed, so `--decompress` is a no-op for `--source gcp`
+and the transfer is the full on-disk size.
+
+| streams | throughput | note |
+|---|---|---|
+| 1 | 17.8 MB/s | TCP-window-bound over a ~200 ms link, not bandwidth-bound |
+| 4 | **75.6 MB/s** | 12 GB of real 3 GB volumes in 159 s |
+
+At the 4-stream rate `nt_prok` lands in **~28 minutes**. Parallelism is what
+matters here: a single stream is limited by latency, so `--num_threads 8` is
+doing the real work. The 10 h walltime in the job script is generous.
+
+**Verified result of an actual download** (`/scratch/rg42/blastdb`):
+
+```
+nt_prok     120 GB   8,962,499 sequences, 502.7 Gbp   ← blastdbcmd -info OK
+nt_viruses   65 GB   (not needed -- see above)
+taxdb       281 MB   all three files, so --taxonomy works
+```
+
 `env/gadi_fetch_blastdb.sh` runs the download as a **`copyq`** job rather than
 on a login node: 127.7 GB is hours of transfer, and `copyq` is one of the few
 Gadi queues with outbound network — standard compute queues have none, which is
 also why `--meta_source blast` exists.
+
+### Bait search at sweep scale
+
+Two deviations are worth making deliberately when the database is `nt_prok`
+rather than a curated set:
+
+**Use `--blast_task megablast` for the bait search.** The `blastn` default
+(word size 11) exists because megablast misses IS copies at 85-92% identity --
+but that applies to the **IS search**, not the bait search, where only `FULL`
+hits at >=95% identity are carried forward. Against 502.7 Gbp, word size 11 is
+far more expensive for no gain in what is kept.
+
+> Honest cost: megablast will not report the `<85%` superfamily background at
+> all, so the `PARALOGUE` class disappears rather than being logged. At this
+> scale that is arguably desirable -- logging millions of paralogues helps
+> nobody -- but it **is** a deviation from "rejections are logged, never
+> silent" and belongs in the methods, not slipped in silently.
+
+**Scope before committing to the full chain.** Every `FULL` hit becomes a
+window extraction, an IS search and a PlasmidFinder run. Run `BAIT_SEARCH`
+alone first, look at the hit distribution, set the Tier A/B thresholds against
+what actually came back, then re-run with `-resume` so the search is not
+repeated.
+
+> **The 527 bp seed is not specific enough for this database.** `nt_prok` is
+> 8.96 M mostly-chromosomal sequences and chromosomes carry 5-12 relE-family
+> genes each. Tier A at 95/95 does a lot of work, but the proper discriminator
+> is the extended core anchor (`ISEsa1-ISEsa2-relBE`), which is **not yet
+> built** -- see section 11. A seed sweep now is reconnaissance, not the real
+> sweep.
 
 ### An already-present alternative on Gadi
 
@@ -481,7 +532,7 @@ All settable on the command line (`--flank 15000`) or in `nextflow.config`.
 | `meta_cache` | `data/metadata_cache` | per-accession JSON cache |
 | `full_pident` / `full_qcov` | 95 / 95 | Tier A FULL threshold |
 | `paralogue_max_pident` | 85 | below this is superfamily background |
-| `blast_task` | `blastn` | **not** megablast |
+| `blast_task` | `blastn` | **not** megablast locally — but see the sweep note below |
 | `tier_a` | `FULL` | Tier A classes to carry forward |
 | `replicon_type` | `plasmid` | `''` keeps all |
 | `min_flank` | 0 | 0 keeps short-flank loci and records them |
