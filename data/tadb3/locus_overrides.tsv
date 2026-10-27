@@ -1,0 +1,4 @@
+# Manual locus coordinate overrides for TADB3 entries whose "locus tag" is not a
+# GenBank /locus_tag. One row per TA id. Coordinates are 1-based inclusive.
+# ta_id	accession	relE_start	relE_end	relB_start	relB_end	relB_complement	reason
+TA006114	KF033132	29150	29443	29434	29673	yes	KF033132 carries NO /locus_tag qualifiers (38 CDS, /product + /note only). TADB3 "Locus_27"/"Locus_28" is TADB3-internal 0-indexed CDS numbering, off by one from GenBank CDS order. Correct pair identified by product: CDS28 "RelE/StbE" (toxin) + CDS29 "CopG" (anti-toxin), adjacent, 10 bp ORF overlap. Verified 2026-10-22.

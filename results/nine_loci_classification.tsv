@@ -1,0 +1,10 @@
+accession	organism	replicon_type	replicon_name	replicon_len	topology	relBE_pident	relBE_alnlen	relBE_strand	relB_start	ISEsa1_pident	ISEsa1_alnlen	ISEsa1_cov	ISEsa1_off_start	ISEsa1_off_end	ISEsa2_pident	ISEsa2_alnlen	ISEsa2_cov	ISEsa2_off_start	ISEsa2_off_end	class	architecture	note
+CP028197.1	Salmonella enterica Concord	plasmid	pGMI14-002_1	444417	circular	100.0	527	plus	205713	91.7	1596	99	-5494	-3899	100.0	1493	100	-3898	-2406	COMPLETE	I (canonical)	
+CP028537.1	Enterobacter hormaechei	plasmid	pQnrB4_020042	328828	circular	100.0	527	minus	230904	91.7	1596	99	-5494	-3899	100.0	1493	100	-3898	-2406	COMPLETE	I (canonical)	
+MF344582.1	Citrobacter freundii NY2385	plasmid	pNY2385-HI2	354045	circular	100.0	527	minus	319216	87.6	275	17	-4173	-3899	100.0	1493	100	-3898	-2406	DECAYED	I (canonical)	ISEsa1 reduced to 275bp stub
+CP018961.1	Escherichia coli Ecol_422	plasmid	pEC422_1	289903	circular	100.0	527	minus	258222	91.4	1540	96	-10554	-9015	94.5	1493	100	-6675	-5184	COMPLETE	III (shifted)	ISEsa1 split by ISKpn21 (2278bp, 5bp DR) - NOT intact
+CP010512.1	Enterobacter cloacae colR/S	chromosome	chromosome	4828976	circular	100.0	527	plus	564021	91.6	1592	99	-5224	-3633	-	-	-	-	-	HALF-CORE	III (shifted)	
+CP026216.1	Citrobacter sp. CFNIH10	chromosome	chromosome	5246201	circular	100.0	527	plus	2005646	91.7	1599	99	-3991	-2393	-	-	-	-	-	HALF-CORE	III (shifted)	
+CP020841.1	Klebsiella pneumoniae KPN1482	chromosome	chromosome	5591645	circular	100.0	527	minus	5361031	91.6	1586	99	-5483	-3898	94.5	1493	100	-3897	-2406	COMPLETE	I (canonical)	
+CP012599.1	Salmonella Newport 0307-213	chromosome	chromosome	4512838	circular	100.0	527	plus	270743	91.7	1596	99	-5494	-3899	100.0	1493	100	-3898	-2406	COMPLETE	I (canonical)	
+CP017220.1	Escherichia coli FAM21845	chromosome	chromosome	4901993	circular	99.4	527	minus	1723530	-	-	-	-	-	-	-	-	-	-	NO CORE	none	deck slide5: "IS1, adjacent deletions"

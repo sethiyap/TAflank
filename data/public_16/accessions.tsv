@@ -1,0 +1,18 @@
+# relBE loci from RelBE_from_Sept2018_lab_meeting.pptx (slides 2/4/5 = nine; slide 12/13 = extras)
+# accession	set	host	replicon	note
+CP028197.1	nine	Salmonella_enterica_Concord_CFSAN018747	plasmid_pGMI14	IncFIB
+CP028537.1	nine	Enterobacter_hormaechei_SCEH020042	plasmid_pQnrB4_020042	IncFIB
+MF344582.1	nine	Citrobacter_freundii_NY2385	plasmid_pNY2385-HI2	HI2; deck calls it p525011-HI2
+CP018961.1	nine	Escherichia_coli_Ecol_422	plasmid_pEC422_1	HI2 context; STAGE1 TARGET
+CP010512.1	nine	Enterobacter_cloacae_colRS	chromosome	pNDM-CIT-type insertion
+CP026216.1	nine	Citrobacter_sp_CFNIH10	chromosome	direct ISEsa1b insertion
+CP020841.1	nine	Klebsiella_pneumoniae_KPN1482	chromosome	ISEcp1-mediated
+CP012599.1	nine	Salmonella_enterica_Newport_0307-213	chromosome	HI2-derived
+CP017220.1	nine	Escherichia_coli_FAM21845	chromosome	
+CP018962.1	control	Escherichia_coli_Ecol_422	chromosome	NEGATIVE: no relBE, plasmid CP018961 has it
+CP006636.1	control	Escherichia_coli_PCN061	chromosome	NEGATIVE: no relBE, plasmid CP006642 has it
+CP006642.1	extra	Escherichia_coli_PCN061	plasmid_PCN061p6	relBE fragment, IS26 + Tn21
+CP021960.1	extra	Klebsiella_pneumoniae_AR_0139	chromosome	ISEcp1-mediated
+CP026975.1	extra	Enterobacter_cloacae_complex_FDAARGOS_77	chromosome	pECL_A-type insertion
+CP023893.1	extra	Klebsiella_ornithinolytica_FDAARGOS_431	plasmid_unnamed1	pECL_A group
+LT991956.1	extra	Enterobacter_hormaechei_steigerwaltii_C309	plasmid	pECL_A group (JIE4345)

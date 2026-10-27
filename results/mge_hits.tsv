@@ -1,0 +1,8 @@
+locus_id	element	family	win_start	win_end	len	identity	query_cov	is_fragment	offset_from_relB	nested_in	interrupts	DR_seq	DR_len	note
+CP018961.1__CP018961.1__1__minus	ISKpn28	IS481	3322	4417	1096	100.0	100.0	no	-11679	.	.	.	.	complete; = slide13 "ISKpn28 upstream"
+CP018961.1__CP018961.1__1__minus	ISEsa1	ISNCY/IS1202	4447	5986	1540	91.4	95.7	no	-10554	.	.	TGAGC	5	5' portion, IS bases 1-1540; ANCESTRAL VEHICLE left end
+CP018961.1__CP018961.1__1__minus	ISKpn21	ISNCY	5984	8261	2278	100.0	100.0	no	-9017	ISEsa1	ISEsa1	TGAGC	5	complete; inserted INTO ISEsa1 at IS base ~1540
+CP018961.1__CP018961.1__1__minus	ISEsa1	ISNCY/IS1202	8262	8325	64	96.9	4.0	yes	-6739	.	.	TGAGC	5	3' portion, IS bases 1533-1596; displaced by ISKpn21
+CP018961.1__CP018961.1__1__minus	ISEsa2	IS110	8326	9817	1493	94.5	100.0	no	-6675	.	.	.	.	complete, variant (94.5%); ANCESTRAL VEHICLE right end
+CP018961.1__CP018961.1__1__minus	ISEcp1	IS1380/IS138	11041	12696	1656	100.0	100.0	no	-3960	.	.	.	.	TPU with qnrE1 (CDS 17719-18363)
+CP018961.1__CP018961.1__1__minus	ISEcp1	IS1380/IS138	21029	22684	1656	100.0	100.0	no	6028	.	.	.	.	second complete copy, DOWNSTREAM of relBE

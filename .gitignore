@@ -1,0 +1,20 @@
+# Large/derived data — never source
+data/genomes/
+data/ncbi_sweep/
+data/public_16/fasta/
+data/public_16/gbk/
+data/tadb3/genomes/
+db/plasmidfinder/
+
+# Build artefacts — rebuildable, never a source of truth
+db/isfinder/ISfinder.n*
+blastdb/
+work/
+.nextflow*
+configs/system_paths_local.yaml
+configs/system_paths.config
+
+# Decks and lock files
+*.pptx
+~$*.pptx
+.DS_Store

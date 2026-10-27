@@ -1,0 +1,7 @@
+ISfinder nucleotide sequences
+source : https://github.com/thanhleviet/ISfinder-sequences (IS.fna)
+mirror of: https://www-is.biotoul.fr/  (ISfinder; Siguier et al. NAR 2006)
+fetched: 2026-10-21
+note   : ISfinder does not permit bulk download; this is the community mirror.
+         Cite ISfinder, not the mirror. Re-verify named hits on the ISfinder
+         web BLAST (slide 3) before publishing.

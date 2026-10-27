@@ -1,0 +1,2 @@
+locus_id	genome	species	replicon	replicon_type	contig	contig_len	topology	relB_start_orig	relE_end_orig	strand_orig	reoriented	window_start	window_end	window_len	flank_up	flank_dn	truncated	relBE_in_window	seed_pident	seed_qcov	n_seed_hits
+CP018961.1__CP018961.1__1__minus	CP018961.1	Escherichia coli Ecol_422	plasmid pEC422_1	HI2-context	CP018961.1	289903	circular	258222	257696	minus	revcomp	242696	273222	30527	15000	15000	no	15001-15527	100.000	100.0	1

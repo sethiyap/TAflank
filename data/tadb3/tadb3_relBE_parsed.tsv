@@ -1,0 +1,59 @@
+ta_id	evidence	related_mge	species	replicon_name	replicon_type	accession	relE_locus_tag	relB_locus_tag	family_domain
+TA010191	experimental	.	Synechococcus sp. CB0101	chromosome	chromosome	NZ_CP039373	CB0101_RS08920	CB0101_RS08915	relBE/-
+TA010158	experimental	IS/Tn	Streptococcus suis SC84	chromosome	chromosome	NC_012924	SSUSC84_RS07050	SSUSC84_RS07055	relBE/-
+TA000130	experimental	.	Mycobacterium tuberculosis H37Rv	chromosome	chromosome	NC_000962	Rv3358	Rv3357	relBE/PHD-RelE
+TA006257	experimental	GI	Bifidobacterium longum subsp. infantis ATCC 15697 = JCM 1222	chromosome	chromosome	NC_011593	BLON_RS07270	BLON_RS07265	relBE/RelE(antitoxin)
+TA000093	experimental	.	Mycobacterium tuberculosis H37Rv	chromosome	chromosome	NC_000962	Rv1246c	Rv1247c	relBE/PHD-RelE
+TA006144	experimental	GI	Lactobacillus rhamnosus ATCC 8530	chromosome	chromosome	NC_017491	LRHK_RS13845	LRHK_RS02420	relBE/RHH-RelE
+TA000178	experimental	IS/Tn Integron	Vibrio cholerae O1 biovar El Tor str. N16961	chromosome II	chromosome	NC_002506	VC_RS15765	VC_RS15760	relBE/PHD-RelE
+TA006097	experimental	Plasmid	Sinorhizobium meliloti 1021	plasmid pSymA	plasmid	NC_003037	SM_RS26010	SM_RS26005	relBE/RHH-RelE
+TA006114	experimental	.	uncultured bacterium clone 93	metagenomic gene cluster	other	KF033132	Locus_27	Locus_28	relBE/RelE-RelE
+TA006128	experimental	Plasmid	Streptococcus mutans	plasmid pNC101	plasmid	NC_019239	HS718_RS00030	HS718_RS00025	relBE/RHH-RelE
+TA001041	experimental	Prophage	Escherichia coli str. K-12 substr. MG1655	chromosome	chromosome	NC_000913	b1563	b1564	relBE/RHH-RelE
+TA010142	experimental	Plasmid IScluster/Tn	Pseudomonas savastanoi	plasmid pPsv48C	plasmid	NC_019292	PSPSV_RS00035	PSPSV_RS00040	relBE/-
+TA010123	experimental	Prophage	Paracoccus phage vB_PkoS_Pkon1	chromosome	chromosome	MK291442	pkon1_p44	pkon1_p43	relBE/-
+TA006289	experimental	GI	Bifidobacterium longum subsp. longum JDM301	chromosome	chromosome	NC_014169	BLJ_RS05005	BLJ_RS05010	relBE/-
+TA006134	experimental	Plasmid	Paracoccus aminophilus	plasmid pAMI7	plasmid	NC_014832	G7C87_RS00025	G7C87_RS00020	relBE/RHH-RelE
+TA010143	experimental	Plasmid	Pseudomonas savastanoi	plasmid pPsv48C	plasmid	NC_019292	PSPSV_RS00250	PSPSV_RS00245	relBE/-
+TA006131	experimental	Plasmid	Escherichia coli	plasmid pO26-CRL-125	plasmid	NC_022996	HTC40_RS00015	HTC40_RS00010	relBE/PHD-RelE
+TA006239	experimental	GI	Lactobacillus rhamnosus ATCC 8530	chromosome	chromosome	NC_017491	LRHK_RS13845	LRHK_RS02420	relBE/RelE(toxin)
+TA000028	experimental	.	Helicobacter pylori 26695	chromosome	chromosome	NC_000915	HP_RS04360	HP_RS04365	relBE/-
+TA000172	experimental	Integron	Vibrio cholerae O1 biovar El Tor str. N16961	chromosome II	chromosome	NC_002506	VC_RS15415	VC_RS15410	relBE/PHD-RelE
+TA010139	experimental	Plasmid	Pseudomonas savastanoi	plasmid pPsv48A	plasmid	NC_019265	PSA3335_RS00260	PSA3335_RS00265	relBE/-
+TA010136	experimental	Plasmid IScluster/Tn	Pseudomonas savastanoi	plasmid pPsv48A	plasmid	NC_019265	PSA3335_RS00100	PSA3335_RS00105	relBE/-
+TA010137	experimental	Plasmid IScluster/Tn	Pseudomonas savastanoi	plasmid pPsv48A	plasmid	NC_019265	PSA3335_RS00175	PSA3335_RS00180	relBE/-
+TA010095	experimental	ICE	Clostridium difficile R20291	chromosome	chromosome	NC_013316	CDR20291_RS09590	CDR20291_RS09595	relBE/-
+TA010157	experimental	.	Streptococcus suis SC84	chromosome	chromosome	NC_012924	SSUSC84_RS02995	SSUSC84_RS02990	relBE/-
+TA000705	experimental	Integron	Vibrio parahaemolyticus RIMD 2210633	chromosome	chromosome	NC_004603	VP1843	VP1842	relBE/RHH-RelE
+TA000727	experimental	.	Streptococcus pneumoniae R6	chromosome	chromosome	NC_003098	SPR_RS05505	SPR_RS05510	relBE/RHH-RelE
+TA010181	experimental	.	Aggregatibacter actinomycetemcomitans D11S 1	chromosome	chromosome	NC_013416	D11S_RS05705	D11S_RS05710	relBE/-
+TA001075	experimental	.	Staphylococcus aureus subsp. aureus N315	chromosome	chromosome	NC_002745	SA_RS12895	SA_RS12900	relBE/PHD-RelE
+TA006132	experimental	Plasmid	Escherichia coli	plasmid pO111-CRL-115	plasmid	NC_022992	HTA80_RS00015	HTA80_RS00010	relBE/PHD-RelE
+TA006285	experimental	ICE	Streptomyces cattleya NRRL 8057 = DSM 46488	chromosome	chromosome	NC_017586	SCATT_RS18610	SCATT_RS18615	relBE/RelE(toxin)
+TA010190	experimental	Plasmid	Pseudomonas sp. strain ANT_J3	plasmid pA3J1	plasmid	NZ_KY498026	HXI37_RS00015	HXI37_RS00020	relBE/-
+TA006261	experimental	.	Bifidobacterium longum subsp. infantis ATCC 15697 = JCM 1222	chromosome	chromosome	NC_011593	BLON_RS04730	BLON_RS04725	relBE/PIN(toxin)
+TA006106	experimental	Prophage	Burkholderia pseudomallei K96243	chromosome	chromosome	NC_006351	BPS_RS24505	BPS_RS24510	relBE/RelE(toxin)
+TA000179	experimental	IS/Tn Integron	Vibrio cholerae O1 biovar El Tor str. N16961	chromosome II	chromosome	NC_002506	VC_RS15830	VC_RS15835	relBE/-
+TA000613	experimental	.	Staphylococcus aureus subsp. aureus MW2	chromosome	chromosome	NC_003923	MW2329	MW2330	relBE/PHD-RelE
+TA000168	experimental	Integron	Vibrio cholerae O1 biovar El Tor str. N16961	chromosome II	chromosome	NC_002506	VC_RS15045	VC_RS15050	relBE/RHH-RelE
+TA000614	experimental	.	Staphylococcus aureus subsp. aureus MW2	chromosome	chromosome	NC_003923	MW2380	MW2381	relBE/PHD-RelE
+TA000326	experimental	.	Streptococcus pneumoniae TIGR4	chromosome	chromosome	NC_003028	SP_RS05995	SP_RS06000	relBE/RHH-RelE
+TA006129	experimental	Plasmid	Streptococcus mutans	plasmid pDC09	plasmid	NC_019238	HS723_RS00030	HS723_RS00025	relBE/RHH-RelE
+TA000173	experimental	Integron	Vibrio cholerae O1 biovar El Tor str. N16961	chromosome II	chromosome	NC_002506	VC_RS15515	VC_RS15520	relBE/PHD-RelE
+TA001005	experimental	.	Escherichia coli O157:H7 str. Sakai	chromosome	chromosome	NC_002695	Ecs_5400	ECs_5399	relBE/Xre-RelE
+TA000978	experimental	.	Synechocystis sp. PCC 6803	chromosome	chromosome	NC_000911	SGL_RS17355	SGL_RS17350	relBE/-
+TA010166	experimental	.	Xenorhabdus nematophila ATCC 19061	chromosome	chromosome	NC_014228	XNC1_RS12315	XNC1_RS12320	relBE/-
+TA006105	experimental	Prophage	Burkholderia pseudomallei K96243	chromosome	chromosome	NC_006350	BPS_RS00910	BPS_RS00905	relBE/Xre-RelE
+TA010141	experimental	Plasmid IScluster/Tn	Pseudomonas savastanoi	plasmid pPsv48C	plasmid	NC_019292	PSPSV_RS00020	PSPSV_RS00015	relBE/-
+TA006256	experimental	.	Bifidobacterium longum subsp. infantis ATCC 15697 = JCM 1222	chromosome	chromosome	NC_011593	BLON_RS00060	BLON_RS00065	relBE/RelE(toxin)
+TA000226	experimental	.	Caulobacter crescentus CB15	chromosome	chromosome	NC_002696	CC_RS04185	CC_RS04190	relBE/RHH-RelE
+TA006139	experimental	GI	Lactobacillus rhamnosus Lc 705	chromosome	chromosome	NC_013199	LC705_RS14280	LC705_RS02415	relBE/RHH-RelE
+TA000229	experimental	.	Caulobacter crescentus CB15	chromosome	chromosome	NC_002696	CC_RS13115	CC_RS13120	relBE/RHH-RelE
+TA000665	experimental	.	Streptococcus mutans UA159	chromosome	chromosome	NC_004350	SMU_RS04160	SMU_RS04155	relBE/RHH-RelE
+TA000166	experimental	Integron	Vibrio cholerae O1 biovar El Tor str. N16961	chromosome II	chromosome	NC_002506	VC_RS14895	VC_RS14900	relBE/RHH-RelE
+TA010182	experimental	.	Aggregatibacter actinomycetemcomitans D11S 1	chromosome	chromosome	NC_013416	D11S_RS08275	D11S_RS08270	relBE/-
+TA006023	experimental	.	Xenorhabdus nematophila ATCC 19061	chromosome	chromosome	NC_014228	XNC1_1940	XNC1_1941	relBE/-
+TA004918	experimental	.	Actinobacillus pleuropneumoniae serovar 3 str. JL03	chromosome	chromosome	NC_010278	APJL_1288	APJL_1287	relBE/PHD-RelE
+TA000175	experimental	IS/Tn Integron	Vibrio cholerae O1 biovar El Tor str. N16961	chromosome II	chromosome	NC_002506	VC_RS15705	VC_RS15700	relBE/PHD-RelE
+TA000124	experimental	.	Mycobacterium tuberculosis H37Rv	chromosome	chromosome	NC_000962	Rv2866	Rv2865	relBE/PHD-RelE
+TA006127	experimental	.	Helicobacter pylori 26695	chromosome	chromosome	NC_000915	HP_RS04350	HP_RS04355	relBE/-
