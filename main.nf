@@ -125,7 +125,8 @@ process COLLATE {
     """
     ${PY()} ${projectDir}/scripts/collate.py \\
         --is-dir . --pf-dir . --loci ${loci_tsv} \\
-        --out-mge mge_hits.tsv --out-rep replicons.tsv --out-summary summary.tsv
+        --out-mge mge_hits.tsv --out-rep replicons.tsv --out-summary summary.tsv \
+        --aliases ${projectDir}/assets/replicon_aliases.tsv
     """
 }
 

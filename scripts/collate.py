@@ -14,6 +14,13 @@ rather than a quietly smaller number.
 import argparse, glob, os
 
 
+def read_tsv_skipcomments(p):
+    with open(p) as fh:
+        lines = [l for l in fh if not l.startswith('#') and l.strip()]
+    hdr = lines[0].rstrip('\n').split('\t')
+    return [dict(zip(hdr, l.rstrip('\n').split('\t'))) for l in lines[1:]]
+
+
 def read_tsv(p):
     with open(p) as fh:
         hdr = fh.readline().rstrip('\n').split('\t')
@@ -28,9 +35,18 @@ def main():
     a.add_argument('--out-mge', required=True)
     a.add_argument('--out-rep', required=True)
     a.add_argument('--out-summary', required=True)
+    a.add_argument('--aliases', default='')
     a = a.parse_args()
 
     loci = read_tsv(a.loci)
+
+    # Lab vocabulary. The deck calls MF344582 "p525011-HI2" and LT991956
+    # "JIE4345"; NCBI calls them pNY2385-HI2 and pC309-p2. Reporting only the
+    # NCBI name makes the tables unrecognisable to the people who made the deck.
+    alias = {}
+    if a.aliases and os.path.exists(a.aliases):
+        for r in read_tsv_skipcomments(a.aliases):
+            alias[r['accession']] = r
 
     is_rows = []
     for f in sorted(glob.glob(os.path.join(a.is_dir, '*.tsv'))):
@@ -64,7 +80,7 @@ def main():
     for r in is_rows:
         is_by_locus.setdefault(r['locus_id'], []).append(r)
 
-    hdr = ['locus_id', 'accession', 'organism', 'replicon_type',
+    hdr = ['locus_id', 'accession', 'lab_alias', 'organism', 'replicon_type',
            'replicon_name', 'plasmidfinder_replicons', 'replicon_len',
            'topology', 'window_len', 'flank_up', 'flank_dn',
            'truncated_up', 'truncated_dn', 'n_is', 'n_is_complete',
@@ -75,8 +91,9 @@ def main():
         h = is_by_locus.get(L['locus_id'], [])
         els = [x['element'] for x in h]
         out.append([
-            L['locus_id'], L['accession'], L['organism'], L['replicon_type'],
-            L['replicon_name'],
+            L['locus_id'], L['accession'],
+            alias.get(L['accession'], {}).get('lab_alias', L['replicon_name']),
+            L['organism'], L['replicon_type'], L['replicon_name'],
             ','.join(sorted(set(pf_by_acc.get(L['accession'], [])))) or '-',
             L['replicon_len'], L['topology'], L['window_len'],
             L['flank_up'], L['flank_dn'], L['truncated_up'], L['truncated_dn'],

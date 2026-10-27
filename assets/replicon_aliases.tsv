@@ -1,0 +1,18 @@
+# Lab vocabulary <-> NCBI record names.
+#
+# NCBI's title is authoritative for the record, but the deck and the lab use
+# different names for several plasmids. Reporting only the NCBI name makes
+# results unrecognisable; reporting only the lab name loses the link to the
+# record. Carry both.
+#
+# deck_slide refers to "RelBE_from_Sept2018_lab_meeting - Read-Only.pptx"
+# (15 slides). Verified by text search of the deck on 2026-10-27.
+#
+accession	ncbi_name	lab_alias	deck_slides	note
+CP018961	pEC422_1	pEC422_1	2,5,6,14	names agree
+CP006642	PCN061p6	PCN061p6	14	names agree
+CP028537	pQnrB4_020042	pQnrB4_020042	2,5,6	names agree
+MF344582	pNY2385-HI2	p525011-HI2	2,5,6	MISMATCH: deck says p525011, NCBI says pNY2385
+LT991956	pC309-p2	JIE4345	13	MISMATCH: deck says JIE4345, NCBI says pC309-p2; pECL_A group
+CP028197	pGMI14-002_1	pGMI14-002_1	2,5,6	deck refers to it by accession, not plasmid name
+CP023893	unnamed1	CP023893	13	NCBI name is literally "unnamed1"; pECL_A group
