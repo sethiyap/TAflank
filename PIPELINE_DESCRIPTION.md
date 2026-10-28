@@ -777,6 +777,22 @@ run:
   (two-word binomial from the title vs the fuller `esummary` string) and
   `topology` (absent from BLAST output, so assumed — see §5)
 
+**Cross-platform reproducibility, measured.** Job `182451448` on Gadi
+reproduced the laptop run **exactly** — `mge_hits` 45/45, `context` 7/7,
+`replicons` 17/17, with identical element names, `offset_from_bait` values,
+vehicle classes and replicon calls. That holds despite the two runs differing
+in nearly everything underneath:
+
+| | laptop | Gadi |
+|---|---|---|
+| architecture | arm64 macOS | x86_64 Linux |
+| BLAST | 2.17.0 | 2.11.0 |
+| Python | 3.9.6 | 3.13.13 |
+| metadata source | `esummary` (network) | `stitle` (offline) |
+| executor | local, no containers | PBS job, `gadi_single` |
+
+Cost: **0.38 SU**, 1 min 26 s walltime, 1.13 GB of 32 GB requested.
+
 **Unit tests.** `/usr/bin/python3 -I tests/test_relbe_window.py` — 25
 assertions covering circular wrap-around, the whole-replicon case, truncation
 coordinate frames, and an end-to-end check against the real CP018961 record.
