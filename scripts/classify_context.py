@@ -1,0 +1,121 @@
+#!/usr/bin/env python3
+"""
+Tier C -- classify each locus by what is around it.
+
+  classify_context.py --loci results/loci.tsv --is-dir results/is \
+                      --cargo-dir results/cargo --out results/context.tsv
+
+TWO INDEPENDENT AXES, deliberately never merged (PIPELINE_DESCRIPTION.md 4b):
+
+  lineage  -- from SEQUENCE identity alone, decided upstream in Tier A.
+              A paralogue is a DIFFERENT GENE, not a copy without a vehicle.
+
+  context  -- from what is found in the window. COMPLETE / DECAYED /
+              HALF-CORE / NO CORE for the vehicle, plus a cargo profile.
+
+Collapsing them -- "no vehicle, therefore a paralogue" -- would misclassify
+CP017220 and CP006642, both 99.4% identical to the seed and both genuinely the
+lineage, and would delete the evidence for repeated independent acquisition.
+
+Nothing here filters. Every locus gets a row, including loci with no IS and no
+cargo at all.
+"""
+
+import argparse, glob, os
+
+
+def read_tsv(p):
+    with open(p) as fh:
+        hdr = fh.readline().rstrip('\n').split('\t')
+        return [dict(zip(hdr, l.rstrip('\n').split('\t'))) for l in fh if l.strip()]
+
+
+def vehicle_class(is_rows, ends=('ISEsa1', 'ISEsa2')):
+    """COMPLETE / DECAYED / HALF-CORE / NO CORE, following PIPELINE.md F3."""
+    present, interrupted = {}, set()
+    for h in is_rows:
+        e = h['element']
+        if e not in ends:
+            continue
+        # BEST coverage per element, not per HSP. An element split in two by a
+        # later insertion contributes a large piece and a small one; judging on
+        # the small one alone would call a 96%-covered ISEsa1 "decayed" purely
+        # because its 64 bp tail is also reported.
+        present[e] = max(present.get(e, 0.0), float(h.get('query_cov') or 0))
+    for h in is_rows:
+        if h.get('nested_in') in ends:
+            interrupted.add(h['nested_in'])
+
+    degraded = {e for e, cov in present.items() if cov < 90}
+
+    n = len(present)
+    if n == 0:
+        return 'NO CORE', '', ''
+    if n == 1:
+        return 'HALF-CORE', next(iter(present)), ';'.join(sorted(interrupted))
+    cls = 'DECAYED' if degraded else 'COMPLETE'
+    return cls, ','.join(sorted(present)), ';'.join(sorted(interrupted))
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument('--loci', required=True)
+    p.add_argument('--is-dir', required=True)
+    p.add_argument('--cargo-dir', required=True)
+    p.add_argument('--out', required=True)
+    a = p.parse_args()
+
+    loci = read_tsv(a.loci)
+    is_by, cargo_by = {}, {}
+    for f in glob.glob(os.path.join(a.is_dir, '*.is.tsv')):
+        for r in read_tsv(f):
+            is_by.setdefault(r['locus_id'], []).append(r)
+    for f in glob.glob(os.path.join(a.cargo_dir, '*.cargo.tsv')):
+        for r in read_tsv(f):
+            cargo_by.setdefault(r['locus_id'], []).append(r)
+
+    hdr = ['locus_id', 'accession', 'replicon_type', 'vehicle_class',
+           'vehicle_ends', 'vehicle_interrupted', 'n_is', 'n_is_fragment',
+           'cargo_families', 'has_czc', 'has_cytb', 'has_hok_gef',
+           'czc_offset', 'hok_gef_offset', 'metal_module', 'note']
+    rows = []
+    for L in loci:
+        lid = L['locus_id']
+        ish = is_by.get(lid, [])
+        car = cargo_by.get(lid, [])
+        vcls, vends, vint = vehicle_class(ish)
+        fams = sorted({c['family'] for c in car})
+        off = {}
+        for c in car:
+            off.setdefault(c['family'], c['offset_from_bait'])
+        czc, cytb = 'czc' in fams, 'cytb' in fams
+        rows.append([
+            lid, L['accession'], L.get('replicon_type', ''),
+            vcls, vends, vint,
+            len(ish), sum(1 for h in ish if h.get('is_fragment') == 'yes'),
+            ','.join(fams) or '-',
+            'yes' if czc else 'no', 'yes' if cytb else 'no',
+            'yes' if 'hok_gef' in fams else 'no',
+            off.get('czc', ''), off.get('hok_gef', ''),
+            # recorded as context, NEVER as a membership test
+            'yes' if (czc and cytb) else 'no',
+            'no IS called' if not ish else '',
+        ])
+
+    with open(a.out, 'w') as fh:
+        fh.write('\t'.join(hdr) + '\n')
+        for r in rows:
+            fh.write('\t'.join(str(v) for v in r) + '\n')
+
+    c = {}
+    for r in rows:
+        c[r[3]] = c.get(r[3], 0) + 1
+    print(f'{len(rows)} loci -> {a.out}')
+    for k in sorted(c):
+        print(f'  {k:<11} {c[k]}')
+    m = sum(1 for r in rows if r[14] == 'yes')
+    print(f'  with the czc+cytb metal module: {m}/{len(rows)}')
+
+
+if __name__ == '__main__':
+    main()

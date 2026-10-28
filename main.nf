@@ -132,6 +132,34 @@ process PLASMIDFINDER {
     """
 }
 
+process CARGO_SEARCH {
+    publishDir "${params.outdir}/cargo", mode: 'copy'
+    label 'python'
+    input:  path locus
+    output: path "*.cargo.tsv", emit: hits
+    script:
+    """
+    BLAST_BIN='${params.blast_bin}' ${PY()} ${projectDir}/scripts/cargo_search.py \\
+        --locus ${locus} --db ${params.cargo_fa} \\
+        --out ${locus.baseName}.cargo.tsv \\
+        --min-pident ${params.cargo_min_pident} --min-cov ${params.cargo_min_cov}
+    """
+}
+
+process CLASSIFY_CONTEXT {
+    publishDir params.outdir, mode: 'copy'
+    label 'python'
+    input:  path loci_tsv
+            path is_tsv
+            path cargo_tsv
+    output: path 'context.tsv', emit: ctx
+    script:
+    """
+    ${PY()} ${projectDir}/scripts/classify_context.py \\
+        --loci ${loci_tsv} --is-dir . --cargo-dir . --out context.tsv
+    """
+}
+
 process COLLATE {
     publishDir params.outdir, mode: 'copy'
     label 'python'
@@ -169,7 +197,14 @@ workflow {
     sel     = SELECT_LOCI(hits.hits, meta.meta)
     loci    = EXTRACT_LOCI(sel.sel)
 
-    is_ch   = IS_SEARCH(loci.loci.flatten())
+    loci_fa = loci.loci.flatten()
+    is_ch   = IS_SEARCH(loci_fa)
+
+    // Tier C input. Deliberately NOT an annotation pass: ISfinder covers the
+    // IS layer and a small curated set covers the cargo families the biology
+    // turns on, so classification is cheap. Bakta is for the figure's complete
+    // gene track and runs later, on far fewer loci.
+    cargo_ch = CARGO_SEARCH(loci_fa)
 
     // PlasmidFinder runs on the WHOLE PARENT REPLICON, not the window.
     rep_ch  = loci.table
@@ -177,6 +212,8 @@ workflow {
                   .map { r -> r.accession }
                   .unique()
     pf_ch   = PLASMIDFINDER(rep_ch)
+
+    CLASSIFY_CONTEXT(loci.table, is_ch.hits.collect(), cargo_ch.hits.collect())
 
     COLLATE(is_ch.hits.collect(), pf_ch.hits.collect(), loci.table)
 }

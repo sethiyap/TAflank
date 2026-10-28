@@ -231,6 +231,58 @@ Every threshold is a parameter — see §9.
 
 ---
 
+## 4b. Design rule: no MGE feature is ever a membership criterion
+
+**Lineage membership is decided by sequence identity. Context is recorded, never
+used to admit or exclude a locus.** This holds for `czc`, for `Cytb/b6`, and
+most importantly for ISEsa1/ISEsa2.
+
+The tempting shortcut is "no vehicle found, therefore a paralogue". Measured on
+the 16 curated records, that would be wrong in both directions that matter:
+
+|  | has ISEsa1 | no ISEsa1 |
+|---|---|---|
+| **>=95% identity** (the lineage) | 12 | **2** |
+| **<85% identity** (superfamily) | 0 | 33 |
+
+Those 2 are `CP017220` (99.4%, class `NO CORE`, "IS1, adjacent deletions") and
+`CP006642` (99.4%, carried by IS26 + Tn21 instead). Both are unambiguously the
+lineage by sequence. Classifying them as paralogues would discard precisely the
+evidence for **repeated independent acquisition** — the branch of the §6
+decision tree that the project exists to resolve.
+
+The vehicle is also far less reliable than a curated set suggests. Even among
+nine loci *chosen* for showing the pattern:
+
+```
+COMPLETE   5/9    both ends intact
+HALF-CORE  2/9    ISEsa2 absent entirely
+DECAYED    1/9    ISEsa1 reduced to a 275 bp stub (17% coverage)
+NO CORE    1/9    neither end
+```
+
+Only five of nine have an intact vehicle, and that is in a biased sample. In
+`nt_prok` the fraction will be much lower — **what it actually is, is the
+research question**, so it cannot also be the filter.
+
+### Consequence for the extended core anchor
+
+The core anchor (`ISEsa1–ISEsa2–relBE`) is built for **specificity**, and must
+not be used for **discovery**:
+
+| query | job | property |
+|---|---|---|
+| the 527 bp seed | find every copy | sensitive |
+| the extended core | say which copies look ancestral | specific |
+
+Searching with the core would miss both HALF-CORE loci, barely catch the
+DECAYED one, and lose `CP017220` and `CP006642` entirely. It classifies what the
+seed finds; it never decides what enters the pipeline.
+
+**Enforced in code:** `select_loci.py` filters on `tier_a` (sequence) and
+`replicon_type` (record) only. No filter anywhere consults IS or cargo content,
+and a locus with zero IS hits still gets a row in every table.
+
 ## 5. Flank availability, and why short flanks are kept
 
 A hit near the end of a record cannot give a full ±20 kb window. The default
