@@ -295,9 +295,24 @@ and why. This is CLAUDE.md's "never silently drop" rule made mechanical.
 **And the accounting is written out, not reconstructed.** Two intermediate
 files make the whole cascade auditable:
 
-- `bait_blast_raw.tsv` — the **verbatim** blastn output with the exact command
-  as a header comment, so the filtering can be checked against what BLAST
-  actually returned rather than taken on trust.
+- `blast/01_raw.tsv`, `blast/02_tier_a.tsv`, `blast/03_selected.tsv` — the
+  search result at each stage, **all in the same `outfmt 6` columns**, so the
+  narrowing can be measured with `wc -l` and inspected with `diff`:
+
+```
+  01_raw.tsv        15 HSPs   blastn, no filtering applied
+  02_tier_a.tsv     14 HSPs   Tier A: pident>=95 qcov>=95; PARALOGUE removed
+  03_selected.tsv    7 HSPs   Tier B: tier_a=FULL replicon_type=plasmid
+
+  $ diff <(grep -v '^#' blast/01_raw.tsv | cut -f2,3) \
+         <(grep -v '^#' blast/02_tier_a.tsv | cut -f2,3)
+  < CP006642   67.681          <- the one hit sequence identity removed
+```
+
+  Each file carries its filter and its in/out counts as `#` comments, and
+  `01_raw.tsv` additionally records the exact blastn command line — so a result
+  can be checked against what BLAST actually returned rather than taken on
+  trust.
 - `filter_summary.tsv` — counts at every axis, each distinct combination of
   deselection reasons, and the parameters that produced them:
 

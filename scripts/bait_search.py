@@ -34,6 +34,23 @@ FMT_TAX = ' staxids sscinames'
 # breaks every downstream join on accession.
 
 
+def write_blast6(path, fmt, lines, applied, provenance):
+    """Write BLAST outfmt 6 rows with a commented header.
+
+    Every stage writes the SAME columns, so the files at each step of the
+    cascade can be compared directly -- `wc -l` shows the narrowing and `diff`
+    shows exactly which hits a filter removed.
+    """
+    import os
+    os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
+    with open(path, 'w') as fh:
+        fh.write(f'# filter: {applied}\n')
+        fh.write(f'# {provenance}\n')
+        fh.write('# ' + '\t'.join(fmt.split()) + '\n')
+        for l in lines:
+            fh.write(l.rstrip('\n') + '\n')
+
+
 def parse_subregions(spec):
     """'relB:1-240,relE:240-527' -> [('relB',1,240), ('relE',240,527)]"""
     out = []
@@ -56,8 +73,10 @@ def main():
     p.add_argument('--db', required=True)
     p.add_argument('--out', required=True)
     p.add_argument('--raw-out', default='',
-                   help='also write the verbatim blastn tabular output, '
-                        'before any parsing or classification')
+                   help='verbatim blastn tabular output, BEFORE any filtering')
+    p.add_argument('--kept-out', default='',
+                   help='the Tier A survivors, in the SAME outfmt 6 columns as '
+                        '--raw-out so the two are directly comparable')
     p.add_argument('--subregions', default='')
     p.add_argument('--full-pident', type=float, default=95.0)
     p.add_argument('--full-qcov', type=float, default=95.0)
@@ -92,13 +111,12 @@ def main():
 
     # The unprocessed search result, kept so the filtering can be audited
     # against what BLAST actually returned rather than taken on trust.
+    raw_lines = res.stdout.splitlines()
     if a.raw_out:
-        with open(a.raw_out, 'w') as fh:
-            fh.write('# ' + ' '.join(cmd) + '\n')
-            fh.write('# ' + '\t'.join(FMT.split()) + '\n')
-            fh.write(res.stdout)
-        print(f'raw blastn output -> {a.raw_out} '
-              f'({len(res.stdout.splitlines())} HSPs)')
+        write_blast6(a.raw_out, FMT, raw_lines,
+                     'blastn, no filtering applied',
+                     ' '.join(cmd))
+        print(f'  [1] raw            {len(raw_lines):>7} HSPs -> {a.raw_out}')
 
     hdr = ([c for c in FMT.split()] + ['qcov', 'strand', 'hit_start', 'hit_end']
            + ['cov_' + s[0] for s in subs] + ['tier_a', 'reason'])
@@ -153,6 +171,19 @@ def main():
         fh.write('\t'.join(hdr) + '\n')
         for r in rows:
             fh.write('\t'.join(str(x) for x in r) + '\n')
+
+    # Tier A survivors, in the SAME columns as the raw dump so `diff` and
+    # `wc -l` between the two show exactly what sequence identity removed.
+    if a.kept_out:
+        nf = len(FMT.split())
+        kept = ['\t'.join(str(x) for x in r[:nf])
+                for r in rows if r[-2] not in ('PARALOGUE', 'REJECT')]
+        write_blast6(a.kept_out, FMT, kept,
+                     f'Tier A kept: pident>={a.full_pident} qcov>={a.full_qcov} '
+                     f'(FULL), orphans and partials retained; '
+                     f'PARALOGUE (<{a.paralogue_max_pident}%) removed',
+                     f'{len(raw_lines)} in -> {len(kept)} out')
+        print(f'  [2] after Tier A   {len(kept):>7} HSPs -> {a.kept_out}')
 
     print(f'{len(rows)} HSPs -> {a.out}')
     for k in sorted(counts):

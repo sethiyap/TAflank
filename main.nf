@@ -32,15 +32,16 @@ process BUILD_DB {
 }
 
 process BAIT_SEARCH {
-    publishDir params.outdir, mode: 'copy'
+    publishDir params.outdir, mode: 'copy', pattern: 'bait_hits.tsv'
+    publishDir "${params.outdir}/blast", mode: 'copy', pattern: 'blast/*.tsv', saveAs: { it.split('/')[-1] }
     label 'python'
     cpus params.blast_cpus
     // db_files is empty for a pre-formatted database: nt_prok is far too large
     // to stage per task, so it is referenced by absolute path and left in place.
     input:  path bait
             tuple val(db), path(db_files)
-    output: path 'bait_hits.tsv',     emit: hits
-            path 'bait_blast_raw.tsv', emit: raw
+    output: path 'bait_hits.tsv',  emit: hits
+            path 'blast/*.tsv',     emit: staged
     script:
     def tax = params.taxonomy ? '--taxonomy' : ''
     """
@@ -52,7 +53,7 @@ process BAIT_SEARCH {
         --task ${params.blast_task} --evalue ${params.evalue} \\
         --max-target-seqs ${params.max_target_seqs} \\
         --num-threads ${task.cpus} ${tax} \\
-        --raw-out bait_blast_raw.tsv
+        --raw-out blast/01_raw.tsv --kept-out blast/02_tier_a.tsv
     """
 }
 
@@ -77,19 +78,22 @@ process FETCH_METADATA {
 }
 
 process SELECT_LOCI {
-    publishDir params.outdir, mode: 'copy'
+    publishDir params.outdir, mode: 'copy', pattern: '*.tsv'
+    publishDir "${params.outdir}/blast", mode: 'copy', pattern: 'blast/*.tsv', saveAs: { it.split('/')[-1] }
     label 'python'
     input:  path hits
             path meta
     output: path 'loci_selected.tsv',  emit: sel
             path 'filter_summary.tsv',  emit: audit
+            path 'blast/*.tsv',         emit: staged
     script:
     """
     ${PY()} ${projectDir}/scripts/select_loci.py \\
         --hits ${hits} --meta ${meta} --out loci_selected.tsv \\
         --flank ${params.flank} --tier-a '${filterOf(params.tier_a)}' \\
         --replicon-type '${filterOf(params.replicon_type)}' --min-flank ${params.min_flank} \\
-        --summary-out filter_summary.tsv
+        --summary-out filter_summary.tsv \\
+        --blast-out blast/03_selected.tsv
     """
 }
 

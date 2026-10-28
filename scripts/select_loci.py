@@ -100,6 +100,9 @@ def main():
     p.add_argument('--require-complete', action='store_true')
     p.add_argument('--summary-out', default='',
                    help='write a stage-by-stage audit of the filter cascade')
+    p.add_argument('--blast-out', default='',
+                   help='the Tier B survivors in the same outfmt 6 columns the '
+                        'earlier stages used, so the narrowing is diffable')
     a = p.parse_args()
 
     keep_tier = {x.strip() for x in a.tier_a.split(',') if x.strip()}
@@ -171,6 +174,31 @@ def main():
 
     if a.summary_out:
         write_summary(a.summary_out, rows, hdr, hits, a)
+
+    if a.blast_out:
+        import os
+        bcols = [c for c in ('qseqid', 'sacc', 'pident', 'length', 'mismatch',
+                             'gapopen', 'qstart', 'qend', 'sstart', 'send',
+                             'evalue', 'bitscore', 'qlen', 'slen', 'stitle')
+                 if c in hits[0]]
+        keep_acc = {(r[1], r[7], r[8]) for r in rows if r[-2] == 'yes'}
+        os.makedirs(os.path.dirname(a.blast_out) or '.', exist_ok=True)
+        with open(a.blast_out, 'w') as fh:
+            fh.write(f'# filter: Tier B  tier_a={a.tier_a or "all"} '
+                     f'replicon_type={a.replicon_type or "all"} '
+                     f'min_flank={a.min_flank}\n')
+            n = 0
+            for h in hits:
+                lo, hi = sorted((int(h['sstart']), int(h['send'])))
+                if (h['sacc'], lo, hi) in keep_acc:
+                    n += 1
+            fh.write(f'# {len(hits)} in -> {n} out\n')
+            fh.write('# ' + '\t'.join(bcols) + '\n')
+            for h in hits:
+                lo, hi = sorted((int(h['sstart']), int(h['send'])))
+                if (h['sacc'], lo, hi) in keep_acc:
+                    fh.write('\t'.join(h.get(c, '') for c in bcols) + '\n')
+        print(f'  [3] after Tier B   {n:>7} HSPs -> {a.blast_out}')
     print(f'{len(rows)} hits -> {len(sel)} selected -> {a.out}')
     for r in rows:
         if r[-2] == 'no':
