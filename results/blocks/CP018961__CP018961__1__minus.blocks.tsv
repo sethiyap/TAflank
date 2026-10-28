@@ -1,0 +1,70 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP018961__CP018961__1__minus	CDS	CRISPR-associated protein Csf2		1	289	+				CRISPR-associated protein Csf2	annotation	genbank	-20000
+CP018961__CP018961__1__minus	CDS	hypothetical protein		1118	1390	+				hypothetical protein	annotation	genbank	-18883
+CP018961__CP018961__1__minus	CDS	IS200/IS605 family transposase		1483	1725	-				ISEc41	isfinder	genbank	-18518
+CP018961__CP018961__1__minus	IS	ISEc41	IS200/IS605	1485	1699	+	fragment	yes		ISEc41	isfinder	genbank	-18516
+CP018961__CP018961__1__minus	IS	ISKpn41	IS200/IS605	1700	2370	+	fragment	yes		ISKpn41	isfinder	genbank	-18301
+CP018961__CP018961__1__minus	CDS	transposase		1700	2269	+				ISKpn41	isfinder	genbank	-18301
+CP018961__CP018961__1__minus	CDS	protein impA		2579	2830	-				protein impA	annotation	genbank	-17422
+CP018961__CP018961__1__minus	CDS	group II intron reverse transcriptase/ma		2963	4447	+				group II intron reverse transcriptase/ma	annotation	genbank	-17038
+CP018961__CP018961__1__minus	CDS	protein impA'		4533	4955	+				protein impA'	annotation	genbank	-15468
+CP018961__CP018961__1__minus	CDS	DNA polymerase V subunit UmuC		4955	6226	+				DNA polymerase V subunit UmuC	annotation	genbank	-15046
+CP018961__CP018961__1__minus	CDS	hypothetical protein		6327	6770	+				hypothetical protein	annotation	genbank	-13674
+CP018961__CP018961__1__minus	CDS	hypothetical protein		6767	7237	+				hypothetical protein	annotation	genbank	-13234
+CP018961__CP018961__1__minus	CDS	hypothetical protein		7347	7607	-				hypothetical protein	annotation	genbank	-12654
+CP018961__CP018961__1__minus	CDS	integrase		8178	9359	-				ISKpn28	isfinder	genbank	-11823
+CP018961__CP018961__1__minus	IS	ISKpn28	IS481	8322	9417	-	complete	no		ISKpn28	isfinder	genbank	-11679
+CP018961__CP018961__1__minus	IS	ISEsa1	ISNCY	9447	10986	+	complete	no		ISEsa1	isfinder	genbank	-10554
+CP018961__CP018961__1__minus	CDS	transposase		9507	10847	+				ISEsa1	isfinder	genbank	-10494
+CP018961__CP018961__1__minus	CDS	hypothetical protein		10825	11025	+				ISEsa1	isfinder	genbank	-9176
+CP018961__CP018961__1__minus	IS	ISKpn21	ISNCY	10984	13261	-	complete	no	ISEsa1	ISKpn21	isfinder	genbank	-9017
+CP018961__CP018961__1__minus	CDS	hypothetical protein		11100	11732	+				ISKpn21	isfinder	genbank	-8901
+CP018961__CP018961__1__minus	CDS	transposase		11761	13164	-				ISKpn21	isfinder	genbank	-8240
+CP018961__CP018961__1__minus	IS	ISEsa1	ISNCY	13262	13325	+	fragment	yes		ISEsa1	isfinder	genbank	-6739
+CP018961__CP018961__1__minus	IS	ISEsa2	IS110	13326	14817	+	complete	no		ISEsa2	isfinder	genbank	-6675
+CP018961__CP018961__1__minus	CDS	IS110 family transposase		13551	14789	+				ISEsa2	isfinder	genbank	-6450
+CP018961__CP018961__1__minus	CDS	hypothetical protein		14949	15161	-				hypothetical protein	annotation	genbank	-5052
+CP018961__CP018961__1__minus	cargo	cytb		15263	15835	+				cytb	cargo	genbank	-4738
+CP018961__CP018961__1__minus	CDS	hypothetical protein		15265	15837	+				hypothetical protein	annotation	genbank	-4736
+CP018961__CP018961__1__minus	IS	ISEcp1	IS1380	16041	17696	+	complete	no		ISEcp1	isfinder	genbank	-3960
+CP018961__CP018961__1__minus	CDS	IS1380 family transposase		16227	17489	+				ISEcp1	isfinder	genbank	-3774
+CP018961__CP018961__1__minus	CDS	hypothetical protein		17470	17592	+				ISEcp1	isfinder	genbank	-2531
+CP018961__CP018961__1__minus	CDS	fluoroquinolone resistance protein		17719	18363	+				fluoroquinolone resistance protein	annotation	genbank	-2282
+CP018961__CP018961__1__minus	cargo	qnr		17721	18365	+				qnr	cargo	genbank	-2280
+CP018961__CP018961__1__minus	CDS	MFS transporter AraJ		18475	18813	+				MFS transporter AraJ	annotation	genbank	-1526
+CP018961__CP018961__1__minus	CDS	cation-efflux pump		18815	19738	+				cation-efflux pump	annotation	genbank	-1186
+CP018961__CP018961__1__minus	cargo	czc		18817	19740	+				czc	cargo	genbank	-1184
+CP018961__CP018961__1__minus	cargo	relB		19999	20238	+				relB	cargo	genbank	-2
+CP018961__CP018961__1__minus	CDS	antitoxin RelB		20001	20240	+				antitoxin RelB	annotation	genbank	0
+CP018961__CP018961__1__minus	CDS	mRNA interferase RelE		20240	20527	+				mRNA interferase RelE	annotation	genbank	239
+CP018961__CP018961__1__minus	cargo	relE		20242	20529	+				relE	cargo	genbank	241
+CP018961__CP018961__1__minus	CDS	Hok/Gef family protein		20599	20757	+				Hok/Gef family protein	annotation	genbank	598
+CP018961__CP018961__1__minus	cargo	hok_gef		20601	20759	+				hok_gef	cargo	genbank	600
+CP018961__CP018961__1__minus	CDS	hypothetical protein		21133	21357	-				hypothetical protein	annotation	genbank	1132
+CP018961__CP018961__1__minus	CDS	hypothetical protein		21360	21850	+				hypothetical protein	annotation	genbank	1359
+CP018961__CP018961__1__minus	CDS	hypothetical protein		21978	22334	+				hypothetical protein	annotation	genbank	1977
+CP018961__CP018961__1__minus	CDS	phosphonate ABC transporter substrate-bi		22532	22909	-				phosphonate ABC transporter substrate-bi	annotation	genbank	2531
+CP018961__CP018961__1__minus	CDS	hypothetical protein		23090	23278	-				hypothetical protein	annotation	genbank	3089
+CP018961__CP018961__1__minus	CDS	hydrogenase expression/formation protein		23235	23531	+				hydrogenase expression/formation protein	annotation	genbank	3234
+CP018961__CP018961__1__minus	CDS	hypothetical protein		23599	24666	+				hypothetical protein	annotation	genbank	3598
+CP018961__CP018961__1__minus	CDS	hypothetical protein		24822	25169	+				hypothetical protein	annotation	genbank	4821
+CP018961__CP018961__1__minus	CDS	hypothetical protein		25248	25481	+				hypothetical protein	annotation	genbank	5247
+CP018961__CP018961__1__minus	IS	ISEcp1	IS1380	26029	27684	+	complete	no		ISEcp1	isfinder	genbank	6028
+CP018961__CP018961__1__minus	CDS	IS1380 family transposase		26215	27477	+				ISEcp1	isfinder	genbank	6214
+CP018961__CP018961__1__minus	CDS	hypothetical protein		27458	27580	+				ISEcp1	isfinder	genbank	7457
+CP018961__CP018961__1__minus	CDS	MBL fold metallo-hydrolase		27717	28358	+				MBL fold metallo-hydrolase	annotation	genbank	7716
+CP018961__CP018961__1__minus	CDS	MFS transporter		28281	28583	-				MFS transporter	annotation	genbank	8280
+CP018961__CP018961__1__minus	CDS	hypothetical protein		28583	28939	+				hypothetical protein	annotation	genbank	8582
+CP018961__CP018961__1__minus	CDS	nuclease-related domain protein		28993	29766	-				nuclease-related domain protein	annotation	genbank	8992
+CP018961__CP018961__1__minus	CDS	peptidase S49 family protein		29769	30905	-				peptidase S49 family protein	annotation	genbank	9768
+CP018961__CP018961__1__minus	CDS	conjugal transfer protein TraJ		30914	31588	-				conjugal transfer protein TraJ	annotation	genbank	10913
+CP018961__CP018961__1__minus	cargo	tra		30916	31590	-				tra	cargo	genbank	10915
+CP018961__CP018961__1__minus	CDS	hypothetical protein		31601	32698	-				hypothetical protein	annotation	genbank	11600
+CP018961__CP018961__1__minus	CDS	conjugal transfer protein TraD		32701	34827	-				conjugal transfer protein TraD	annotation	genbank	12700
+CP018961__CP018961__1__minus	cargo	tra		32703	34829	-				tra	cargo	genbank	12702
+CP018961__CP018961__1__minus	CDS	conjugal transfer protein TraI		34817	37765	-				conjugal transfer protein TraI	annotation	genbank	14816
+CP018961__CP018961__1__minus	cargo	tra		34819	37767	-				tra	cargo	genbank	14818
+CP018961__CP018961__1__minus	CDS	hypothetical protein		37779	38567	-				hypothetical protein	annotation	genbank	17778
+CP018961__CP018961__1__minus	CDS	hypothetical protein		38567	39031	-				hypothetical protein	annotation	genbank	18566
+CP018961__CP018961__1__minus	CDS	hypothetical protein		39629	39899	+				hypothetical protein	annotation	genbank	19628
+CP018961__CP018961__1__minus	CDS	hypothetical protein		39971	40384	+				hypothetical protein	annotation	genbank	19970

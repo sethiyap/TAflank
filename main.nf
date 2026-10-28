@@ -154,6 +154,42 @@ process CARGO_SEARCH {
     """
 }
 
+process BAKTA {
+    publishDir "${params.outdir}/bakta", mode: 'copy'
+    label 'bakta'
+    cpus 4
+    input:  path locus
+    output: tuple val(locus.baseName), path("${locus.baseName}.gff3"), emit: gff
+    when:   params.run_bakta
+    script:
+    """
+    bakta --db ${params.bakta_db} --output . --prefix ${locus.baseName} \\
+          --threads ${task.cpus} --keep-contig-headers --force \\
+          ${params.bakta_args} ${locus}
+    """
+}
+
+process GENE_BLOCKS {
+    publishDir "${params.outdir}/blocks", mode: 'copy'
+    label 'python'
+    input:  tuple val(lid), path(locus), path(is_tsv), path(cargo_tsv), path(gff)
+    output: path "*.blocks.tsv", emit: blocks
+    script:
+    // Annotation source, in order: Bakta GFF -> parent GenBank -> none.
+    // The GenBank fallback exists so this merge is testable before Bakta is
+    // available; Bakta cannot run on macOS at all (amrfinderplus has no macOS
+    // build). Swapping it in changes the source, not the logic.
+    def acc  = lid.split('__')[0]
+    def gbk  = file("${params.gbk_dir}/${acc}.1.gbk")
+    def gsrc = gff.name != 'NO_GFF' ? "--gff ${gff}"
+             : (gbk.exists() ? "--gbk ${gbk}" : '')
+    """
+    ${PY()} ${projectDir}/scripts/gene_blocks.py \\
+        --locus ${locus} --is ${is_tsv} --cargo ${cargo_tsv} ${gsrc} \\
+        --out ${lid}.blocks.tsv
+    """
+}
+
 process CLASSIFY_CONTEXT {
     publishDir params.outdir, mode: 'copy'
     label 'python'
@@ -213,6 +249,20 @@ workflow {
     // turns on, so classification is cheap. Bakta is for the figure's complete
     // gene track and runs later, on far fewer loci.
     cargo_ch = CARGO_SEARCH(loci_fa)
+
+    // Bakta and ISfinder are COMPLEMENTARY, not alternatives, and independent
+    // of each other -- so they run in parallel and are merged afterwards, with
+    // the ISfinder element name overriding annotation's generic family label.
+    bakta_ch = params.run_bakta ? BAKTA(loci_fa).gff
+                                : Channel.empty()
+
+    keyed = loci_fa.map        { f -> tuple(f.baseName, f) }
+        .join(is_ch.hits.map   { f -> tuple(f.baseName.replace('.is',''), f) })
+        .join(cargo_ch.hits.map{ f -> tuple(f.baseName.replace('.cargo',''), f) })
+        .join(bakta_ch, remainder: true)
+        .map { lid, fa, is_t, cg, gff -> tuple(lid, fa, is_t, cg,
+                                               gff ?: file('NO_GFF')) }
+    blocks_ch = GENE_BLOCKS(keyed)
 
     // PlasmidFinder runs on the WHOLE PARENT REPLICON, not the window.
     rep_ch  = loci.table
