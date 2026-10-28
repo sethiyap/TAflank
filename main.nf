@@ -12,6 +12,14 @@
 
 def PY = { params.python_exec ?: 'python3' }
 
+// Nextflow parses `--tier_a ''` on the command line as the BOOLEAN true, so an
+// "empty means keep everything" filter is unexpressible that way: the value
+// arrives as the string "true" and matches nothing. Accept `all` (and a bare
+// flag) as the explicit way to disable a filter.
+def filterOf = { v ->
+    (v == null || v == true || v.toString().toLowerCase() in ['all', 'any', '']) ? '' : v.toString()
+}
+
 process BUILD_DB {
     publishDir "${projectDir}/blastdb", mode: 'copy'
     input:  path genome_dir
@@ -76,8 +84,8 @@ process SELECT_LOCI {
     """
     ${PY()} ${projectDir}/scripts/select_loci.py \\
         --hits ${hits} --meta ${meta} --out loci_selected.tsv \\
-        --flank ${params.flank} --tier-a '${params.tier_a}' \\
-        --replicon-type '${params.replicon_type}' --min-flank ${params.min_flank}
+        --flank ${params.flank} --tier-a '${filterOf(params.tier_a)}' \\
+        --replicon-type '${filterOf(params.replicon_type)}' --min-flank ${params.min_flank}
     """
 }
 

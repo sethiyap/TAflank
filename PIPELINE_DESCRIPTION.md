@@ -283,6 +283,40 @@ seed finds; it never decides what enters the pipeline.
 `replicon_type` (record) only. No filter anywhere consults IS or cargo content,
 and a locus with zero IS hits still gets a row in every table.
 
+**Demonstrated.** Running with `--tier_a all --replicon_type all` keeps every
+hit. Three loci come back `NO CORE`, and only the sequence axis tells them
+apart:
+
+| locus | Tier A | identity | context |
+|---|---|---|---|
+| `CP006642__…__1` | FULL | 99.43% | NO CORE — carried by IS26 + Tn21 |
+| `CP017220__…__1` | FULL | 99.43% | NO CORE — IS629, IS1R, ISSen4 present, no vehicle |
+| `CP006642__…__2` | **PARALOGUE** | **67.68%** | NO CORE — a genuinely different gene |
+
+Collapsing the axes would lump all three. Note also that `CP017220` is not
+short of IS elements — it has three — they are simply not ISEsa1/ISEsa2. So
+"has IS" is no more a valid lineage test than "has the vehicle" is.
+
+> **Disabling a filter: use the literal `all`, not `''`.** Nextflow parses an
+> empty CLI value as the boolean `true`, which then arrives as the string
+> `"true"` and matches nothing — selecting zero loci with no error.
+
+### Why Bakta does not replace the ISfinder layer
+
+Annotation names IS elements by **family**, not by element. The same region of
+CP028197:
+
+| ISfinder (sequence homology) | GenBank / Bakta-style annotation |
+|---|---|
+| **ISEsa1** at −5494 | "ISNCY family transposase" |
+| **ISEsa2** at −3898 | "IS110 family transposase" |
+
+This is PIPELINE.md §0's warning made concrete: *"annotation keywords cannot be
+trusted to find the vehicle — only sequence homology can."* Bakta gives the
+complete gene track, boundaries, `cytb` and `czc`; ISfinder names the vehicle.
+Both are needed, which is why the figure uses a two-tier colour key — ISfinder
+element name where a feature overlaps a tiled IS call, gene family otherwise.
+
 ## 5. Flank availability, and why short flanks are kept
 
 A hit near the end of a record cannot give a full ±20 kb window. The default
