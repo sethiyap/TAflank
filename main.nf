@@ -230,6 +230,22 @@ process COLLATE {
     """
 }
 
+process RUN_REPORT {
+    publishDir params.outdir, mode: 'copy'
+    label 'python'
+    // Reads only the PUBLISHED tables, so the report is reproducible from
+    // results/ alone and never needs the pipeline re-run to regenerate.
+    input:  val ready
+    output: path 'run_report.txt'
+            path 'run_report.tsv'
+    script:
+    """
+    ${PY()} ${projectDir}/scripts/run_report.py \\
+        --results ${params.outdir} \\
+        --out run_report.txt --tsv run_report.tsv
+    """
+}
+
 workflow {
     bait = Channel.fromPath(params.bait, checkIfExists: true)
 
@@ -281,5 +297,9 @@ workflow {
 
     CLASSIFY_CONTEXT(loci.table, is_ch.hits.collect(), cargo_ch.hits.collect())
 
-    COLLATE(is_ch.hits.collect(), pf_ch.hits.collect(), loci.table)
+    collated = COLLATE(is_ch.hits.collect(), pf_ch.hits.collect(), loci.table)
+
+    // Last: one readable account of what went in, what each filter removed,
+    // and what came out at every layer. Gated on everything else finishing.
+    RUN_REPORT(collated[0].mix(blocks_ch, CLASSIFY_CONTEXT.out.ctx).collect())
 }

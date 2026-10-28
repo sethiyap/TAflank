@@ -522,7 +522,21 @@ figure. All offsets assume the bait on `+`.
 | `results/summary.tsv` | locus | one line per locus joining all of the above, incl. `lab_alias`, `plasmidfinder_replicons`, `has_ISEsa1`, `has_ISEsa2`, `nested_events` |
 | `loci/plasmids/*.fa` | locus | the window itself; the FASTA header carries flank, truncation, wrap and bait position |
 
-`results/summary.tsv` is the table to read first.
+`results/run_report.txt` is the place to start — one readable account of what
+went in, what each filter removed, and what came out at every layer:
+discovery and the narrowing, window statistics, the IS layer broken down by
+coverage class, cargo families per locus, vehicle classes, replicon typing, and
+the feature track with any locus that has no gene track called out by name.
+
+`run_report.tsv` carries the same numbers for scripting, and `summary.tsv` is
+the per-locus table.
+
+`RUN_REPORT` reads only the **published** tables, so the report regenerates
+from `results/` alone without re-running the pipeline:
+
+```bash
+python3 scripts/run_report.py --results results
+```
 
 Every emitted table has a header. (`results/stage1_is_hits.tsv`, from the
 earlier hand-run work, is headerless raw BLAST in a non-standard column order

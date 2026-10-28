@@ -1,0 +1,74 @@
+TAflank run report
+============================================================
+  generated : 2026-10-28 16:04
+  results   : /Users/pooja/Documents/mobile_genetic_elements/results
+  parameters: tier_a=FULL replicon_type=plasmid min_flank=0 flank=20000
+
+DISCOVERY  (how the hits were narrowed)
+---------------------------------------
+  blastn HSPs, unfiltered                        15  
+  after Tier A (sequence)                        14  -1 removed
+  after Tier B (record)                           7  -7 removed
+    Tier A class: FULL                           14  
+    Tier A class: PARALOGUE                       1  
+    deselected: replicon_type=chromosome          7  
+    deselected: tier_a=PARALOGUE                  1  
+
+WINDOWS
+-------
+  windows extracted                               7  
+  total sequence                         283,689 bp  
+  full flanks both sides                        7/7  
+  truncated (kept, recorded)                      0  
+  wrapped the origin                              0  
+    replicon_type: plasmid                        7  
+
+MGE LAYER  (ISfinder, no length cutoff)
+---------------------------------------
+  IS calls                                       45  
+    complete                                     32  
+    partial                                       1  
+    fragment                                     12  
+  distinct elements                              24  
+  nesting events                                  1  
+  loci with ISEsa1                                6  
+  loci with ISEsa2                                4  
+
+CARGO
+-----
+  cargo hits                                     57  
+    loci with czc                               4/7  
+    loci with cytb                              4/7  
+    loci with hok_gef                           6/7  
+    loci with tra                               6/7  
+    loci with qnr                               1/7  
+    loci with intI                              1/7  
+
+CONTEXT  (vehicle class)
+------------------------
+  COMPLETE                                        3  
+  DECAYED                                         1  
+  HALF-CORE                                       2  
+  NO CORE                                         1  
+  with czc+cytb metal module                      4  
+
+REPLICON TYPING  (PlasmidFinder)
+--------------------------------
+  replicon hits                                  17  
+  records typed                                   7  
+    IncHI2A                                       3  
+    IncHI2                                        3  
+    IncFIB(K)                                     2  
+    IncN                                          2  
+    IncX1                                         1  
+    IncFIB(pNDM-Mar)                              1  
+
+FEATURE TRACK  (figure input)
+-----------------------------
+  drawable features                             426  
+    coloured by annotation                      278  
+    coloured by cargo                            57  
+    coloured by isfinder                         91  
+    annotation source: genbank                  426  
+  loci with NO gene track                         1  <- needs Bakta: LT991956
+
