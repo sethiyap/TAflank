@@ -178,6 +178,71 @@ Two things that are easy to get wrong and are handled explicitly:
 > of a replicon. Relevant as soon as the TADB3 set (Cyanobacteria,
 > Actinobacteria, *Helicobacter*, *Caulobacter*) is added.
 
+### CARGO_SEARCH — `scripts/cargo_search.py`  *(Tier C input)*
+
+`blastn` of each window against `assets/cargo_genes.fa` — 333 sequences across
+12 families (`czc`, `cytb`, `hok_gef`, `tra`, `qnr`, `intI`, `mer`, `ars`,
+`sil`, `ter`, `relB`, `relE`), built by `scripts/build_cargo_set.py` from this
+project's own GenBank records, so every entry traces to an accession and
+coordinates.
+
+Deliberately **not** an annotation pass. Classifying context needs only the
+families the biology turns on, and 333 sequences answer that in milliseconds.
+Same 30 bp tiling tolerance as the IS layer.
+
+### CLASSIFY_CONTEXT — `scripts/classify_context.py`  *(Tier C)*
+
+Combines the IS and cargo layers into `results/context.tsv`: a vehicle class
+(COMPLETE / DECAYED / HALF-CORE / NO CORE) plus a cargo profile and the offsets
+of `czc` and `hok_gef`.
+
+`vehicle_interrupted` is reported separately from the class, because
+"all sequence present" and "intact" are different things — CP018961 is COMPLETE
+at 96% ISEsa1 coverage yet split in two by a 2,278 bp ISKpn21 insertion.
+
+> Coverage is judged on the **best HSP per element**, not per HSP. An element
+> split by a later insertion contributes a large piece and a small one; judging
+> on the small one would call a 96%-covered ISEsa1 "decayed" purely because its
+> 64 bp tail is also reported.
+
+Reproduces the hand classification on all four overlapping loci.
+
+### BAKTA + GENE_BLOCKS — `scripts/gene_blocks.py`
+
+Bakta and ISfinder are **complementary and independent**, so they run in
+parallel and are merged afterwards:
+
+```
+            ┌─► IS_SEARCH  (ISfinder)   → names the ELEMENT   ISEsa1
+locus ──────┤
+            └─► BAKTA      (annotation) → names the FAMILY    "ISNCY family transposase"
+                      │
+                      └──► GENE_BLOCKS  ← element name wins on >=50% overlap
+```
+
+**The two-tier colour key is not cosmetic.** Annotation names IS elements by
+family only, so colouring from it alone would merge the vehicle with unrelated
+transposases of the same family. Measured on CP028197:
+
+| annotation says | must say |
+|---|---|
+| "ISNCY family transposase" | **ISEsa1** |
+| "IS110 family transposase" | **ISEsa2** |
+| "IS91 family transposase" | **ISVsa3** |
+| "IS6 family transposase IS15DIV" | **IS26** |
+
+Annotation source falls back **GFF → parent GenBank → none**, recorded per
+locus in `annot_source`. The GenBank fallback is not a shortcut: it lets the
+merge be built and validated before Bakta exists, since Bakta cannot run on
+macOS at all. Swapping Bakta in changes the source, not the logic.
+
+The gap stays visible — `LT991956` yields **0 CDS** from GenBank, so its gene
+track is empty and the table says so. That locus is the concrete argument for
+running Bakta on the cluster.
+
+`--run_bakta` defaults to false; `GENE_BLOCKS` joins on `remainder: true`, so
+every locus gets a track whether or not Bakta ran.
+
 ### COLLATE — `scripts/collate.py`
 
 Gathers per-locus and per-record outputs into the deliverables, and attaches
@@ -408,6 +473,8 @@ figure. All offsets assume the bait on `+`.
 | `results/loci.tsv` | extracted window | `window_len, bait_in_window, reoriented, source_interval` |
 | `results/mge_hits.tsv` | IS call | `element, family, win_start, win_end, query_cov, cov_class, is_fragment, offset_from_bait, nested_in, interrupts` |
 | `results/replicons.tsv` | replicon hit | `accession, replicon, pident, qcovs, start, end` |
+| `results/context.tsv` | locus | `vehicle_class, vehicle_ends, vehicle_interrupted, cargo_families, czc_offset, hok_gef_offset` |
+| `results/blocks/*.blocks.tsv` | drawable feature | `feature_type, name, start, end, colour_key, colour_source, annot_source` — the figure's input |
 | `results/summary.tsv` | locus | one line per locus joining all of the above, incl. `lab_alias`, `plasmidfinder_replicons`, `has_ISEsa1`, `has_ISEsa2`, `nested_events` |
 | `loci/plasmids/*.fa` | locus | the window itself; the FASTA header carries flank, truncation, wrap and bait position |
 
@@ -450,28 +517,70 @@ metadata top-up (cacheable, `--offline_meta`), and the bulk sweep. Stages
 between are fully offline, which is what makes Gadi's network-less compute
 queues workable.
 
-### Running on a cluster
+### Running on Gadi
 
-Three things differ from a local run, and the pipeline handles each with a
-parameter rather than a separate code path:
+Gadi provides everything needed, verified: `nextflow/24.04.5`,
+`java/jdk-17.0.2`, `blast/2.11.0`, `singularity`, Python 3.13.
+
+**Step 1 — one-time setup, on a LOGIN NODE** (it needs outbound network, which
+standard compute queues do not have):
+
+```bash
+cd /g/data/rg42/TAflank
+bash env/gadi_setup.sh
+```
+
+The repository deliberately does not carry the genome records
+(`data/public_16/{fasta,gbk}`, 252 MB, recoverable by accession) or the two
+reference databases, which are build artefacts. Without this step a run fails
+at `BUILD_DB` with an empty input directory. The script is idempotent.
+
+**Step 2 — submit:**
+
+```bash
+qsub env/gadi_run.sh                                    # plasmids, defaults
+qsub -v REPLICON=chromosome env/gadi_run.sh             # chromosomes
+qsub -v TIER=all,REPLICON=all env/gadi_run.sh           # keep everything
+qsub -v DB=/scratch/rg42/blastdb/nt_prok env/gadi_run.sh  # the sweep
+qsub -v BAKTA=true,BAKTA_DB=/g/data/rg42/bakta_db/db-light env/gadi_run.sh
+```
+
+Monitor with `qstat -u $USER`; output lands in `/scratch/rg42/$USER/taflank_run`.
+
+### Two Gadi profiles, because scale changes the right shape
+
+| profile | executor | for |
+|---|---|---|
+| `gadi_single` | `local` **inside one PBS job** | curated sets, tens of loci |
+| `gadi` | `pbspro`, tasks fan out | the `nt_prok` sweep |
+
+`gadi_single` is the default in `env/gadi_run.sh`. Everything runs inside the
+job's own allocation, so there is no head process to keep alive on a login
+node, no nested submission, and no head/task walltime coordination. It sizes
+Nextflow's local executor from `PBS_NCPUS`/`PBS_VMEM` and puts the work
+directory on `PBS_JOBFS`.
+
+`gadi` is needed only when tasks must spread across nodes. Its head process
+then has to sit on a login node (in tmux) or in `copyq`, because standard
+compute queues have no outbound network — the same constraint that makes
+`--meta_source blast` the default on both profiles.
+
+### What changes on a cluster
+
+Three things, each a parameter rather than a separate code path:
 
 | local | cluster |
 |---|---|
-| builds its own BLAST db from FASTAs | `--blastdb <abs path>` to a pre-formatted one; `BUILD_DB` is skipped |
+| builds its own BLAST db from FASTAs | `--blastdb <abs path>`; `BUILD_DB` is skipped |
 | reads sequence from `--fasta-dir` | reads it from the database via `blastdbcmd` |
 | `esummary` for record metadata | `--meta_source blast`, parsed from `stitle`, **no network** |
 
-A full no-network invocation:
-
-```bash
-./tools/nf run main.nf -profile gadi \
-    --blastdb /scratch/$PROJECT/$USER/blastdb/nt_prok \
-    --genome_dir '' --meta_source blast --taxonomy
-```
-
-`--taxonomy` additionally requests `staxids`/`sscinames`, which need the
-`taxdb` files sitting beside the database — a reason to include `taxdb` in the
-download even though it is tiny.
+> **`-parse_seqids` cuts both ways.** It is load-bearing for genome databases —
+> it is what lets `blastdbcmd` pull flanking sequence back out by accession and
+> range, which is how `nt_prok` is used without shipping any FASTAs. But
+> `makeblastdb` **refuses** it on the ISfinder mirror, which has 400 duplicated
+> ids. That database is only ever a BLAST subject, never retrieved from, so it
+> is built without.
 
 ### Databases: what to download and where to put it
 
@@ -695,8 +804,9 @@ to the *bla*NDM literature the method is modelled on.
 |---|---|---|
 | Direct repeats / TSDs (F6) | **not built** | would restore the `DR_seq` column the archived table had. Slide 13 already holds the ground truth: a 16 bp `AGGAGAAGAAGGCCAT` family, plus `TTAA` (ISKpn38) and `GAG` (ISKpn28) |
 | Extended core anchor (Stage 2) | **not built** | `anchors/relBE_core.fa` does not exist. This is the gate before any expansion, and the reason a sweep cannot be keyword-led |
-| Uniform annotation + gene families (Stage 3) | **not built** | needs Bakta → Firefly. Supplies the gene track for the colour-block figure |
-| Context classification (Tier C) | **not built** | COMPLETE / DECAYED / HALF-CORE / NO CORE, currently only in the hand-made `nine_loci_classification.tsv` |
+| Uniform annotation (Bakta) | **wired, off by default** | `--run_bakta`; needs a container and `--bakta_db`. The merge it feeds is already built and validated against a GenBank stand-in |
+| Gene families (clustering) | **not built** | blastp + connected components is Roary's `-i 0.9 -s` and needs no new tool |
+| Context classification (Tier C) | **BUILT** | `CLASSIFY_CONTEXT`; reproduces the hand classification on all four overlapping loci |
 | Structural-variant splitting (Stage 6) | **not built** | Acman's method. Do **not** vendor the reference implementation: its released `track_variants.R` sets `step <- 100`, which cannot resolve the 64 bp fragment the decisive test depends on |
 | Colour-block figure (Stage 7) | **not built** | needs Stage 3 for the gene track |
 | ISEScan, IntegronFinder, mob_suite, geNomad | **not built** | all reachable via Apptainer on Firefly |
