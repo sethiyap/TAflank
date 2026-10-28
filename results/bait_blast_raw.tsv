@@ -1,0 +1,17 @@
+# /Users/pooja/opt/ncbi-blast-2.17.0+/bin/blastn -query relBE_seed.fa -db public16 -task blastn -evalue 1e-5 -outfmt 6 qseqid sacc pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen stitle -max_target_seqs 100000 -num_threads 1 -dust no -soft_masking false
+# qseqid	sacc	pident	length	mismatch	gapopen	qstart	qend	sstart	send	evalue	bitscore	qlen	slen	stitle
+relBE	MF344582	100.000	527	0	0	1	527	319216	318690	0.0	951	527	354045	Citrobacter freundii strain NY2385 plasmid pNY2385-HI2, complete sequence
+relBE	CP028537	100.000	527	0	0	1	527	230904	230378	0.0	951	527	328828	Enterobacter hormaechei strain SCEH020042 plasmid pQnrB4_020042, complete sequence
+relBE	CP028197	100.000	527	0	0	1	527	205713	206239	0.0	951	527	444417	Salmonella enterica subsp. enterica serovar Concord strain CFSAN018747 plasmid pGMI14-002_1, complete sequence
+relBE	CP026216	100.000	527	0	0	1	527	2005646	2006172	0.0	951	527	5246201	Citrobacter sp. CFNIH10 chromosome, complete genome
+relBE	CP021960	100.000	527	0	0	1	527	4163856	4164382	0.0	951	527	5606368	Klebsiella pneumoniae strain AR_0139, complete genome
+relBE	CP020841	100.000	527	0	0	1	527	5361031	5360505	0.0	951	527	5591645	Klebsiella pneumoniae strain KPN1482 chromosome, complete genome
+relBE	CP018961	100.000	527	0	0	1	527	258222	257696	0.0	951	527	289903	Escherichia coli strain Ecol_422 plasmid pEC422_1, complete sequence
+relBE	CP012599	100.000	527	0	0	1	527	270743	271269	0.0	951	527	4512838	Salmonella enterica subsp. enterica serovar Newport strain 0307-213, complete genome
+relBE	CP010512	100.000	527	0	0	1	527	564021	564547	0.0	951	527	4828976	Enterobacter cloacae strain colR/S, complete sequence
+relBE	LT991956	99.810	527	1	0	1	527	105697	106223	0.0	947	527	183339	Enterobacter hormaechei subsp. steigerwaltii isolate C309 genome assembly, plasmid: pC309-p2
+relBE	CP026975	99.810	527	1	0	1	527	2518190	2518716	0.0	947	527	4876999	Enterobacter cloacae complex sp. strain FDAARGOS_77 chromosome, complete genome
+relBE	CP023893	99.810	527	1	0	1	527	74508	75034	0.0	947	527	231294	Klebsiella ornithinolytica strain FDAARGOS_431 plasmid unnamed1, complete sequence
+relBE	CP017220	99.431	527	3	0	1	527	1723530	1723004	0.0	938	527	4901993	Escherichia coli strain FAM21845, complete sequence
+relBE	CP006642	99.431	527	3	0	1	527	43487	42961	0.0	938	527	145722	Escherichia coli PCN061 plasmid PCN061p6, complete sequence
+relBE	CP006642	67.681	263	83	2	239	500	67857	67596	1.03e-15	85.1	527	145722	Escherichia coli PCN061 plasmid PCN061p6, complete sequence

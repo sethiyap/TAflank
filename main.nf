@@ -39,7 +39,8 @@ process BAIT_SEARCH {
     // to stage per task, so it is referenced by absolute path and left in place.
     input:  path bait
             tuple val(db), path(db_files)
-    output: path 'bait_hits.tsv', emit: hits
+    output: path 'bait_hits.tsv',     emit: hits
+            path 'bait_blast_raw.tsv', emit: raw
     script:
     def tax = params.taxonomy ? '--taxonomy' : ''
     """
@@ -50,7 +51,8 @@ process BAIT_SEARCH {
         --paralogue-max-pident ${params.paralogue_max_pident} \\
         --task ${params.blast_task} --evalue ${params.evalue} \\
         --max-target-seqs ${params.max_target_seqs} \\
-        --num-threads ${task.cpus} ${tax}
+        --num-threads ${task.cpus} ${tax} \\
+        --raw-out bait_blast_raw.tsv
     """
 }
 
@@ -79,13 +81,15 @@ process SELECT_LOCI {
     label 'python'
     input:  path hits
             path meta
-    output: path 'loci_selected.tsv', emit: sel
+    output: path 'loci_selected.tsv',  emit: sel
+            path 'filter_summary.tsv',  emit: audit
     script:
     """
     ${PY()} ${projectDir}/scripts/select_loci.py \\
         --hits ${hits} --meta ${meta} --out loci_selected.tsv \\
         --flank ${params.flank} --tier-a '${filterOf(params.tier_a)}' \\
-        --replicon-type '${filterOf(params.replicon_type)}' --min-flank ${params.min_flank}
+        --replicon-type '${filterOf(params.replicon_type)}' --min-flank ${params.min_flank} \\
+        --summary-out filter_summary.tsv
     """
 }
 

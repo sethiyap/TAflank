@@ -44,6 +44,47 @@ def flanks(hit_start, hit_end, slen, topology, flank):
     return up, dn, up < flank, dn < flank, False
 
 
+def write_summary(path, rows, hdr, hits, a):
+    """Stage-by-stage audit of the cascade.
+
+    The filters are evaluated together, not in sequence -- a hit can fail on
+    more than one -- so this reports the population at each axis and every
+    distinct combination of reasons, rather than pretending to a strict
+    funnel it does not implement.
+    """
+    ti, si, ri = hdr.index('tier_a'), hdr.index('selected'), hdr.index('replicon_type')
+    def tally(i):
+        c = {}
+        for r in rows:
+            c[r[i]] = c.get(r[i], 0) + 1
+        return c
+    reasons = {}
+    for r in rows:
+        if r[si] == 'no':
+            reasons[r[-1]] = reasons.get(r[-1], 0) + 1
+
+    out = [('input', 'blastn HSPs', len(hits), '')]
+    for k, v in sorted(tally(ti).items()):
+        out.append(('tier_a', k, v, 'kept' if (not a.tier_a or k in a.tier_a)
+                                     else 'dropped'))
+    for k, v in sorted(tally(ri).items()):
+        keep = (not a.replicon_type) or k in a.replicon_type
+        out.append(('replicon_type', k, v, 'kept' if keep else 'dropped'))
+    for k, v in sorted(reasons.items(), key=lambda x: -x[1]):
+        out.append(('deselect_reason', k, v, 'dropped'))
+    nsel = sum(1 for r in rows if r[si] == 'yes')
+    out.append(('output', 'selected loci', nsel, ''))
+    out.append(('params', f'tier_a={a.tier_a or "all"} '
+                          f'replicon_type={a.replicon_type or "all"} '
+                          f'min_flank={a.min_flank} flank={a.flank}', '', ''))
+
+    with open(path, 'w') as fh:
+        fh.write('stage\tcategory\tn\tdisposition\n')
+        for st, cat, n, dis in out:
+            fh.write(f'{st}\t{cat}\t{n}\t{dis}\n')
+    print(f'  filter audit -> {path}')
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--hits', required=True)
@@ -57,6 +98,8 @@ def main():
     p.add_argument('--min-flank', type=int, default=0,
                    help='0 keeps short-flank loci and records how much was got')
     p.add_argument('--require-complete', action='store_true')
+    p.add_argument('--summary-out', default='',
+                   help='write a stage-by-stage audit of the filter cascade')
     a = p.parse_args()
 
     keep_tier = {x.strip() for x in a.tier_a.split(',') if x.strip()}
@@ -125,6 +168,9 @@ def main():
 
     sel = [r for r in rows if r[-2] == 'yes']
     nassumed = sum(1 for r in sel if r[-3] == 'assumed_linear')
+
+    if a.summary_out:
+        write_summary(a.summary_out, rows, hdr, hits, a)
     print(f'{len(rows)} hits -> {len(sel)} selected -> {a.out}')
     for r in rows:
         if r[-2] == 'no':

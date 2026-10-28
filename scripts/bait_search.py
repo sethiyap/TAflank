@@ -55,6 +55,9 @@ def main():
     p.add_argument('--bait', required=True)
     p.add_argument('--db', required=True)
     p.add_argument('--out', required=True)
+    p.add_argument('--raw-out', default='',
+                   help='also write the verbatim blastn tabular output, '
+                        'before any parsing or classification')
     p.add_argument('--subregions', default='')
     p.add_argument('--full-pident', type=float, default=95.0)
     p.add_argument('--full-qcov', type=float, default=95.0)
@@ -86,6 +89,16 @@ def main():
     res = subprocess.run(cmd, capture_output=True, text=True)
     if res.returncode:
         sys.exit('blastn failed:\n' + res.stderr)
+
+    # The unprocessed search result, kept so the filtering can be audited
+    # against what BLAST actually returned rather than taken on trust.
+    if a.raw_out:
+        with open(a.raw_out, 'w') as fh:
+            fh.write('# ' + ' '.join(cmd) + '\n')
+            fh.write('# ' + '\t'.join(FMT.split()) + '\n')
+            fh.write(res.stdout)
+        print(f'raw blastn output -> {a.raw_out} '
+              f'({len(res.stdout.splitlines())} HSPs)')
 
     hdr = ([c for c in FMT.split()] + ['qcov', 'strand', 'hit_start', 'hit_end']
            + ['cov_' + s[0] for s in subs] + ['tier_a', 'reason'])

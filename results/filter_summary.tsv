@@ -1,0 +1,10 @@
+stage	category	n	disposition
+input	blastn HSPs	15	
+tier_a	FULL	14	kept
+tier_a	PARALOGUE	1	dropped
+replicon_type	chromosome	7	dropped
+replicon_type	plasmid	8	kept
+deselect_reason	replicon_type=chromosome	7	dropped
+deselect_reason	tier_a=PARALOGUE	1	dropped
+output	selected loci	7	
+params	tier_a=FULL replicon_type=plasmid min_flank=0 flank=20000		

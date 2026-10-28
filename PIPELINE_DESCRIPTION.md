@@ -292,6 +292,33 @@ alone cannot discriminate, but `ISEsa1–ISEsa2–relBE` can.
 `selected` and `deselect_reason`. You can always see what the filter removed
 and why. This is CLAUDE.md's "never silently drop" rule made mechanical.
 
+**And the accounting is written out, not reconstructed.** Two intermediate
+files make the whole cascade auditable:
+
+- `bait_blast_raw.tsv` — the **verbatim** blastn output with the exact command
+  as a header comment, so the filtering can be checked against what BLAST
+  actually returned rather than taken on trust.
+- `filter_summary.tsv` — counts at every axis, each distinct combination of
+  deselection reasons, and the parameters that produced them:
+
+```
+stage            category                   n   disposition
+input            blastn HSPs                15
+tier_a           FULL                       14  kept
+tier_a           PARALOGUE                   1  dropped
+replicon_type    chromosome                  7  dropped
+replicon_type    plasmid                     8  kept
+deselect_reason  replicon_type=chromosome    7  dropped
+deselect_reason  tier_a=PARALOGUE            1  dropped
+output           selected loci               7
+params           tier_a=FULL replicon_type=plasmid min_flank=0 flank=20000
+```
+
+Note the filters are evaluated **together, not in sequence** — a hit can fail
+on more than one — so the summary reports the population at each axis rather
+than pretending to a strict funnel the code does not implement. Here 8 of 15
+HSPs are on plasmids, but one of those is the paralogue, so 7 are selected.
+
 Every threshold is a parameter — see §9.
 
 ---
@@ -467,7 +494,9 @@ figure. All offsets assume the bait on `+`.
 
 | file | one row per | key columns |
 |---|---|---|
+| `results/bait_blast_raw.tsv` | BLAST HSP | the **verbatim** blastn output, with the exact command as a header comment — before any parsing or classification |
 | `results/bait_hits.tsv` | BLAST HSP | `sacc, pident, qcov, strand, cov_*, tier_a, reason` |
+| `results/filter_summary.tsv` | filter stage | `stage, category, n, disposition` — the cascade audited end to end |
 | `results/record_metadata.tsv` | source record | `replicon_type, replicon_name, genus, slen, topology, is_complete, replicon_type_evidence` |
 | `results/loci_selected.tsv` | hit | `locus_id, flank_up, flank_dn, truncated_*, wrapped, whole_replicon, selected, deselect_reason` |
 | `results/loci.tsv` | extracted window | `window_len, bait_in_window, reoriented, source_interval` |
