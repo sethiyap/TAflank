@@ -29,3 +29,4 @@ work/
 results/pipeline_info/
 db/plasmidfinder/_src/
 blastdb/
+data/efetch_cache/

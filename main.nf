@@ -57,6 +57,29 @@ process BAIT_SEARCH {
     """
 }
 
+process IMPORT_BLAST {
+    publishDir params.outdir, mode: 'copy', pattern: 'bait_hits.tsv'
+    publishDir "${params.outdir}/blast", mode: 'copy', pattern: 'blast/*.tsv', saveAs: { it.split('/')[-1] }
+    label 'python'
+    // An NCBI web BLAST "Hit Table" download IS outfmt 6, so results from the
+    // online search can be filtered and processed by exactly the same code as
+    // a local one. It carries no slen/stitle, so metadata must come from
+    // esummary -- params.meta_source is forced to 'ncbi' below.
+    input:  path hit_table
+            path bait
+    output: path 'bait_hits.tsv', emit: hits
+            path 'blast/*.tsv',   emit: staged
+    script:
+    """
+    ${PY()} ${projectDir}/scripts/import_blast.py \\
+        --hit-table ${hit_table} --bait ${bait} --out bait_hits.tsv \\
+        --subregions '${params.subregions}' \\
+        --full-pident ${params.full_pident} --full-qcov ${params.full_qcov} \\
+        --paralogue-max-pident ${params.paralogue_max_pident} \\
+        --raw-out blast/01_raw.tsv --kept-out blast/02_tier_a.tsv
+    """
+}
+
 process FETCH_METADATA {
     publishDir params.outdir, mode: 'copy'
     label 'python'
@@ -107,9 +130,11 @@ process EXTRACT_LOCI {
     script:
     def src = params.genome_dir ? "--fasta-dir ${params.genome_dir}" : ''
     def bdb = params.use_blastdb_seq ? "--blastdb ${params.blastdb_path}" : ''
+    // Imported web-BLAST hits have no local copy, so the window comes from NCBI.
+    def efe = params.hit_table ? "--efetch --efetch-cache ${params.efetch_cache}" : ''
     """
     BLAST_BIN='${params.blast_bin}' ${PY()} ${projectDir}/scripts/extract_loci.py \\
-        --selected ${sel} ${src} ${bdb} \\
+        --selected ${sel} ${src} ${bdb} ${efe} \\
         --out-dir . --out-table loci.tsv --flank ${params.flank}
     """
 }
@@ -139,6 +164,7 @@ process PLASMIDFINDER {
     // 20 kb of the bait. Source is a FASTA if we have one, else the BLAST db.
     def fa = file("${params.genome_dir}/${acc}.1.fna")
     def src = (params.genome_dir && fa.exists()) ? "--replicon ${fa}"
+            : params.hit_table ? "--efetch --efetch-cache ${params.efetch_cache}"
             : "--blastdb ${params.blastdb_path}"
     """
     BLAST_BIN='${params.blast_bin}' ${PY()} ${projectDir}/scripts/plasmidfinder.py \\
@@ -253,14 +279,19 @@ workflow {
     // (update_blastdb.pl nt_prok ...). A pre-formatted db is referenced by
     // absolute path and never staged -- nt_prok is far too large to copy per
     // task, and it already contains every sequence we need.
-    if (params.blastdb) {
+    if (params.hit_table) {
+        // Entry point for an NCBI web BLAST result: no database is searched,
+        // so BUILD_DB and BAIT_SEARCH are both skipped.
+        hits = IMPORT_BLAST(Channel.fromPath(params.hit_table, checkIfExists: true),
+                            bait)
+    } else if (params.blastdb) {
         db_ch = Channel.value(tuple(params.blastdb, []))
+        hits  = BAIT_SEARCH(bait, db_ch)
     } else {
         gdir  = Channel.fromPath(params.genome_dir, checkIfExists: true, type: 'dir')
         db_ch = BUILD_DB(gdir).db.map { f -> tuple(params.db_name, f) }
+        hits  = BAIT_SEARCH(bait, db_ch)
     }
-
-    hits    = BAIT_SEARCH(bait, db_ch)
     meta    = FETCH_METADATA(hits.hits)
     sel     = SELECT_LOCI(hits.hits, meta.meta)
     loci    = EXTRACT_LOCI(sel.sel)

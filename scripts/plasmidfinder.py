@@ -33,6 +33,10 @@ def main():
     p.add_argument('--blastdb', default='',
                    help='pull the replicon from this BLAST db instead; needed '
                         'for pre-formatted sets like nt_prok that ship no FASTAs')
+    p.add_argument('--efetch', action='store_true',
+                   help='fetch the whole replicon from NCBI; for hits imported '
+                        'from a web BLAST, where no local copy exists')
+    p.add_argument('--efetch-cache', default='data/efetch_cache')
     p.add_argument('--db', required=True)
     p.add_argument('--out', required=True)
     p.add_argument('--accession', default='')
@@ -64,8 +68,34 @@ def main():
         with open(tmp, 'w') as fh:
             fh.write(r.stdout)
         subject = tmp
+    if not subject and a.efetch:
+        # The WHOLE record, not a window: Inc rep genes are rarely within
+        # 20 kb of the bait, so a window-only search returns nothing useful.
+        import urllib.parse, urllib.request, time
+        os.makedirs(a.efetch_cache, exist_ok=True)
+        cf = os.path.join(a.efetch_cache, f'{acc}_full.fa')
+        if not os.path.exists(cf):
+            q = {'db': 'nuccore', 'id': acc, 'rettype': 'fasta',
+                 'retmode': 'text'}
+            kf = os.path.expanduser('~/.ncbi_api_key')
+            if os.path.exists(kf):
+                q['api_key'] = open(kf).read().strip()
+            url = ('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?'
+                   + urllib.parse.urlencode(q))
+            for attempt in range(4):
+                try:
+                    with urllib.request.urlopen(url, timeout=180) as r:
+                        txt = r.read().decode()
+                    if txt.startswith('>'):
+                        open(cf, 'w').write(txt)
+                        break
+                except Exception:
+                    pass
+                time.sleep(2 ** attempt)
+        if os.path.exists(cf):
+            subject = cf
     if not subject:
-        sys.exit('give --replicon or --blastdb')
+        sys.exit('give --replicon, --blastdb or --efetch')
 
     cmd = [resolve('blastn', a.blast_bin),
            '-query', a.db, '-subject', subject, '-task', 'blastn',

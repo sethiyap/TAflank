@@ -30,6 +30,45 @@ bait.fa ──► local BLAST ──► Tier A ──► fetch metadata ──�
                                                                           └─► collated tables
 ```
 
+## 1b. Importing an NCBI web BLAST result
+
+A web BLAST sees a far larger database than any local one — `nt` is
+3,697 Gbp against `public16`'s 0.047 Gbp, about 79,000x — so a search there
+legitimately returns thousands of hits where a curated local set returns
+fifteen. Those results can be fed straight in:
+
+```bash
+# On the NCBI results page: Download -> Hit Table (text)  [or csv]
+./tools/nf run main.nf -profile local \
+    --hit_table ncbi_hits.txt --genome_dir ''
+```
+
+`BUILD_DB` and `BAIT_SEARCH` are skipped; `IMPORT_BLAST` takes their place and
+applies **the same Tier A thresholds**, so an imported search and a local one
+are directly comparable.
+
+Two consequences follow from what a hit table does and does not carry:
+
+| column | local search | hit table |
+|---|---|---|
+| the 12 `outfmt 6` fields | yes | **yes — a hit table *is* outfmt 6** |
+| `qlen` | yes | taken from the bait FASTA |
+| `slen`, `stitle` | yes | **absent** |
+
+- **`meta_source` is forced to `ncbi`.** The `blast` mode parses `stitle`,
+  which a hit table does not have, so metadata comes from `esummary` instead.
+- **Windows are fetched from NCBI**, by accession and range, since there is no
+  local copy of the record. Only the needed span is requested, except where a
+  circular window wraps the origin — that needs the whole record for the
+  arithmetic. Responses are cached under `data/efetch_cache/`.
+  PlasmidFinder fetches the **whole** replicon, because Inc *rep* genes are
+  rarely within 20 kb of the bait.
+
+Verified: windows fetched this way are **byte-identical** to locally extracted
+ones, and report true replicon coordinates
+(`orig=CP018961.1:237696-278222`), not coordinates within the fetched slice.
+Vehicle classification agrees locus for locus.
+
 ## 2. Quick start
 
 ```bash
