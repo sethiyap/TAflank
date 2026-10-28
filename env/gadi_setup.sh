@@ -20,8 +20,13 @@ echo "=== 1. ISfinder BLAST database ==="
 if [ -s db/isfinder/ISfinder.nin ]; then
     echo "  already built"
 else
+    # NO -parse_seqids: the community mirror contains duplicate ids (e.g.
+    # IS1004_IS200/IS605_IS200), which makeblastdb rejects outright. We only
+    # ever BLAST against this database, never retrieve from it by id, so
+    # sequence ids are not needed -- and this matches how the local copy was
+    # built.
     makeblastdb -in db/isfinder/IS.fna -dbtype nucl \
-        -out db/isfinder/ISfinder -title "ISfinder mirror" -parse_seqids > /dev/null
+        -out db/isfinder/ISfinder -title "ISfinder mirror" > /dev/null
     echo "  built from IS.fna ($(grep -c '^>' db/isfinder/IS.fna) sequences)"
 fi
 
