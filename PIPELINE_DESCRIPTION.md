@@ -597,6 +597,12 @@ figure. All offsets assume the bait on `+`.
 | `results/summary.tsv` | locus | one line per locus joining all of the above, incl. `lab_alias`, `plasmidfinder_replicons`, `has_ISEsa1`, `has_ISEsa2`, `nested_events` |
 | `loci/plasmids/*.fa` | locus | the window itself; the FASTA header carries flank, truncation, wrap and bait position |
 
+Read any of these with `scripts/tsvcols.py <file> <column> ...`, which selects
+columns **by name**. `cut -f<numbers>` is not safe on these tables: inserting a
+column silently shifts every later number, so a view that looks right returns
+the wrong data. The same failure mode produced three real bugs in the scripts
+themselves (see the `clipped_at_window_edge` commit), all now name-indexed.
+
 `results/run_report.txt` is the place to start — one readable account of what
 went in, what each filter removed, and what came out at every layer:
 discovery and the narrowing, window statistics, the IS layer broken down by

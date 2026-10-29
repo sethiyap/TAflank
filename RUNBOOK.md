@@ -17,6 +17,38 @@ mkdir -p /scratch/rg42/ps1744/myrun
 
 That is all. The databases and genome files are already in place.
 
+### Looking at a table
+
+Every "look at it" block below uses the same small helper, which picks columns
+**by name**:
+
+```bash
+python3 /g/data/rg42/TAflank/scripts/tsvcols.py <file> <column> <column> ...
+```
+
+Run it with no column names and it lists what the file contains:
+
+```bash
+python3 /g/data/rg42/TAflank/scripts/tsvcols.py \
+  /scratch/rg42/ps1744/myrun/cargo/CP028197__CP028197__1__plus.cargo.tsv
+```
+
+Ask for a name that is not there and it says so, and lists the real ones. It
+replaces `cut -f2,8,9,10 | column -t`, which looks equivalent but silently
+hands back *different* columns as soon as a new one is added to a table — which
+is exactly what happened when `clipped_at_window_edge` arrived at position 10
+of the cargo table and `offset_from_bait` quietly dropped out of the view. A
+name cannot go wrong that way.
+
+A glob matching several files gives one combined table with the header printed
+once, so this works too:
+
+```bash
+python3 /g/data/rg42/TAflank/scripts/tsvcols.py \
+  /scratch/rg42/ps1744/myrun/cargo/*.cargo.tsv \
+  locus_id family offset_from_bait
+```
+
 ---
 
 # STEP 1 — Build the search database
@@ -94,7 +126,9 @@ python3 /g/data/rg42/TAflank/scripts/fetch_metadata.py \
 **Look at it:**
 
 ```bash
-cut -f1,17,18,19 /scratch/rg42/ps1744/myrun/record_metadata.tsv | column -t -s$'\t'
+python3 /g/data/rg42/TAflank/scripts/tsvcols.py \
+  /scratch/rg42/ps1744/myrun/record_metadata.tsv \
+  accession organism replicon_type replicon_name replicon_type_evidence
 ```
 
 This asked NCBI what each record is. The `replicon_type_evidence` column says
@@ -176,8 +210,10 @@ done
 **Look at one locus:**
 
 ```bash
-cut -f2,3,5,6,10,11,12,13,14,16 \
-  /scratch/rg42/ps1744/myrun/is/CP018961*.is.tsv | column -t -s$'\t'
+python3 /g/data/rg42/TAflank/scripts/tsvcols.py \
+  /scratch/rg42/ps1744/myrun/is/CP018961*.is.tsv \
+  element family win_start win_end query_cov cov_class is_fragment \
+  clip_cause clipped_missing_bp offset_from_bait
 ```
 
 **The one to find:** a row saying `ISEsa1 ... 64 ... fragment ... -6739`.
@@ -217,8 +253,9 @@ done
 **Look at one:**
 
 ```bash
-cut -f2,8,9,10,11,13 \
-  /scratch/rg42/ps1744/myrun/cargo/CP028197*.cargo.tsv | column -t -s$'\t'
+python3 /g/data/rg42/TAflank/scripts/tsvcols.py \
+  /scratch/rg42/ps1744/myrun/cargo/CP028197*.cargo.tsv \
+  family pident cov clip_cause clipped_missing_bp offset_from_bait
 ```
 
 **What to notice:** `czc` sits at position **−1184** in every plasmid that has
@@ -237,8 +274,9 @@ missing. The gene is not degraded — it runs off the end of the window.
 **Now the column that carries the actual result**, which the view above hides:
 
 ```bash
-cut -f2,3,9,13 \
-  /scratch/rg42/ps1744/myrun/cargo/CP028197*.cargo.tsv | column -t -s$'\t'
+python3 /g/data/rg42/TAflank/scripts/tsvcols.py \
+  /scratch/rg42/ps1744/myrun/cargo/CP028197*.cargo.tsv \
+  family source cov offset_from_bait
 ```
 
 `source` names the record each reference gene came from. For CP028197 the
@@ -282,7 +320,10 @@ python3 /g/data/rg42/TAflank/scripts/classify_context.py \
 **Look at it:**
 
 ```bash
-cut -f1,4,5,6,9 /scratch/rg42/ps1744/myrun/context.tsv | column -t -s$'\t'
+python3 /g/data/rg42/TAflank/scripts/tsvcols.py \
+  /scratch/rg42/ps1744/myrun/context.tsv \
+  locus_id vehicle_class vehicle_ends vehicle_interrupted \
+  vehicle_edge_clipped n_is_fragment n_is_fragment_real cargo_families
 ```
 
 | class | meaning |
