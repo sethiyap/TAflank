@@ -318,6 +318,31 @@ running Bakta on the cluster.
 `--run_bakta` defaults to false; `GENE_BLOCKS` joins on `remainder: true`, so
 every locus gets a track whether or not Bakta ran.
 
+**Installing it on Gadi:** `qsub env/gadi_bakta_setup.sh` (or `bash` it on a
+login node) — pulls the container, downloads the database, verifies it, and
+annotates one real window as a smoke test. Idempotent.
+
+`params.bakta_container` is `quay.io/biocontainers/bakta:1.12.2--pyhdfd78af_0`,
+taken from the live quay.io tag list rather than assumed, and bound to the
+`bakta` process label in `configs/gadi.config` and `configs/gadi_single.config`.
+Without that binding the task would start and fail with
+`bakta: command not found`, since Gadi has no bakta module.
+
+Use the **`light`** database: 1.3 GB compressed, 3.9 GB unpacked, against
+`full` at 30 GB / 84 GB. `full` does not fit in the rg42 `/g/data` allocation
+(100 GiB) and buys nothing — `light` supplies CDS coordinates and products,
+which is the entire contract with `GENE_BLOCKS`, and the vehicle is named by
+ISfinder regardless. `bakta_db download --output DIR --type light` creates
+`DIR/db-light`; the name is fixed in Bakta's `db.py`. The download also
+provisions the AMRFinderPlus database, so no separate `amrfinder_update` is
+needed.
+
+Bakta is **uninstallable on macOS** at any version: `amrfinderplus`, a hard
+requirement, has no osx-arm64, osx-64 or noarch build in bioconda or
+conda-forge. Rosetta cannot help where there is no x86_64 build either. The
+cluster, or Docker, are the only routes — which is why the GenBank fallback is
+part of the design rather than a stopgap.
+
 ### COLLATE — `scripts/collate.py`
 
 Gathers per-locus and per-record outputs into the deliverables, and attaches

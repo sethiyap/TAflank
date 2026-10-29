@@ -219,6 +219,8 @@ only** ("ISNCY family transposase"), so it cannot identify the vehicle —
 ISfinder does that by homology. Both feed `blocks/`, where the element name wins
 on ≥50% overlap.
 
+Install it with `qsub env/gadi_bakta_setup.sh`; see RUNBOOK STEP 9b.
+
 Without it, `annot_source` reads `genbank` and the CDS track comes from the
 parent record's own annotation. That works for 15 of the 16 records; **LT991956
 has 0 CDS features** and needs Bakta before it can contribute a gene track.

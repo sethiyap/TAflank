@@ -413,43 +413,74 @@ contribute a gene track to the figure until it is annotated.
 
 ### Why it will not run yet
 
-Two things are missing on Gadi, and the pipeline is already wired for both:
+Two things are missing on Gadi. The pipeline is already wired for both, so
+installing them is all that is left:
 
-1. **The database is not there.** `/g/data/rg42/bakta_db/` does not exist. The
-   light database is about 1.5 GB and must be downloaded from a node with
-   network access — a login node or `copyq`, never a compute node.
-2. **The container has to be pulled once.** It is now named in the config
-   (`quay.io/biocontainers/bakta:1.12.2--pyhdfd78af_0`, checked against the
-   real quay.io tag list), and Gadi has `module load singularity`. But the pull
-   also needs network, so it cannot happen inside a compute job.
+1. **The database is not there** — `/g/data/rg42/bakta_db/` does not exist.
+2. **The container has not been pulled.** It is named in the config as
+   `quay.io/biocontainers/bakta:1.12.2--pyhdfd78af_0`, read off the real
+   quay.io tag list, and Gadi has `module load singularity` (3.11.3).
 
-Bakta cannot run on your laptop at all, for an unrelated reason:
-`amrfinderplus`, which Bakta hard-requires, has **no macOS build** in bioconda
-or conda-forge — not arm64, not x86_64, not noarch. Rosetta does not help.
-That is why the GenBank fallback exists.
+Both steps need **outbound network**, which standard compute queues do not
+have. So they go through `copyq`, or a login node.
 
-### To set it up (one time, from a login node)
+### Installing it — one command
 
 ```bash
-mkdir -p /g/data/rg42/bakta_db
-cd /g/data/rg42/bakta_db
-module load singularity
-export SINGULARITY_CACHEDIR=/scratch/rg42/$USER/singularity_cache
-singularity pull --name bakta.sif \
-  docker://quay.io/biocontainers/bakta:1.12.2--pyhdfd78af_0
-singularity exec bakta.sif bakta_db download --output . --type light
+cd /g/data/rg42/TAflank
+qsub env/gadi_bakta_setup.sh
 ```
 
-Then run the pipeline with it switched on:
+That script pulls the container, downloads the database, verifies it, and
+annotates one of your real windows as a smoke test before declaring success.
+It is idempotent, so re-running it skips whatever is already in place. If PBS
+rejects the resource request, run the same script on a login node instead:
+
+```bash
+bash env/gadi_bakta_setup.sh
+```
+
+Watch it with `qstat -u $USER`. When it finishes it prints the exact `qsub`
+line to use next.
+
+### Which database — `light`, not `full`
+
+| | compressed | unpacked | fits in `/g/data/rg42`? |
+|---|---|---|---|
+| **`light`** | 1.3 GB | **3.9 GB** | yes — about 54 GiB free |
+| `full` | 30 GB | **84 GB** | **no** — the whole rg42 allocation is 100 GiB |
+
+A full database would have to live on `/scratch` and would be purged after
+~100 days without access. And it would buy nothing here: `light` gives CDS
+coordinates and product names, which is all `GENE_BLOCKS` consumes. The vehicle
+is named by **ISfinder**, not by Bakta, so the deeper reference sets that `full`
+adds do not touch any conclusion in this project.
+
+The download also sets up the AMRFinderPlus database itself, so there is no
+separate `amrfinder_update` step.
+
+### Then run the pipeline with it on
 
 ```bash
 cd /g/data/rg42/TAflank
 qsub -v BAKTA=true,BAKTA_DB=/g/data/rg42/bakta_db/db-light env/gadi_run.sh
 ```
 
-I have not run any of this — the download and the pull are yours to start, and
-the `db-light` folder name should be confirmed against what `bakta_db download`
-actually creates before the `-v` path above is trusted.
+`db-light` is not a name I chose — `bakta_db download --output DIR --type light`
+always creates `DIR/db-light` (and `DIR/db` for `full`); the name is fixed in
+Bakta's own `db.py`.
+
+### Why it cannot be installed on your laptop
+
+For a different reason entirely: `amrfinderplus`, which Bakta hard-requires,
+has **no macOS build at all** — not in bioconda, not in conda-forge, not
+arm64, not x86_64, not noarch. Rosetta does not help, because there is no
+x86_64 build either. The only local route would be Docker, and that daemon is
+off. This is why the GenBank fallback exists and why the merge in STEP 10 could
+be built and tested before Bakta was available anywhere.
+
+**I have not run the installation** — the container pull and the database
+download are yours to start.
 
 ---
 
