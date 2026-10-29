@@ -443,18 +443,88 @@ bash env/gadi_bakta_setup.sh
 Watch it with `qstat -u $USER`. When it finishes it prints the exact `qsub`
 line to use next.
 
-### Which database — `light`, not `full`
+### Which database — start with `light`
 
 | | compressed | unpacked | fits in `/g/data/rg42`? |
 |---|---|---|---|
 | **`light`** | 1.3 GB | **3.9 GB** | yes — about 54 GiB free |
 | `full` | 30 GB | **84 GB** | **no** — the whole rg42 allocation is 100 GiB |
 
-A full database would have to live on `/scratch` and would be purged after
-~100 days without access. And it would buy nothing here: `light` gives CDS
-coordinates and product names, which is all `GENE_BLOCKS` consumes. The vehicle
-is named by **ISfinder**, not by Bakta, so the deeper reference sets that `full`
-adds do not touch any conclusion in this project.
+**Nothing the project concludes depends on which one you pick:**
+
+| what you need | comes from | changes with `full`? |
+|---|---|---|
+| CDS **coordinates** | Pyrodigal — gene calling, independent of the database | no |
+| the **vehicle** (ISEsa1/ISEsa2) | ISfinder homology, STEP 6 | no |
+| **cargo** (czc, cytb, relB, relE, hok_gef, tra) | the curated 333-sequence set, STEP 7 | no |
+| **gene families** for the figure | MMseqs2 sequence clustering (Stage 3, not built) | no |
+| gene **product names** | the Bakta database | **yes** |
+
+Only the last row moves. And uniform *coordinates* were the point of deciding
+to re-annotate at all — GenBank gives anywhere from 0 to 5,765 features
+depending on who deposited the record. `light` fixes that completely.
+
+### What `full` would actually buy
+
+`light` keeps every non-coding feature but, for CDSs, only the **PSCC** layer
+(UniRef50 clusters). It drops UPS/IPS/PSC — the exact-match layers that supply
+gene symbols, allele-level detail and `WP_*`/UniRef100 cross-references — so
+product names come out coarser.
+
+That is worth weighing, because the current baseline is already weak. Measured
+on the blocks tables built from GenBank annotation:
+
+| locus | CDS named by annotation | "hypothetical protein" | |
+|---|---|---|---|
+| CP006642 | 32 | 7 | 22% |
+| CP018961 | 39 | 19 | 49% |
+| CP023893 | 60 | 27 | 45% |
+| CP028197 | 51 | 33 | 65% |
+| CP028537 | 50 | 32 | 64% |
+| LT991956 | 0 | 0 | — (no CDS at all) |
+| MF344582 | 46 | 35 | 76% |
+| **total** | **278** | **153** | **55%** |
+
+The 153 counts every key containing "hypothetical": 151 are exactly
+`hypothetical protein` and 2 are `orf; hypothetical protein`. Reproduce it with:
+
+```bash
+awk -F'\t' 'FNR==1{for(i=1;i<=NF;i++)h[$i]=i; next}
+  $h["feature_type"]=="CDS" && $h["colour_source"]=="annotation" {print $h["colour_key"]}' \
+  /scratch/rg42/ps1744/myrun/blocks/*.blocks.tsv > /tmp/keys.txt
+
+wc -l < /tmp/keys.txt              # 278 annotation-named CDS
+grep -ci hypothetical /tmp/keys.txt  # 153 of them unnamed
+sort /tmp/keys.txt | uniq -c | sort -rn | head
+```
+
+That awk reads the header and looks columns up **by name**, so it keeps working
+when columns are added — and unlike `tsvcols.py` piped into `cut`, it does not
+break on product names that contain spaces.
+
+So **55% of annotated CDSs are already unnamed**, and `full` would put names on
+some of them. That matters if you want to know what sits in CP028197's unnamed
+13.4 kb gap between `hok_gef` and the `tra` operon. It does not matter for the
+vehicle, the cargo, or the offsets.
+
+Switching later is a **re-download, not a redesign** — same script, same
+pipeline, same output columns, only better product strings:
+
+```bash
+qsub -v TYPE=full,DBROOT=/scratch/rg42/$USER/bakta_db env/gadi_bakta_setup.sh
+```
+
+(`full` has to go on `/scratch`, which has room but is purged after ~100 days.)
+
+### What neither database fixes
+
+`gene_blocks.py` uses the product string as the colour key, so all 153
+"hypothetical protein" CDSs collapse onto **one colour**. A better database
+shrinks that pile; it cannot empty it.
+
+The real fix is the Stage 3 MMseqs2 clustering — colour by **sequence** family,
+not by whatever name the annotator happened to emit. An 84 GB download is not a
+substitute for it; they solve different problems.
 
 The download also sets up the AMRFinderPlus database itself, so there is no
 separate `amrfinder_update` step.

@@ -328,14 +328,56 @@ taken from the live quay.io tag list rather than assumed, and bound to the
 Without that binding the task would start and fail with
 `bakta: command not found`, since Gadi has no bakta module.
 
-Use the **`light`** database: 1.3 GB compressed, 3.9 GB unpacked, against
-`full` at 30 GB / 84 GB. `full` does not fit in the rg42 `/g/data` allocation
-(100 GiB) and buys nothing — `light` supplies CDS coordinates and products,
-which is the entire contract with `GENE_BLOCKS`, and the vehicle is named by
-ISfinder regardless. `bakta_db download --output DIR --type light` creates
-`DIR/db-light`; the name is fixed in Bakta's `db.py`. The download also
-provisions the AMRFinderPlus database, so no separate `amrfinder_update` is
-needed.
+`bakta_db download --output DIR --type light` creates `DIR/db-light`; the name
+is fixed in Bakta's `db.py`. The download also provisions the AMRFinderPlus
+database, so no separate `amrfinder_update` is needed.
+
+#### `light` vs `full` — measured, not assumed
+
+`light` is 1.3 GB compressed / 3.9 GB unpacked; `full` is 30 GB / 84 GB. `full`
+does not fit the rg42 `/g/data` allocation (100 GiB, ~54 GiB free) and would
+have to sit on purgeable `/scratch`.
+
+**No conclusion in this project depends on the choice.** CDS *coordinates* come
+from Pyrodigal and are database-independent; the vehicle comes from ISfinder;
+cargo from the curated 333-sequence set; gene families, when Stage 3 is built,
+from MMseqs2 sequence clustering. Only product *names* differ: `light` keeps
+every non-coding feature but, for CDS, only the **PSCC** layer (UniRef50
+clusters), dropping the UPS/IPS/PSC exact-match layers that carry gene symbols,
+allele detail and `WP_*`/UniRef100 dbxrefs.
+
+That is a real if secondary cost, because the GenBank baseline is already
+sparse. Counted across the seven plasmid blocks tables:
+
+| locus | CDS named by annotation | `hypothetical protein` | |
+|---|---|---|---|
+| CP006642 | 32 | 7 | 22% |
+| CP018961 | 39 | 19 | 49% |
+| CP023893 | 60 | 27 | 45% |
+| CP028197 | 51 | 33 | 65% |
+| CP028537 | 50 | 32 | 64% |
+| LT991956 | 0 | 0 | — no CDS at all |
+| MF344582 | 46 | 35 | 76% |
+| **total** | **278** | **153** | **55%** |
+
+The 153 counts every colour key containing "hypothetical": 151 exactly
+`hypothetical protein`, 2 `orf; hypothetical protein`. RUNBOOK STEP 9b carries
+the one-line command that reproduces the table.
+
+So `full` would name some of 153 currently-unnamed CDSs — which is what you
+would want in order to characterise, say, the unnamed 13.4 kb between
+`hok_gef` and the `tra` operon in CP028197. It changes no offset, no vehicle
+call and no cargo call.
+
+Start with `light`; switching is a re-download, not a redesign — identical
+pipeline, identical output schema, better product strings:
+`qsub -v TYPE=full,DBROOT=/scratch/rg42/$USER/bakta_db env/gadi_bakta_setup.sh`.
+
+**Neither database fixes the colour key.** `gene_blocks.py` uses the product
+string, so all 153 `hypothetical protein` CDSs share one colour. A richer
+database shrinks that pile but cannot empty it; the fix is Stage 3's MMseqs2
+clustering, colouring by sequence family rather than by emitted name. The two
+are not interchangeable.
 
 Bakta is **uninstallable on macOS** at any version: `amrfinderplus`, a hard
 requirement, has no osx-arm64, osx-64 or noarch build in bioconda or

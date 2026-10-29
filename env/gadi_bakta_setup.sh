@@ -32,13 +32,25 @@
 #   qsub -v DBROOT=/scratch/rg42/$USER/bakta_db env/gadi_bakta_setup.sh
 #
 # WHICH DATABASE. `light` is 1.3 GB compressed, 3.9 GB unpacked. `full` is
-# 30 GB compressed, 84 GB unpacked -- which does NOT fit in the rg42 /g/data
+# 30 GB compressed, 84 GB unpacked -- which does NOT fit the rg42 /g/data
 # allocation (100 GiB total, ~54 GiB free when this was written), so a full
 # database has to go on /scratch and will be purged after ~100 days of no
-# access. `light` is the right choice here: it annotates CDS coordinates and
-# products, which is all GENE_BLOCKS needs. The vehicle is named by ISfinder,
-# not by Bakta, so the deeper databases that `full` adds buy nothing for this
-# project.
+# access.
+#
+# Start with `light`. No conclusion in this project depends on the choice: CDS
+# coordinates come from Pyrodigal and are database-independent, the vehicle is
+# named by ISfinder, cargo by the curated gene set, and gene families (Stage 3)
+# by MMseqs2 sequence clustering. Only product NAMES differ -- `light` keeps all
+# non-coding features but only the PSCC/UniRef50 layer for CDS, dropping the
+# exact-match layers that carry gene symbols and allele detail.
+#
+# The cost is real but secondary: 153 of 278 annotation-named CDSs across the
+# seven plasmid loci are already `hypothetical protein` from GenBank (55%,
+# ranging 22% in CP006642 to 76% in MF344582), so `full` would put names on some
+# of them. Worth it only if characterising unnamed regions becomes the goal --
+# e.g. CP028197's 13.4 kb gap between hok_gef and the tra operon. Switching is a
+# re-download, not a redesign: identical pipeline, identical output columns.
+# See PIPELINE_DESCRIPTION.md, "light vs full -- measured, not assumed".
 set -euo pipefail
 
 REPO="${REPO:-/g/data/rg42/TAflank}"
