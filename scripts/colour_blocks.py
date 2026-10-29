@@ -129,6 +129,47 @@ def shade(base, i, n):
         int(round(c * 255)) for c in colorsys.hls_to_rgb(h, l, sat))
 
 
+def label_plan(feats, which, ends, min_span=1300):
+    """Which IS blocks get a label, and on which stacked level.
+
+    One rule for every hit instead of three special cases. The old condition
+    was `name.startswith('ISEsa') or fragment or nested`, which hardcoded this
+    project's vehicle: run the pipeline with a different bait and the elements
+    that mattered would silently go unlabelled, exactly the failure that
+    `--vehicle_ends` was added to classify_context.py to prevent.
+
+    `which`:
+      all     every IS -- the default, because an unlabelled block is what
+              made ISKpn21 read as a second colour of ISEsa1
+      key     the vehicle ends, fragments, and anything nested in another IS
+      none    no labels
+
+    Returns {index in feats: level}. Level is the greedy stack height needed
+    to clear every label already placed on that row, so the caller can size
+    the row before drawing into it.
+    """
+    out, placed = {}, []
+    if which == 'none':
+        return out
+    for i, r in enumerate(feats):
+        if r['feature_type'] != 'IS':
+            continue
+        frag = r.get('cov_class') == 'fragment'
+        if which == 'key' and not (r['name'] in ends or frag
+                                   or r.get('nested_in')):
+            continue
+        o = int(r['offset_from_bait'])
+        w = int(r['end']) - int(r['start']) + 1
+        cx, half = o + w / 2, max(w, min_span) / 2
+        lvl = 0
+        while any(abs(cx - px) < (half + ph) and lv == lvl
+                  for px, ph, lv in placed):
+            lvl += 1
+        placed.append((cx, half, lvl))
+        out[i] = lvl
+    return out
+
+
 def gene_arrow(x, w, y, h, strand, head):
     """Block pointed in the direction of transcription.
 
@@ -283,6 +324,12 @@ def main():
     p.add_argument('--flank', type=int, default=20000)
     p.add_argument('--families', default='',
                    help='results/gene_families.tsv -- colours the CDS track')
+    p.add_argument('--label-is', choices=['all', 'key', 'none'], default='all',
+                   help="which IS blocks get a name drawn on the figure")
+    p.add_argument('--vehicle-ends', default='ISEsa1,ISEsa2',
+                   help='the elements bracketing the core -- emphasised in '
+                        'the figure. Must match ENDS / --vehicle_ends used '
+                        'for the run, or the figure highlights the wrong ones')
     p.add_argument('--palette', choices=sorted(PALETTES), default='deck',
                    help="'deck' = relBE_schematic.pptx slide 11 (default), "
                         "'lab2018' = the Sept 2018 lab-meeting deck, "
@@ -361,7 +408,12 @@ def main():
         fam_seen.setdefault(f, set()).add(e)
     blocks = legend_blocks(fam_seen, is_colour, seen)
 
-    PITCH = 1.75                       # vertical distance between loci
+    ends = {e.strip() for e in a.vehicle_ends.split(',') if e.strip()}
+    plans = {l: label_plan(by_locus[l], a.label_is, ends) for l in loci}
+    deepest = max([lv for p in plans.values() for lv in p.values()] or [0])
+    # rows must be tall enough for the deepest label stack, or labels from one
+    # locus climb into the row above
+    PITCH = 1.45 + 0.30 * (deepest + 1)   # +1 leaves room for the bracket
     NCOL = 6
     n_lrow = -(-len(blocks) // NCOL)
     leg_h = 0.20 * sum(max(len(b[2]) for b in blocks[i * NCOL:(i + 1) * NCOL]) + 1.45
@@ -377,14 +429,14 @@ def main():
     HEAD = a.flank / 90          # arrowhead length in bp
     for i, lid in enumerate(loci):
         y = (len(loci) - 1 - i) * PITCH
-        label_y = []      # x-ranges already labelled on this row, for stacking
         feats = by_locus[lid]
+        plan = plans[lid]
         offs = [int(r['offset_from_bait']) for r in feats]
         lo, hi = min(offs + [-a.flank]), max(offs + [a.flank])
         ax.plot([lo, hi], [y, y], color='#d9d9d9', lw=1.0, zorder=0,
                 solid_capstyle='butt')
 
-        for r in feats:
+        for fi, r in enumerate(feats):
             o = int(r['offset_from_bait'])
             w = int(r['end']) - int(r['start']) + 1
             ft, nm = r['feature_type'], r['name']
@@ -410,27 +462,19 @@ def main():
                 linestyle='-' if not clipped else (0, (1.4, 1.0)),
                 hatch='///' if frag else None, alpha=0.95, zorder=3))
             # name the vehicle and the small-but-decisive fragments
-            # An element nested inside another IS is the structural event in
-            # that locus, and leaving it unnamed is what made CP018961 read as
-            # "ISEsa1 drawn twice in two colours": the unlabelled pale block
-            # is ISKpn21, lighter only because it shares ISEsa1's family.
-            if (nm.startswith('ISEsa') or (frag and ft == 'IS')
-                    or (ft == 'IS' and r.get('nested_in'))):
-                # Short elements sit shoulder to shoulder and their labels
-                # overprint into an unreadable smear. Push each one up a level
-                # until it clears every label already placed on this row.
-                cx, half = o + w / 2, max(w, 1300) / 2
-                lvl = 0
-                while any(abs(cx - px) < (half + ph) and lv == lvl
-                          for px, ph, lv in label_y):
-                    lvl += 1
-                label_y.append((cx, half, lvl))
-                ax.annotate(f'{nm}\n{w} bp' if frag else nm,
-                            (cx, yy + h / 2 + 0.22 + 0.30 * lvl),
-                            ha='center', va='bottom', fontsize=5.6,
-                            color='#222222', zorder=5, linespacing=0.95,
-                            arrowprops=dict(arrowstyle='-', lw=0.4,
-                                            color='#999999') if lvl else None)
+            if fi in plan:
+                lvl = plan[fi]
+                emph = nm in ends
+                ax.annotate(
+                    f'{nm}\n{w} bp' if frag else nm,
+                    (o + w / 2, yy + h / 2 + 0.16 + 0.30 * lvl),
+                    ha='center', va='bottom',
+                    fontsize=6.0 if emph else 5.4,
+                    fontweight='bold' if emph else 'normal',
+                    color='#111111' if emph else '#444444',
+                    zorder=5, linespacing=0.95,
+                    arrowprops=dict(arrowstyle='-', lw=0.4,
+                                    color='#aaaaaa') if lvl else None)
 
         # ---- one copy, interrupted: bracket its pieces ----
         by_name = {}
@@ -446,8 +490,10 @@ def main():
                   + int(parts[0]['end']) - int(parts[0]['start']) + 1)
             x1 = int(parts[-1]['offset_from_bait'])
             tot = sum(int(r['end']) - int(r['start']) + 1 for r in parts)
-            yb = y + 0.34 + H_IS / 2 + 0.07
-            ax.plot([x0, x0, x1, x1], [yb - 0.05, yb, yb, yb - 0.05],
+            # above the deepest label on this row, or it lands on top of them
+            yb = (y + 0.34 + H_IS / 2 + 0.16
+                  + 0.30 * (max(plan.values(), default=0) + 1))
+            ax.plot([x0, x0, x1, x1], [yb - 0.07, yb, yb, yb - 0.07],
                     color='#444444', lw=0.7, zorder=2)
             ax.annotate(f'one {nm}, {tot} bp in {len(parts)} pieces',
                         ((x0 + x1) / 2, yb + 0.02), ha='center', va='bottom',

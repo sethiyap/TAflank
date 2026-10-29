@@ -724,6 +724,44 @@ python3 scripts/colour_blocks.py \
 
 Drop `--families` and the CDS track goes back to flat grey.
 
+### Labelling — one rule, not three special cases
+
+Every IS call gets a name on the figure. The rule used to be
+`name.startswith('ISEsa') or fragment or nested`, which had this project's
+vehicle hardcoded into it: run the pipeline with a different bait and the
+elements that mattered would have gone unlabelled with no warning — the same
+failure `--vehicle_ends` was added to `classify_context.py` to prevent.
+
+| flag | effect |
+|---|---|
+| `--label-is all` | **default.** Every IS named. 45 of 45 in this set. |
+| `--label-is key` | only the vehicle ends, fragments, and nested elements |
+| `--label-is none` | no labels |
+| `--vehicle-ends ISEsa1,ISEsa2` | which elements are **bold**. Must match the `ENDS` the run used, or the figure emphasises the wrong ones. |
+
+Labels that would overprint are stacked upward, each with a leader line, and
+**the row height is computed from the deepest stack** rather than fixed — so a
+locus with thirteen IS calls (CP006642, three levels) does not push its labels
+into the row above. Length is appended only where it is the evidence: on
+fragments.
+
+Verify coverage with:
+
+```bash
+python3 - <<'EOF'
+import csv, glob, sys; sys.path.insert(0, 'scripts')
+from colour_blocks import label_plan
+for f in sorted(glob.glob('run_bakta/blocks/*.blocks.tsv')):
+    rows = list(csv.DictReader(open(f), delimiter='\t'))
+    n = sum(1 for r in rows if r['feature_type'] == 'IS')
+    p = label_plan(rows, 'all', {'ISEsa1', 'ISEsa2'})
+    print(f, n, len(p), max(p.values(), default=0) + 1)
+EOF
+```
+
+Cargo is deliberately **not** labelled on the figure — twenty `tra` blocks
+would bury everything else — and is read from the legend instead.
+
 ### Palettes
 
 `--palette` picks the colour scheme. Both deck palettes were read out of the
