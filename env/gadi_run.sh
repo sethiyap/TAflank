@@ -42,8 +42,14 @@
 #   FLANK=20000   window size each side of the bait
 #   REPO=...      a different checkout of TAflank
 #   BAKTA=true BAKTA_DB=/g/data/rg42/bakta_db/db-light
-#                 full annotation; needs the container pulled and the database
-#                 downloaded first, both of which need network (login/copyq)
+#                 full annotation. Run env/gadi_bakta_setup.sh first: it pulls
+#                 the container AND downloads the database, both of which need
+#                 network. Compute nodes have none, so neither can happen here.
+#   BAKTA_SIF=... override the container image. Default: the newest
+#                 bakta-*.sif beside BAKTA_DB, which is where the installer
+#                 puts it. Nextflow is given this FILE, never the docker://
+#                 URI -- handed a URI it tries to pull from quay.io on the
+#                 compute node and dies with "network is unreachable".
 #
 #   A different bait needs ENDS changed with it:
 #   qsub -v BAIT=/path/parDE.fa,ENDS=IS26 env/gadi_run.sh
@@ -74,6 +80,7 @@ REPLICON="${REPLICON:-plasmid}"
 FLANK="${FLANK:-20000}"
 BAKTA="${BAKTA:-false}"
 BAKTA_DB="${BAKTA_DB:-/g/data/rg42/bakta_db/db-light}"
+BAKTA_SIF="${BAKTA_SIF:-}"
 
 # Fail now, with a readable message, rather than 20 minutes into the queue.
 [ -s "$BAIT" ] || { echo "BAIT not found or empty: $BAIT" >&2; exit 2; }
@@ -84,6 +91,25 @@ if [ -n "$DB" ]; then
         exit 2; }
 else
     [ -d "$GENOMES" ] || { echo "GENOMES is not a directory: $GENOMES" >&2; exit 2; }
+fi
+
+if [ "$BAKTA" = "true" ]; then
+    [ -s "$BAKTA_DB/version.json" ] || {
+        echo "BAKTA_DB does not look like a Bakta database: $BAKTA_DB" >&2
+        echo "run env/gadi_bakta_setup.sh first (needs network: copyq or login)" >&2
+        exit 2; }
+    if [ -z "$BAKTA_SIF" ]; then
+        # newest bakta-*.sif sitting beside the database, where the installer
+        # leaves it; `ls -t` so a re-pull at a newer tag wins automatically
+        # `|| true`: with `set -e` a failed glob would exit here silently,
+        # before the readable message below ever ran
+        BAKTA_SIF=$(ls -t "$(dirname "$BAKTA_DB")"/bakta-*.sif 2>/dev/null | head -1) || true
+    fi
+    [ -s "$BAKTA_SIF" ] || {
+        echo "no Bakta container image found next to $BAKTA_DB" >&2
+        echo "compute nodes have NO outbound network, so Nextflow cannot pull" >&2
+        echo "one. Run env/gadi_bakta_setup.sh, or pass BAKTA_SIF=/path.sif" >&2
+        exit 2; }
 fi
 
 module purge
@@ -104,7 +130,7 @@ echo "bait     : $BAIT  ($(grep -c '^>' "$BAIT") sequence(s))"
 echo "subregion: ${SUBREGIONS:-<none>}"
 echo "ends     : $ENDS"
 echo "filters  : tier_a=$TIER  replicon_type=$REPLICON  flank=$FLANK"
-echo "bakta    : $BAKTA"
+echo "bakta    : $BAKTA${BAKTA:+  ${BAKTA_SIF:+image=$BAKTA_SIF}}"
 echo
 
 ARGS=(-profile gadi_single
@@ -127,7 +153,8 @@ else
     ARGS+=(--genome_dir "$GENOMES" --gbk_dir "$REPO/data/public_16/gbk")
 fi
 
-[ "$BAKTA" = "true" ] && ARGS+=(--run_bakta true --bakta_db "$BAKTA_DB")
+[ "$BAKTA" = "true" ] && ARGS+=(--run_bakta true --bakta_db "$BAKTA_DB" \
+                                --bakta_container "$BAKTA_SIF")
 
 nextflow run main.nf "${ARGS[@]}"
 

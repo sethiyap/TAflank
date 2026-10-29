@@ -377,7 +377,7 @@ python3 /g/data/rg42/TAflank/scripts/tsvcols.py \
 
 ---
 
-# STEP 9b — Annotate the windows with Bakta  *(optional, and not yet runnable)*
+# STEP 9b — Annotate the windows with Bakta  *(optional)*
 
 **This is where Bakta sits: between classifying the loci and building the
 drawing input.** It is optional, and right now it cannot run on Gadi. Both
@@ -442,6 +442,35 @@ bash env/gadi_bakta_setup.sh
 
 Watch it with `qstat -u $USER`. When it finishes it prints the exact `qsub`
 line to use next.
+
+### Why the installer has to pull the container, and the pipeline must not
+
+Gadi's compute queues have **no outbound network**. The installer runs on
+`copyq`, which does, and leaves two things on disk:
+
+```
+/g/data/rg42/bakta_db/db-light                       the database
+/g/data/rg42/bakta_db/bakta-1.12.2--pyhdfd78af_0.sif the container image
+```
+
+If Nextflow is handed `docker://quay.io/biocontainers/bakta:...` it will try
+to fetch it itself, on a compute node, and the run dies part-way through:
+
+```
+Failed to pull singularity image
+  pinging container registry quay.io: dial tcp ...:443: connect: network is unreachable
+```
+
+That failure is not confined to the BAKTA step. Nextflow kills the tasks
+already in flight, so IS_SEARCH, CARGO_SEARCH and PLASMIDFINDER are left
+half-finished and the output directory looks plausible but is incomplete —
+`results/` with no `context.tsv` and no `blocks/` is the signature.
+
+So `env/gadi_run.sh` resolves the **local `.sif` file** and passes that as
+`--bakta_container`. It looks for the newest `bakta-*.sif` sitting beside
+`BAKTA_DB`, which is exactly where the installer puts it, and refuses to
+submit if it cannot find one. Override with `BAKTA_SIF=/path/to/image.sif`
+if you keep it somewhere else.
 
 ### Which database — start with `light`
 
