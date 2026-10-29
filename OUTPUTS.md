@@ -227,6 +227,26 @@ has 0 CDS features** and needs Bakta before it can contribute a gene track.
 
 ---
 
+### `figures/is_matrix.tsv` — IS presence matrix
+
+One row per locus, one column per IS element, produced by
+`scripts/colour_blocks.py` alongside the figures.
+
+| column | meaning |
+|---|---|
+| `locus_id` | the locus |
+| `vehicle_class` | COMPLETE / DECAYED / HALF-CORE / NO CORE, carried over from `context.tsv` |
+| one column per element | `complete`, `partial`, `fragment`, or `0` for absent |
+
+Elements are ordered by **how many loci carry them**, so the recurring ones
+collect on the left and single-locus elements trail off to the right. Where a
+locus carries more than one copy of an element, the cell reports the **best**
+one, so `fragment` in a cell means every copy in that locus is a fragment.
+
+This is the input to the Jaccard distance + PERMANOVA grouping (CLAUDE.md
+Stage 6), which asks whether neighbourhood content tracks host species or
+plasmid backbone.
+
 ## Conventions that apply to every table
 
 - **One record per copy.** Loci are named `{accession}__{contig}__{copy}__{strand}` and paralogous relE-family loci never collapse into one row.

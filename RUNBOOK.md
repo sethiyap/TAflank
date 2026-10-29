@@ -602,6 +602,69 @@ cat /scratch/rg42/ps1744/myrun/run_report.txt
 
 ---
 
+# STEP 12 — Draw the figure
+
+This one runs **on the laptop**, not on Gadi: it is the iterate-and-look step,
+it needs no database, and matplotlib is already installed at
+`/opt/anaconda3/bin/python3.12`. Copy the three tables down first.
+
+```bash
+python3 scripts/colour_blocks.py \
+  --blocks   results/blocks \
+  --context  results/context.tsv \
+  --metadata results/record_metadata.tsv \
+  --outdir   figures
+```
+
+Three files land in `figures/`:
+
+| file | what it shows |
+|---|---|
+| `colour_blocks.png` / `.svg` | one row per locus, x = distance from the bait. IS track above each line, curated cargo below, CDS as grey context. |
+| `is_matrix.png` | loci x IS element presence, ordered by how many loci carry each element |
+| `is_matrix.tsv` | the same matrix as a table — this is the input to the Jaccard/PERMANOVA grouping |
+
+The `.svg` is there so panel labels and fonts can be edited in Illustrator or
+Inkscape without re-running anything.
+
+## Reading it
+
+**The vertical dotted line at −3898** is the claim the figure exists to test.
+ISEsa2 begins at exactly that offset in CP028197, CP028537 and MF344582 —
+three records, three different genera. An offset that recurs to the base pair
+across independent loci is the signature of **one ancestral vehicle**, not of
+three separate insertions that happened to land nearby.
+
+**Hatched blocks are fragments** (<50% of the element present). The 64 bp
+ISEsa1 remnant in CP018961 is the smallest and the most important: it sits at
+−6739 and ends at −6675, which is precisely where that locus's ISEsa2 starts.
+This is the direct analogue of the ~75 bp ISAba125 remnant that identified
+Tn125 as the ancestral vehicle for blaNDM. It is only in the figure because
+`is_search.py` runs with **no length cutoff** — a 50 bp or 100 bp minimum,
+which most IS pipelines apply by default, would delete it silently.
+
+**A dashed block outline** means the element runs off the edge of the ±20 kb
+window and is not actually a fragment. Do not read those as decay; the
+`clip_cause` column in `results/is/*.tsv` says which is which.
+
+## What the figure does NOT yet show
+
+CDS are drawn in **uncoloured grey**, which is a deliberate refusal rather than
+a styling choice. 153 of the 278 annotation-named CDS in this set are
+`hypothetical protein`, so they all share one `colour_key`. Colouring by it
+would paint one flat colour across large stretches of every locus and invite
+the reading that those stretches are homologous — the exact claim the figure
+would then appear to support. Gene-family colours need the MMseqs2 clustering
+in Stage 3; until that exists, only the two tracks with trustworthy names
+(ISfinder elements, curated cargo) are coloured.
+
+Also absent, and absent on purpose: the splitting tree that runs down the left
+of Acman Figure 4. That needs Stage 5's all-vs-all threshold stepping. With
+seven loci it would be a tree of seven leaves and would imply far more support
+than seven plasmids can carry.
+
+---
+
 # Once you are happy with all of this
 
 The same eleven steps, run for you in one go:
