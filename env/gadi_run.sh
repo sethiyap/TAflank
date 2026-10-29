@@ -31,6 +31,20 @@
 # WHAT TO SEARCH WITH (the query / bait):
 #   qsub -v BAIT=/g/data/rg42/TAflank/anchors/relBE_seed.fa env/gadi_run.sh
 #
+# WHERE THE OUTPUT GOES (default /scratch/rg42/$USER/taflank_run):
+#   qsub -v OUT=/scratch/rg42/$USER/run2 env/gadi_run.sh
+#   Tables land in $OUT/results, windows in $OUT/loci, Nextflow work in
+#   $PBS_JOBFS (discarded when the job ends). Keep OUT on /scratch, not in
+#   $HOME -- home is capped at 10 GB. /scratch is purged after ~100 days of no
+#   access, so copy anything worth keeping to /g/data/rg42/.
+#
+# OTHER SETTINGS:
+#   FLANK=20000   window size each side of the bait
+#   REPO=...      a different checkout of TAflank
+#   BAKTA=true BAKTA_DB=/g/data/rg42/bakta_db/db-light
+#                 full annotation; needs the container pulled and the database
+#                 downloaded first, both of which need network (login/copyq)
+#
 #   A different bait needs ENDS changed with it:
 #   qsub -v BAIT=/path/parDE.fa,ENDS=IS26 env/gadi_run.sh
 #

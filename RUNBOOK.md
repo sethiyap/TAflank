@@ -17,6 +17,48 @@ mkdir -p /scratch/rg42/ps1744/myrun
 
 That is all. The databases and genome files are already in place.
 
+### The three things you can change
+
+Everything below is written out in full, so you can see exactly where each
+piece comes from and where it goes. There are only three decisions:
+
+| | what it is | the default used below |
+|---|---|---|
+| **the bait** | the sequence you search *with* — the seed | `/g/data/rg42/TAflank/anchors/relBE_seed.fa` (527 bp: relB + relE) |
+| **the database** | the sequences you search *in* | built in STEP 1 from the 16 records, into `/scratch/rg42/ps1744/myrun/mydatabase` |
+| **the output folder** | where everything lands | `/scratch/rg42/ps1744/myrun` |
+
+To use your own, substitute the path wherever it appears. Nothing else changes:
+
+```bash
+# your own bait -- any FASTA, one or more sequences
+--bait /scratch/rg42/ps1744/my_own_seed.fa
+
+# a database you built yourself, or a downloaded one like nt_prok
+# (give the path with NO file extension)
+--db /scratch/rg42/ps1744/blastdb/nt_prok
+
+# a different output folder -- make it first
+mkdir -p /scratch/rg42/ps1744/run2
+```
+
+Put the output on **`/scratch`**, not in your home directory: home is capped at
+10 GB and a full run will blow through it. Note that `/scratch` is purged after
+about 100 days of no access, so copy anything you want to keep to
+`/g/data/rg42/`.
+
+For the one-command version of all of this, see
+[Telling it what to search, and what to search with](#telling-it-what-to-search-and-what-to-search-with)
+at the end — the same three choices become `qsub -v BAIT=...,DB=...,OUT=...`.
+
+### What the output files mean
+
+`OUTPUTS.md` in the repo describes every table and every column:
+
+```bash
+less /g/data/rg42/TAflank/OUTPUTS.md
+```
+
 ### Looking at a table
 
 Every "look at it" block below uses the same small helper, which picks columns
@@ -335,6 +377,82 @@ python3 /g/data/rg42/TAflank/scripts/tsvcols.py \
 
 ---
 
+# STEP 9b — Annotate the windows with Bakta  *(optional, and not yet runnable)*
+
+**This is where Bakta sits: between classifying the loci and building the
+drawing input.** It is optional, and right now it cannot run on Gadi. Both
+reasons are below, with what to do about them.
+
+Bakta and ISfinder are **complementary, not alternatives**:
+
+| | what it gives you | what it cannot do |
+|---|---|---|
+| **ISfinder** (STEP 6) | the IS **element name** — `ISEsa1`, by homology to a named reference | nothing outside its database; no genes |
+| **Bakta** (this step) | every CDS in the window, uniformly called | name the vehicle. It labels IS elements by **family only** — "ISNCY family transposase" — which cannot distinguish ISEsa1 from ISKpn21 |
+
+So the vehicle call comes from ISfinder and the gene track from Bakta, and
+STEP 10 merges them with the element name winning on ≥50% overlap.
+
+### What you get without it
+
+STEP 10 already works: it falls back to each record's **own GenBank
+annotation**, and `annot_source` in the output reads `genbank`. That is why the
+blocks tables exist today. It is good enough for 15 of the 16 records.
+
+The exception is **LT991956**, which has **0 CDS features** in its GenBank
+record. Check for yourself:
+
+```bash
+python3 /g/data/rg42/TAflank/scripts/tsvcols.py \
+  /scratch/rg42/ps1744/myrun/blocks/LT991956*.blocks.tsv \
+  feature_type name annot_source
+```
+
+Every row says `IS` or `cargo`; there are no `CDS` rows. That locus cannot
+contribute a gene track to the figure until it is annotated.
+
+### Why it will not run yet
+
+Two things are missing on Gadi, and the pipeline is already wired for both:
+
+1. **The database is not there.** `/g/data/rg42/bakta_db/` does not exist. The
+   light database is about 1.5 GB and must be downloaded from a node with
+   network access — a login node or `copyq`, never a compute node.
+2. **The container has to be pulled once.** It is now named in the config
+   (`quay.io/biocontainers/bakta:1.12.2--pyhdfd78af_0`, checked against the
+   real quay.io tag list), and Gadi has `module load singularity`. But the pull
+   also needs network, so it cannot happen inside a compute job.
+
+Bakta cannot run on your laptop at all, for an unrelated reason:
+`amrfinderplus`, which Bakta hard-requires, has **no macOS build** in bioconda
+or conda-forge — not arm64, not x86_64, not noarch. Rosetta does not help.
+That is why the GenBank fallback exists.
+
+### To set it up (one time, from a login node)
+
+```bash
+mkdir -p /g/data/rg42/bakta_db
+cd /g/data/rg42/bakta_db
+module load singularity
+export SINGULARITY_CACHEDIR=/scratch/rg42/$USER/singularity_cache
+singularity pull --name bakta.sif \
+  docker://quay.io/biocontainers/bakta:1.12.2--pyhdfd78af_0
+singularity exec bakta.sif bakta_db download --output . --type light
+```
+
+Then run the pipeline with it switched on:
+
+```bash
+cd /g/data/rg42/TAflank
+qsub -v BAKTA=true,BAKTA_DB=/g/data/rg42/bakta_db/db-light env/gadi_run.sh
+```
+
+I have not run any of this — the download and the pull are yours to start, and
+the `db-light` folder name should be confirmed against what `bakta_db download`
+actually creates before the `-v` path above is trusted.
+
+---
+
 # STEP 10 — Build the drawing input
 
 ```bash
@@ -350,7 +468,10 @@ for f in /scratch/rg42/ps1744/myrun/loci/*.fa; do
 done
 ```
 
-This is the table the coloured-block figure will be drawn from.
+This is the table the coloured-block figure will be drawn from. The
+`annot_source` column records where the CDS calls came from: `genbank` with the
+command above, `bakta` if you ran STEP 9b and swap `--gbk` for
+`--gff /scratch/rg42/ps1744/myrun/bakta/$b.gff3`.
 
 ---
 
@@ -417,6 +538,35 @@ pulled back out of the database itself with `blastdbcmd`.
 qsub -v BAIT=/g/data/rg42/TAflank/anchors/relBE_seed.fa env/gadi_run.sh
 ```
 
+**Where the output goes.** The default is
+`/scratch/rg42/ps1744/taflank_run` — note that this is *not* the
+`myrun` folder the eleven steps above use, so a `qsub` run will not overwrite
+what you built by hand.
+
+```bash
+qsub -v OUT=/scratch/rg42/ps1744/run2 env/gadi_run.sh
+```
+
+| goes where | what |
+|---|---|
+| `$OUT/results/` | every table in `OUTPUTS.md` |
+| `$OUT/results/blast/` | the BLAST output before and after filtering |
+| `$OUT/results/blocks/`, `is/`, `cargo/`, `pf/` | the per-locus tables |
+| `$OUT/loci/` | the ±20 kb window FASTAs |
+| `$PBS_JOBFS` | Nextflow's scratch — **discarded when the job ends** |
+
+Keep `OUT` on `/scratch`, never in `$HOME` (capped at 10 GB). `/scratch` is
+purged after about 100 days without access, so copy results worth keeping to
+`/g/data/rg42/`.
+
+**Everything else:** `FLANK=20000` sets the window size, `REPO=` points at a
+different checkout, and `BAKTA=true` turns on annotation (see STEP 9b — it
+needs setting up first). The full list:
+
+```bash
+sed -n '19,76p' /g/data/rg42/TAflank/env/gadi_run.sh
+```
+
 Both together:
 
 ```bash
@@ -474,7 +624,7 @@ qsub -v BAIT=/path/parDE.fa,SUBREGIONS=parD:1-250,parE:250-550,TIER=all,ENDS=IS2
 ### See all the settings
 
 ```bash
-sed -n '19,56p' /g/data/rg42/TAflank/env/gadi_run.sh
+sed -n '19,76p' /g/data/rg42/TAflank/env/gadi_run.sh
 ```
 
 The job prints every one of them at the top of its log before doing any work,

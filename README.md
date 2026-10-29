@@ -71,7 +71,17 @@ which matters because on arm64 the JVM's architecture leaks to child processes.
 | `results/loci.tsv` | extracted window |
 | `results/mge_hits.tsv` | IS call, including fragments and nesting |
 | `results/replicons.tsv` | PlasmidFinder replicon hit |
+| `results/context.tsv` | locus, with the COMPLETE/DECAYED/HALF-CORE/NO CORE verdict |
+| `results/blocks/*.blocks.tsv` | drawable feature — the figure's input |
 | **`results/summary.tsv`** | **locus — read this one first** |
+
+`results/run_report.txt` accounts for the whole run on one page.
+**[`OUTPUTS.md`](OUTPUTS.md) describes every table and every column.**
+
+Read these with `scripts/tsvcols.py <file> [column ...]`, which selects by name
+and lists the available columns when given none. `cut -f<numbers>` is unsafe
+here: adding a column shifts every later number, so the view silently returns
+different data.
 
 ## Requirements
 
@@ -88,6 +98,8 @@ fetch date.
 
 | file | holds |
 |---|---|
+| `RUNBOOK.md` | **how to run it on Gadi**, one copy-paste step at a time, with full paths |
+| `OUTPUTS.md` | **what every output table and column means** |
 | `PIPELINE_DESCRIPTION.md` | **the implementation** — what runs, with what parameters, producing what files |
 | `PIPELINE.md` | **the scientific rationale** — why each filter exists, the MGE layers, the decision tree |
 | `CLAUDE.md` | project plan and conventions |
