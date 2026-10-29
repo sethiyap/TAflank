@@ -91,6 +91,21 @@ def shade(base, i, n):
         int(round(c * 255)) for c in colorsys.hls_to_rgb(h, l, sat))
 
 
+def cds_family_colour(fid):
+    """Pastel hue from the content-addressed family id.
+
+    Gene families are not named in a legend -- there are far too many, and the
+    figure does not ask you to identify one. It asks whether the SAME colour
+    appears at the same offset in another locus. So the only requirement is
+    that a family's colour is stable and distinguishable from its neighbours,
+    which a hash of the id gives for free. Pastel, so the CDS track stays
+    visually behind the IS and cargo blocks that carry the argument.
+    """
+    hue = (int(fid[1:9], 16) % 3600) / 3600
+    return '#%02x%02x%02x' % tuple(
+        int(round(c * 255)) for c in colorsys.hls_to_rgb(hue, 0.74, 0.55))
+
+
 def family_colour(fam):
     if fam in FAMILY:
         return FAMILY[fam]
@@ -145,7 +160,8 @@ def legend_blocks(fam_seen, is_colour, seen):
         blocks.append(('cargo genes' if i == 0 else '', '#333333',
                        [(n, dict(facecolor=seen[n][0])) for n in cargo[i:i + 6]]))
     blocks.append(('key', '#333333', [
-        ('CDS (no family yet)', dict(facecolor='#f0f0f0', edgecolor='#bdbdbd')),
+        ('CDS: shared family', dict(facecolor='#b9d8ea', edgecolor='#9e9e9e')),
+        ('CDS: this locus only', dict(facecolor='#f0f0f0', edgecolor='#bdbdbd')),
         ('fragment <50% cov', dict(facecolor='white', hatch='///')),
         ('runs off the window', dict(facecolor='white',
                                      linestyle=(0, (1.4, 1.0)))),
@@ -189,6 +205,12 @@ def main():
     p.add_argument('--metadata', default='')
     p.add_argument('--outdir', default='figures')
     p.add_argument('--flank', type=int, default=20000)
+    p.add_argument('--families', default='',
+                   help='results/gene_families.tsv -- colours the CDS track')
+    p.add_argument('--min-family-loci', type=int, default=2,
+                   help='colour a gene family only if it spans this many loci '
+                        '(1 would give every singleton its own colour and turn '
+                        'the track into confetti)')
     a = p.parse_args()
 
     files = sorted(glob.glob(os.path.join(a.blocks, '*.blocks.tsv')))
@@ -216,6 +238,13 @@ def main():
         base = family_colour(f)
         for i, e in enumerate(members):
             is_colour[e] = shade(base, i, len(members))
+
+    # CDS -> gene family, keyed on coordinates (verified 363/363 join)
+    cds_fam = {}
+    if a.families and os.path.exists(a.families):
+        for r in read_tsv(a.families):
+            if int(r['family_n_loci']) >= a.min_family_loci:
+                cds_fam[(r['locus_id'], r['start'], r['end'])] = r['family_id']
 
     by_locus = {}
     for r in rows:
@@ -277,10 +306,12 @@ def main():
             clipped = r.get('clipped_at_window_edge', 'no') not in ('no', '-', '')
 
             if ft == 'CDS':
-                # context only: no family colours exist yet (see docstring)
-                ax.add_patch(Rectangle((o, y - H_CDS / 2), w, H_CDS,
-                                       facecolor='#f0f0f0', edgecolor='#bdbdbd',
-                                       lw=0.3, zorder=1))
+                fid = cds_fam.get((lid, r['start'], r['end']))
+                ax.add_patch(Rectangle(
+                    (o, y - H_CDS / 2), w, H_CDS,
+                    facecolor=cds_family_colour(fid) if fid else '#f0f0f0',
+                    edgecolor='#9e9e9e' if fid else '#bdbdbd',
+                    lw=0.35, zorder=1))
                 continue
 
             h = H_IS if ft == 'IS' else H_CARGO
@@ -344,7 +375,8 @@ def main():
         ax.spines[sp].set_visible(False)
     ax.set_title('relBE flanking architecture, aligned on the bait\n'
                  'IS colour = family, shade = element within it; '
-                 'cargo below each line; CDS grey (families not yet called)',
+                 'cargo below each line. CDS colour = gene family; the same '
+                 'colour in two rows is the same family, grey = this locus only',
                  fontsize=10, pad=12)
 
     draw_legend(lg, blocks, NCOL)

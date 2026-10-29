@@ -227,6 +227,35 @@ has 0 CDS features** and needs Bakta before it can contribute a gene track.
 
 ---
 
+### `results/gene_families.tsv` — CDS clustered by sequence
+
+One row per CDS, from `scripts/gene_families.py`. This is what lets the figure
+colour the CDS track by homology instead of by product name.
+
+| column | meaning |
+|---|---|
+| `locus_id`, `gene_id` | the CDS; `gene_id` is Bakta's locus tag |
+| `start`, `end`, `strand` | window coordinates, joinable to `blocks/*.blocks.tsv` |
+| `aa_len` | translated protein length |
+| `family_id` | `F` + 8 hex of a SHA-1 of the representative sequence |
+| `family_size` | CDS in the family, counting repeats within a locus |
+| `family_n_loci` | **how many distinct loci carry it** — the useful one |
+| `is_representative` | `yes` on the one sequence the id is derived from |
+| `product` | Bakta's product name, kept for reading, not used for grouping |
+| `uniref50` | Bakta's UniRef50 cross-reference where it assigned one |
+| `internal_stop` | `yes` would mean the translation is wrong; expect `no` |
+
+`family_id` is **content-addressed on purpose**. A cluster index renumbers
+whenever the dataset grows, so every colour in every figure would shuffle
+between runs and nothing would be comparable. A hash of the representative
+sequence keeps a family's identity stable as loci are added.
+
+`family_n_loci = 1` means the family is specific to one window. Those are the
+grey CDS in the figure.
+
+Note `uniref50` is an independent, coarser grouping (UniRef50 is 50% identity;
+these families are 90%). It is useful as a cross-check, not as a substitute.
+
 ### `figures/is_matrix.tsv` — IS presence matrix
 
 One row per locus, one column per IS element, produced by

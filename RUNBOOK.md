@@ -631,6 +631,82 @@ cat /scratch/rg42/ps1744/myrun/run_report.txt
 
 ---
 
+# STEP 11b — Cluster the proteins into gene families
+
+Without this the CDS track is one flat grey: `gene_blocks.py` keys colour on
+the product string, and 127 of the Bakta-named CDS are `hypothetical protein`.
+
+```bash
+python3 scripts/gene_families.py \
+  --gff   run_bakta/bakta \
+  --loci  run_bakta/loci \
+  --out   results/gene_families.tsv \
+  --check
+```
+
+`--check` asserts that relB and relE translate to the sequences recorded in
+CLAUDE.md (79 aa `MGSINLRIDDEL…TLDEL`, 95 aa `MAYFLDFDERAL…VKRIL`). Keep it on
+— it is a free proof that the proteins are right before anything is built on
+them.
+
+**Proteins are translated from the GFF3, not read from Bakta's `.faa`.** The
+BAKTA process originally declared only the GFF3 as output, so publishDir never
+copied the proteins and they died with the work directory (`$PBS_JOBFS`, gone
+at job end). `main.nf` now publishes the `.faa` too, but the GFF3 route stays:
+the coordinates, strand and phase Pyrodigal called, translated against the same
+window, reproduce the proteins exactly.
+
+### Clustering engine
+
+| engine | when | why |
+|---|---|---|
+| `blastp` | the default here | already installed natively; 363 proteins is nothing |
+| `mmseqs` | the NCBI sweep | all-vs-all blastp does not scale past a few thousand |
+
+`--engine auto` uses `mmseqs` if it is on `PATH` and `blastp` otherwise. Both
+apply the same cuts — 90% identity, 80% coverage **of both sequences** — which
+is the intent of Acman's Roary `-i 0.9 -s`.
+
+MMseqs2 is not installed on this laptop or on Gadi. The official universal
+macOS build (native arm64, no Homebrew, no conda) is:
+
+```bash
+mkdir -p ~/opt/mmseqs2 && cd ~/opt/mmseqs2
+curl -LO https://github.com/soedinglab/MMseqs2/releases/download/18-8cc5c/mmseqs-osx-universal.tar.gz
+tar xzf mmseqs-osx-universal.tar.gz
+export PATH="$HOME/opt/mmseqs2/mmseqs/bin:$PATH"
+```
+
+### What it produced
+
+7 loci, 363 CDS → **258 families**, of which **57 span more than one locus**.
+The 140 `hypothetical protein` CDS that shared one colour split into **107
+families**.
+
+The most widely shared families are the ones that should be, which is the
+check that the clustering is sane:
+
+| family | loci | aa | product |
+|---|---|---|---|
+| `Feff4f214` | 5 | 79 | RelB |
+| `F7b88ed79` | 5 | 95 | RelE |
+| `F9c5dc466` | 4 | 446 | ISEsa1 transposase |
+| `F97780e40` | 4 | 307 | Cation-efflux pump (czc) |
+| `F5dbb1fdc` | 4 | 412 | ISEsa2 transposase |
+| `F2bc0d751` | 4 | 190 | Cytochrome b561 (cytb) |
+| **`F61fefa1c`** | **4** | **70** | **hypothetical protein** |
+| **`F0e2e43c1`** | **4** | **55** | **hypothetical protein** |
+
+The last two are a result. Two unnamed families sit in 4 of the 7 loci —
+as conserved as czc and cytb, and invisible until now because no database
+could name them. They are candidates for the conserved core that Stage 2 has
+to delimit.
+
+Family ids are a hash of the representative sequence, not a cluster index, so
+a family keeps its identity and its colour as loci are added.
+
+---
+
 # STEP 12 — Draw the figure
 
 This one runs **on the laptop**, not on Gadi: it is the iterate-and-look step,
@@ -642,8 +718,11 @@ python3 scripts/colour_blocks.py \
   --blocks   run_bakta/blocks \
   --context  run_bakta/context.tsv \
   --metadata run_bakta/record_metadata.tsv \
+  --families results/gene_families.tsv \
   --outdir   figures
 ```
+
+Drop `--families` and the CDS track goes back to flat grey.
 
 `run_bakta/` is the Bakta-annotated run pulled down from Gadi:
 
@@ -729,18 +808,17 @@ that record names more products than Bakta's `light` database can. This is the
 first concrete evidence that `full` would buy something, and it is confined to
 one locus; it does not change any coordinate, any IS call or any cargo hit.
 
+**CDS colour is the gene family**, from STEP 11b. There is deliberately no
+legend for it: 57 colours cannot be told apart from a key, and the figure does
+not ask you to identify a family. It asks whether the **same colour appears at
+the same offset in another row** — which is the whole Acman Figure 4 device.
+Grey means the family occurs in only one locus (`--min-family-loci` controls
+the cut; 1 would give every singleton its own colour and turn the track into
+confetti).
+
 ## What the figure does NOT yet show
 
-CDS are drawn in **uncoloured grey**, which is a deliberate refusal rather than
-a styling choice. 127 of the 314 annotation-named CDS in this set are
-`hypothetical protein`, so they all share one `colour_key`. Colouring by it
-would paint one flat colour across large stretches of every locus and invite
-the reading that those stretches are homologous — the exact claim the figure
-would then appear to support. Gene-family colours need the MMseqs2 clustering
-in Stage 3; until that exists, only the two tracks with trustworthy names
-(ISfinder elements, curated cargo) are coloured.
-
-Also absent, and absent on purpose: the splitting tree that runs down the left
+Absent, and absent on purpose: the splitting tree that runs down the left
 of Acman Figure 4. That needs Stage 5's all-vs-all threshold stepping. With
 seven loci it would be a tree of seven leaves and would imply far more support
 than seven plasmids can carry.

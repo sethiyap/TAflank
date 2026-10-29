@@ -1,0 +1,364 @@
+locus_id	gene_id	start	end	strand	aa_len	family_id	family_size	family_n_loci	is_representative	product	uniref50	internal_stop
+CP006642__CP006642__1__minus	MMABII_001	71	2026	+	651	F18eaea40	1	1	yes	hypothetical protein		no
+CP006642__CP006642__1__minus	MMABII_002	2017	3012	+	331	Fb170bdcf	1	1	yes	fimbrial adhesin protein precursor MrkD	UniRef50_P21648	no
+CP006642__CP006642__1__minus	MMABII_003	3026	3661	+	211	F19031a6b	1	1	yes	type 3 fimbrial minor pilin subunit MrkF	UniRef50_A0AAN3RVN1	no
+CP006642__CP006642__1__minus	MMABII_004	3927	4895	+	322	Fec6f339b	2	1	no	Transposase IS5	UniRef50_A7WLQ5	no
+CP006642__CP006642__1__minus	MMABII_005	5177	5659	-	160	F61c4d6cd	1	1	yes	TEM family class A beta-lactamase	UniRef50_A0A2X2YN99	no
+CP006642__CP006642__1__minus	MMABII_006	6220	6777	-	185	Fc91f7515	1	1	yes	Transposon Tn1331 resolvase	UniRef50_P21424	no
+CP006642__CP006642__1__minus	MMABII_007	7081	7797	+	238	F37bb35d6	7	2	no	IS6 family IS15 transposase	UniRef50_A9QNU6	no
+CP006642__CP006642__1__minus	MMABII_008	7688	8407	-	239	Fe4a66838	1	1	yes	hypothetical protein		no
+CP006642__CP006642__1__minus	MMABII_009	8347	8499	-	50	Ff2456411	1	1	yes	hypothetical protein		no
+CP006642__CP006642__1__minus	MMABII_011	8967	9410	+	147	Facfa1e86	1	1	yes	aminoglycoside N-acetyltransferase AAC(3)-IId		no
+CP006642__CP006642__1__minus	MMABII_012	9423	9965	+	180	F3c67f1d5	1	1	yes	Tunicamycin resistance protein	UniRef50_A0A916RYI0	no
+CP006642__CP006642__1__minus	MMABII_014	10447	10638	-	63	Fb1bd9bf2	1	1	yes	hypothetical protein	UniRef50_A0A0H3GZK3	no
+CP006642__CP006642__1__minus	MMABII_015	10662	10889	+	75	Fcf95451e	1	1	yes	hypothetical protein		no
+CP006642__CP006642__1__minus	MMABII_016	11717	12067	+	116	F58980201	1	1	yes	hypothetical protein		no
+CP006642__CP006642__1__minus	MMABII_017	12086	12808	+	240	F37bb35d6	7	2	no	IS6 family IS15DIV transposase	UniRef50_A9QNU6	no
+CP006642__CP006642__1__minus	MMABII_018	12842	13216	-	124	Fca30d194	1	1	yes	hypothetical protein		no
+CP006642__CP006642__1__minus	MMABII_019	13703	13819	+	38	F925d052a	1	1	yes	hypothetical protein		no
+CP006642__CP006642__1__minus	MMABII_020	14125	15138	+	337	Fbd82b996	1	1	yes	class 1 integron integrase IntI1	UniRef50_Q48337	no
+CP006642__CP006642__1__minus	MMABII_021	15341	15691	+	116	Fc3eadfe7	1	1	yes	Anti-FlhC(2)FlhD(4) factor YdiV	UniRef50_Q8VVE9	no
+CP006642__CP006642__1__minus	MMABII_022	15817	16377	+	186	F04bd972e	1	1	yes	Transposon Tn501 resolvase	UniRef50_P06691	no
+CP006642__CP006642__1__minus	MMABII_023	16380	19346	+	988	F3025ebaf	1	1	yes	Tn3-like element TnAs3 family transposase	UniRef50_P06694	no
+CP006642__CP006642__1__minus	MMABII_024	19510	19650	-	46	F5410f26d	1	1	yes	hypothetical protein		no
+CP006642__CP006642__1__minus	MMABII_025	19983	20273	-	96	F0fd123f1	1	1	yes	hypothetical protein		no
+CP006642__CP006642__1__minus	MMABII_026	20831	21610	-	259	F285ab416	1	1	yes	IS21-like element ISSen3 family helper ATPase IstB	UniRef50_A0A2I8SU65	no
+CP006642__CP006642__1__minus	MMABII_027	21610	22632	-	340	F283e667d	1	1	yes	IS21 family ISSen3 transposase	UniRef50_Q93K87	no
+CP006642__CP006642__1__minus	MMABII_028	23224	23940	-	238	F37bb35d6	7	2	no	IS6 family IS15 transposase	UniRef50_A9QNU6	no
+CP006642__CP006642__1__minus	MMABII_029	24248	25423	+	391	Fef51a185	1	1	yes	multidrug efflux RND transporter periplasmic adaptor subunit OqxA	UniRef50_A0A261V1B2	no
+CP006642__CP006642__1__minus	MMABII_030	25447	28599	+	1050	F67f5768d	1	1	yes	multidrug efflux RND transporter permease subunit OqxB	UniRef50_A0AAN1X327	no
+CP006642__CP006642__1__minus	MMABII_031	28669	29244	-	191	F667b34c3	1	1	yes	hypothetical protein	UniRef50_D4GE96	no
+CP006642__CP006642__1__minus	MMABII_032	29250	29966	-	238	F37bb35d6	7	2	no	IS6 family IS15 transposase	UniRef50_A9QNU6	no
+CP006642__CP006642__1__minus	MMABII_033	30048	30170	-	40	F00d9b6e5	1	1	yes	hypothetical protein		no
+CP006642__CP006642__1__minus	MMABII_034	30324	30521	+	65	Fe9469fef	1	1	yes	hypothetical protein		no
+CP006642__CP006642__1__minus	MMABII_035	30786	32000	+	404	F49219a64	1	1	yes	type II site-specific deoxyribonuclease	UniRef50_P14633	no
+CP006642__CP006642__1__minus	MMABII_036	32034	33467	-	477	F9fdecc3f	1	1	yes	Type II methyltransferase M-EcoRII	UniRef50_P05101	no
+CP006642__CP006642__1__minus	MMABII_037	33567	33833	+	88	F84f88b33	2	1	no	IS1 transposase	UniRef50_A0A8E0KU03	no
+CP006642__CP006642__1__minus	MMABII_038	33903	34619	+	238	F37bb35d6	7	2	no	IS6 family IS15DIV transposase	UniRef50_A9QNU6	no
+CP006642__CP006642__1__minus	MMABII_039	34625	34900	+	91	F84f88b33	2	1	yes	IS1 family transposase	UniRef50_UPI000B9F986B	no
+CP006642__CP006642__1__minus	MMABII_040	35340	36308	-	322	Fec6f339b	2	1	yes	Transposase IS5	UniRef50_A7WLQ5	no
+CP006642__CP006642__1__minus	MMABII_041	36371	36655	+	94	F78366287	1	1	yes	hypothetical protein		no
+CP006642__CP006642__1__minus	MMABII_042	36652	36849	-	65	F733cf4ff	1	1	yes	Transmembrane protein	UniRef50_K0PYP3	no
+CP006642__CP006642__1__minus	MMABII_043	36890	38878	-	662	Fcdc16bdc	1	1	yes	Ag(+)-translocating P-type ATPase SilP	UniRef50_Q5ZWR1	no
+CP006642__CP006642__1__minus	MMABII_044	38882	39283	+	133	Fae6dfa97	1	1	yes	hypothetical protein		no
+CP006642__CP006642__1__minus	MMABII_045	39992	40516	-	174	Ff30c3660	1	1	yes	Cation efflux system protein CusA	UniRef50_X0ZV58	no
+CP018961__CP018961__1__minus	DEBGEF_001	11	289	+	92	Fe918c1c4	1	1	yes	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_002	366	596	+	76	Ff77b2afe	1	1	yes	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_003	1112	1405	-	97	F922b4343	1	1	yes	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_004	1483	1692	-	69	F55050f52	1	1	yes	Putative transposase	UniRef50_A0A1U6GK62	no
+CP018961__CP018961__1__minus	DEBGEF_005	1760	2269	+	169	F7b891b2e	1	1	yes	RNA-guided endonuclease TnpB family protein	UniRef50_UPI001918C943	no
+CP018961__CP018961__1__minus	DEBGEF_006	2505	2663	-	52	Fc0631482	1	1	yes	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_007	2676	2909	-	77	F4a936708	1	1	yes	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_008	2963	4447	+	494	Fbef76704	1	1	yes	Retron-type reverse transcriptase	UniRef50_A0A2X3CDW5	no
+CP018961__CP018961__1__minus	DEBGEF_009	4533	4955	+	140	F0ebcf19f	1	1	yes	Translesion error-prone DNA polymerase V autoproteolytic subunit	UniRef50_A0A725G3M1	no
+CP018961__CP018961__1__minus	DEBGEF_010	4955	6226	+	423	F71b70aa3	1	1	yes	Translesion error-prone DNA polymerase V subunit UmuC	UniRef50_A0A729IQK2	no
+CP018961__CP018961__1__minus	DEBGEF_011	6246	6770	+	174	F6a8cf71d	1	1	yes	DUF2384 domain-containing protein	UniRef50_A0AAP9H5D1	no
+CP018961__CP018961__1__minus	DEBGEF_012	6869	7237	+	122	Fa28cf348	1	1	yes	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_013	7347	7751	-	134	Faba3b8c9	1	1	yes	hypothetical protein	UniRef50_A0A417ZYG1	no
+CP018961__CP018961__1__minus	DEBGEF_015	8178	9299	-	373	Fe69936e7	3	3	no	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_016	9507	10847	+	446	F9c5dc466	4	4	no	ISNCY family transposase	UniRef50_A0A927DXE0	no
+CP018961__CP018961__1__minus	DEBGEF_017	11088	11732	+	214	Fef6a8a46	1	1	yes	hypothetical protein	UniRef50_A0A2I5HGT9	no
+CP018961__CP018961__1__minus	DEBGEF_018	11761	12969	-	402	F1fc0fbfc	1	1	yes	Integrase catalytic domain-containing protein	UniRef50_A0A6S5JU27	no
+CP018961__CP018961__1__minus	DEBGEF_019	13551	14789	+	412	F5dbb1fdc	4	4	no	IS110 family ISEsa2 transposase	UniRef50_A0AAN2FG40	no
+CP018961__CP018961__1__minus	DEBGEF_020	14949	15146	-	65	F61fefa1c	4	4	no	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_021	15226	15837	+	203	F2bc0d751	4	4	no	Cytochrome b561 bacterial/Ni-hydrogenase domain-containing protein	UniRef50_A0A7H0UCN9	no
+CP018961__CP018961__1__minus	DEBGEF_022	16227	17489	+	420	Fd84ec9b2	2	1	no	IS1380 family ISEc9 transposase	UniRef50_Q6SJ63	no
+CP018961__CP018961__1__minus	DEBGEF_023	17470	17592	+	40	F815ec8b7	2	1	no	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_024	17656	18363	+	235	F4d8bc31f	1	1	yes	QnrE family quinolone resistance pentapeptide repeat protein		no
+CP018961__CP018961__1__minus	DEBGEF_025	18484	18822	+	112	F89e642d2	1	1	yes	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_026	18815	19738	+	307	F97780e40	4	4	no	Cation-efflux pump	UniRef50_A0A2T4UNA1	no
+CP018961__CP018961__1__minus	DEBGEF_027	19782	19949	-	55	F0e2e43c1	4	4	no	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_028	20001	20240	+	79	Feff4f214	5	5	no	type II toxin-antitoxin system antitoxin RelB	UniRef50_P0C079	no
+CP018961__CP018961__1__minus	DEBGEF_029	20240	20527	+	95	F7b88ed79	5	5	no	type II toxin-antitoxin system mRNA interferase RelE	UniRef50_A0A378B2C3	no
+CP018961__CP018961__1__minus	DEBGEF_030	21360	22334	+	324	F03a1f6bd	1	1	yes	Hok/Gef family protein	UniRef50_A0A345WXE3	no
+CP018961__CP018961__1__minus	DEBGEF_031	22532	22909	-	125	F31899143	1	1	yes	Phosphonate ABC transporter substrate-binding protein	UniRef50_B5RJZ2	no
+CP018961__CP018961__1__minus	DEBGEF_032	23235	23531	+	98	Fb4d22172	1	1	yes	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_033	23827	24666	+	279	Fbd9b31dd	1	1	yes	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_034	24762	25169	+	135	Ff074865b	1	1	yes	hypothetical protein	UniRef50_B5RK14	no
+CP018961__CP018961__1__minus	DEBGEF_035	25248	25481	+	77	F2291e63f	1	1	yes	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_036	26215	27477	+	420	Fd84ec9b2	2	1	yes	IS1380 family ISEc9 transposase	UniRef50_Q6SJ63	no
+CP018961__CP018961__1__minus	DEBGEF_037	27458	27580	+	40	F815ec8b7	2	1	yes	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_038	27717	28358	+	213	Feb1fd0e7	1	1	yes	Flavo-diiron protein FprA1	UniRef50_A0A1S8TJL7	no
+CP018961__CP018961__1__minus	DEBGEF_039	28281	28574	-	97	Fff77fa07	1	1	yes	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_040	28583	28939	+	118	F429c6b0b	1	1	yes	hypothetical protein	UniRef50_A0A7H0EVK4	no
+CP018961__CP018961__1__minus	DEBGEF_041	28993	29766	-	257	F2780519e	1	1	yes	NERD domain-containing protein	UniRef50_A0A285B8M1	no
+CP018961__CP018961__1__minus	DEBGEF_042	29769	30905	-	378	Fb71e7da4	1	1	yes	S49 family peptidase	UniRef50_A0A2N4Z926	no
+CP018961__CP018961__1__minus	DEBGEF_043	30914	31588	-	224	F88de8714	1	1	yes	DUF4400 domain-containing protein	UniRef50_A0A6M5ZZU1	no
+CP018961__CP018961__1__minus	DEBGEF_044	31601	32698	-	365	Fd16c072d	1	1	yes	hypothetical protein	UniRef50_A0A7H0EVK0	no
+CP018961__CP018961__1__minus	DEBGEF_045	32701	34827	-	708	F397ea2aa	1	1	yes	Conjugative transfer system coupling protein TraD	UniRef50_A0A5B0WJN5	no
+CP018961__CP018961__1__minus	DEBGEF_046	34817	37765	-	982	F96831c62	1	1	yes	Uncharacterized domain-containing protein	UniRef50_A0A6M5ZYH1	no
+CP018961__CP018961__1__minus	DEBGEF_047	37779	38567	-	262	F6c19a79b	1	1	yes	DUF1845 domain-containing protein	UniRef50_A0A7A7UPK8	no
+CP018961__CP018961__1__minus	DEBGEF_048	38567	39130	-	187	F18face96	1	1	yes	Plasmid transfer protein	UniRef50_A0A6P1V5E6	no
+CP018961__CP018961__1__minus	DEBGEF_049	39109	39288	-	59	F02079f36	1	1	yes	hypothetical protein		no
+CP018961__CP018961__1__minus	DEBGEF_050	39629	40384	+	251	Fbadb2f1e	1	1	yes	hypothetical protein	UniRef50_A0A7H0EVJ5	no
+CP023893__CP023893__1__plus	NPMNCA_001	234	560	+	108	F4897cf63	1	1	yes	Theronine dehydrogenase	UniRef50_A0A5E5RBQ5	no
+CP023893__CP023893__1__plus	NPMNCA_002	616	990	+	124	F4f55678c	1	1	yes	Na+/H+ antiporter MnhB subunit-related protein domain-containing protein	UniRef50_A0A9X5F7U4	no
+CP023893__CP023893__1__plus	NPMNCA_003	1191	1700	+	169	F0102d06f	1	1	yes	IS3 family element%2C transposase orfA	UniRef50_B5RJX4	no
+CP023893__CP023893__1__plus	NPMNCA_004	1757	2566	+	269	F5d4b730d	1	1	yes	IS150 conserved protein InsB	UniRef50_A0A376VN34	no
+CP023893__CP023893__1__plus	NPMNCA_005	2736	3776	+	346	F297ddd65	1	1	yes	AAA+ ATPase domain-containing protein	UniRef50_A0A1D3K6A3	no
+CP023893__CP023893__1__plus	NPMNCA_006	3754	6264	+	836	F680fa7e1	1	1	yes	Peptidase S8/S53 domain-containing protein	UniRef50_A0A433ZY46	no
+CP023893__CP023893__1__plus	NPMNCA_007	6710	6904	+	64	F16278d95	1	1	yes	hypothetical protein		no
+CP023893__CP023893__1__plus	NPMNCA_008	6879	7049	+	56	F7f3a50b7	1	1	yes	hypothetical protein		no
+CP023893__CP023893__1__plus	NPMNCA_009	7321	7668	-	115	F7c261f9c	1	1	yes	Transposase	UniRef50_A0A376PTP4	no
+CP023893__CP023893__1__plus	NPMNCA_010	7817	9157	+	446	F9c5dc466	4	4	yes	ISNCY family ISEsa1 transposase	UniRef50_A0A927DXE0	no
+CP023893__CP023893__1__plus	NPMNCA_011	9413	9823	-	136	F6fd9fc7d	2	2	no	nickel resistance OB fold protein NcrY	UniRef50_A0A6H2ZUC1	no
+CP023893__CP023893__1__plus	NPMNCA_012	9997	11127	-	376	F96153772	2	2	no	Ni(II)/Co(II) efflux transporter permease subunit NcrC	UniRef50_P76425	no
+CP023893__CP023893__1__plus	NPMNCA_013	11140	11409	-	89	F3551d07b	2	2	no	nickel-sensing transcriptional repressor NcrB	UniRef50_A0A1A8TQ72	no
+CP023893__CP023893__1__plus	NPMNCA_014	11515	12813	-	432	Fa014a7cc	2	2	no	nickel resistance membrane nickel efflux protein NcrA	UniRef50_A0A7Z7LP76	no
+CP023893__CP023893__1__plus	NPMNCA_015	13047	13805	-	252	F0e2014df	1	1	yes	Tat pathway signal sequence	UniRef50_A0A0C5EQ51	no
+CP023893__CP023893__1__plus	NPMNCA_016	13859	14779	-	306	Fd5467ffe	1	1	yes	Methyltransferase type 11 domain-containing protein	UniRef50_A0A0C5EKK0	no
+CP023893__CP023893__1__plus	NPMNCA_017	14842	15213	-	123	F445297aa	2	2	no	DUF2946 domain-containing protein	UniRef50_A0A5B8R2V0	no
+CP023893__CP023893__1__plus	NPMNCA_018	15560	16537	+	325	F12d87f81	2	2	no	Chromate resistance protein	UniRef50_A0A8B6IKD6	no
+CP023893__CP023893__1__plus	NPMNCA_019	16494	17381	+	295	Fafe423d5	1	1	yes	Chromate transporter	UniRef50_A0A1H2WMN6	no
+CP023893__CP023893__1__plus	NPMNCA_020	17397	17870	+	157	Fb9b09351	1	1	yes	Chromate transporter	UniRef50_A0A4S2SE24	no
+CP023893__CP023893__1__plus	NPMNCA_021	17901	18590	-	229	F93af9786	1	1	yes	Transmembrane anchor protein	UniRef50_A0A0H3CU82	no
+CP023893__CP023893__1__plus	NPMNCA_022	18604	19341	-	245	F65436cc7	2	2	no	HupE/UreJ family protein	UniRef50_A0A2T7UKG1	no
+CP023893__CP023893__1__plus	NPMNCA_023	19490	19756	+	88	F39bf094b	2	2	no	hypothetical protein		no
+CP023893__CP023893__1__plus	NPMNCA_024	20001	20240	+	79	Feff4f214	5	5	yes	type II toxin-antitoxin system antitoxin RelB	UniRef50_P0C079	no
+CP023893__CP023893__1__plus	NPMNCA_025	20240	20527	+	95	F7b88ed79	5	5	yes	type II toxin-antitoxin system mRNA interferase RelE	UniRef50_A0A378B2C3	no
+CP023893__CP023893__1__plus	NPMNCA_026	20411	21628	-	405	Fe69936e7	3	3	no	Integrase catalytic domain-containing protein	UniRef50_A0A8A6WRG3	no
+CP023893__CP023893__1__plus	NPMNCA_027	21700	21858	+	52	F043528ea	2	2	no	Hok/Gef family protein	UniRef50_M1EXW0	no
+CP023893__CP023893__1__plus	NPMNCA_028	22556	22828	+	90	F75079090	1	1	yes	hypothetical protein	UniRef50_A0A0H3GZN9	no
+CP023893__CP023893__1__plus	NPMNCA_029	22825	23175	+	116	F6d69c94f	1	1	yes	hypothetical protein	UniRef50_A0L3E1	no
+CP023893__CP023893__1__plus	NPMNCA_030	23118	23507	+	129	F954c04cf	1	1	yes	hypothetical protein	UniRef50_A0A7D5G2M2	no
+CP023893__CP023893__1__plus	NPMNCA_031	24348	24704	+	118	F6f0b5c61	1	1	yes	Dopa decarboxylase protein remnant	UniRef50_S5N495	no
+CP023893__CP023893__1__plus	NPMNCA_032	24765	24977	+	70	Fc14503a1	1	1	yes	hypothetical protein		no
+CP023893__CP023893__1__plus	NPMNCA_033	24988	25212	+	74	F602cbf86	1	1	yes	hypothetical protein	UniRef50_A0A7Z9CNW5	no
+CP023893__CP023893__1__plus	NPMNCA_034	25293	25613	+	106	Ffe8b5b17	1	1	yes	RelE-like toxin protein	UniRef50_A0A4P0XEE4	no
+CP023893__CP023893__1__plus	NPMNCA_035	25603	25881	+	92	F266c99d5	1	1	yes	HTH cro/C1-type domain-containing protein	UniRef50_A0A0C7AUS1	no
+CP023893__CP023893__1__plus	NPMNCA_036	25882	26295	+	137	F43ef6a94	1	1	yes	DNA-binding protein	UniRef50_G9G282	no
+CP023893__CP023893__1__plus	NPMNCA_037	26701	26958	-	85	F547a78db	1	1	yes	hypothetical protein		no
+CP023893__CP023893__1__plus	NPMNCA_038	27124	27945	+	273	Fa5d72fdf	1	1	yes	DUF945 domain-containing protein	UniRef50_A0A178LF24	no
+CP023893__CP023893__1__plus	NPMNCA_039	27993	28307	+	104	Fd9793bd0	1	1	yes	hypothetical protein	UniRef50_X2JGR1	no
+CP023893__CP023893__1__plus	NPMNCA_040	28340	28825	-	161	F5b0bcbfa	1	1	yes	Transglycosylase SLT domain-containing protein	UniRef50_A0A7D5FZA0	no
+CP023893__CP023893__1__plus	NPMNCA_041	29127	29306	+	59	Fe6a2a666	1	1	yes	hypothetical protein		no
+CP023893__CP023893__1__plus	NPMNCA_042	29249	29632	+	127	F05a6f695	1	1	yes	Relaxosome protein TraM	UniRef50_E0D8F6	no
+CP023893__CP023893__1__plus	NPMNCA_044	29832	30569	+	245	F8bd60195	1	1	yes	Conjugal transfer protein TrbJ	UniRef50_A0A6G9HNY8	no
+CP023893__CP023893__1__plus	NPMNCA_045	30672	30890	+	72	F4f1a027c	1	1	yes	Relaxosome protein TraY	UniRef50_A0A2A7U7W1	no
+CP023893__CP023893__1__plus	NPMNCA_046	30964	31479	-	171	F99a58714	1	1	yes	hypothetical protein		no
+CP023893__CP023893__1__plus	NPMNCA_047	31659	32225	+	188	F1ec77534	1	1	yes	TraE protein	UniRef50_Q65AH9	no
+CP023893__CP023893__1__plus	NPMNCA_048	32212	32952	+	246	Fc936f8b0	1	1	yes	TraK lipoprotein	UniRef50_A0A285B8A5	no
+CP023893__CP023893__1__plus	NPMNCA_049	32952	34376	+	474	Ff978dd8b	1	1	yes	Conjugative transfer: assembly	UniRef50_Q93GN9	no
+CP023893__CP023893__1__plus	NPMNCA_050	34448	35032	+	194	Feddceff3	1	1	yes	TraV protein	UniRef50_Q65AH6	no
+CP023893__CP023893__1__plus	NPMNCA_051	35355	35573	+	72	F155e863b	1	1	yes	YfiB	UniRef50_A0A2X5TUR5	no
+CP023893__CP023893__1__plus	NPMNCA_052	35574	35885	+	103	F1bc0c449	1	1	yes	Inner membrane protein	UniRef50_G9G2K3	no
+CP023893__CP023893__1__plus	NPMNCA_053	35952	36356	+	134	F82949f79	1	1	yes	TMhelix containing protein	UniRef50_A0A3S7I555	no
+CP023893__CP023893__1__plus	NPMNCA_054	36742	37131	+	129	F065fa021	1	1	yes	hypothetical protein	UniRef50_G9G2K2	no
+CP023893__CP023893__1__plus	NPMNCA_055	37203	39842	+	879	F076c7a02	1	1	yes	Conjugal transfer ATP-binding protein TraC	UniRef50_A0A1P8VT82	no
+CP023893__CP023893__1__plus	NPMNCA_056	39842	40231	+	129	Fe65d5aa5	1	1	yes	Type-F conjugative transfer system protein (TrbI_Ftype)	UniRef50_A0A2P1BNS3	no
+CP028197__CP028197__1__plus	IPOGBM_001	90	266	-	58	F7e5abb8b	2	2	no	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_002	596	1411	+	271	F077ccf3a	1	1	yes	sulfonamide-resistant dihydropteroate synthase Sul2	UniRef50_B3H353	no
+CP028197__CP028197__1__plus	IPOGBM_003	1408	1770	-	120	F5d5ab954	1	1	yes	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_004	1976	3469	-	497	F7ca5d43f	1	1	yes	IS91-like element ISVsa3 family transposase	UniRef50_C4NUT8	no
+CP028197__CP028197__1__plus	IPOGBM_005	3680	3904	-	74	F68dbfa6a	2	2	no	Transcriptional regulator	UniRef50_A0AAD0RR37	no
+CP028197__CP028197__1__plus	IPOGBM_006	3901	4638	-	245	F54d65850	2	2	no	Resolvase/invertase-type recombinase catalytic domain-containing protein	UniRef50_A0A3M3GBB7	no
+CP028197__CP028197__1__plus	IPOGBM_007	4705	5088	+	127	F87358056	2	2	no	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_008	5447	6088	+	213	F7cf12a42	1	1	yes	Transposase	UniRef50_A0A1U9XH16	no
+CP028197__CP028197__1__plus	IPOGBM_009	6094	6294	+	66	F84b34afe	2	2	no	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_010	6284	7177	+	297	F2b3c4c65	2	2	no	KlaC	UniRef50_A0AAE5BBN8	no
+CP028197__CP028197__1__plus	IPOGBM_011	7352	7579	+	75	F3061cd2e	2	2	no	hypothetical protein	UniRef50_A0A0B1MYQ4	no
+CP028197__CP028197__1__plus	IPOGBM_012	7758	8078	+	106	F5dba79e0	2	2	no	hypothetical protein	UniRef50_A0A0B1N2L6	no
+CP028197__CP028197__1__plus	IPOGBM_013	8911	9402	+	163	Fe5e4f054	2	2	no	DUF3085 domain-containing protein	UniRef50_A0AAD1X4B3	no
+CP028197__CP028197__1__plus	IPOGBM_014	9545	9775	+	76	F4b5678a4	1	1	yes	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_015	9955	10158	+	67	Ffbacaf0c	2	2	no	Inner membrane protein	UniRef50_A0A0B1N2L9	no
+CP028197__CP028197__1__plus	IPOGBM_016	10213	10437	+	74	Fd93bd5ee	2	2	no	Phage protein	UniRef50_A0A379Y233	no
+CP028197__CP028197__1__plus	IPOGBM_017	10477	10677	+	66	F12da4958	2	2	no	hypothetical protein	UniRef50_A0A5B9ARK0	no
+CP028197__CP028197__1__plus	IPOGBM_018	10900	11211	+	103	Fff85f9cb	2	2	no	Cytoplasmic protein	UniRef50_A0A6Y0XDS7	no
+CP028197__CP028197__1__plus	IPOGBM_019	11265	11441	+	58	F97c373a1	2	2	no	hypothetical protein	UniRef50_A0A142CPP8	no
+CP028197__CP028197__1__plus	IPOGBM_020	11587	11868	+	93	F2e01a4df	2	2	no	Integrase	UniRef50_A0A379Y1T7	no
+CP028197__CP028197__1__plus	IPOGBM_021	12085	12690	+	201	F3dc35cda	2	2	no	Inner membrane protein	UniRef50_A0A0B1N2M3	no
+CP028197__CP028197__1__plus	IPOGBM_022	13023	13544	+	173	F8dfd5ac1	1	1	yes	IS3 family ISKpn8 transposase ORF A	UniRef50_A0A0H2V168	no
+CP028197__CP028197__1__plus	IPOGBM_023	13541	14392	+	283	F31f421a4	1	1	yes	IS3 family ISKpn8 transposase ORF B	UniRef50_P19769	no
+CP028197__CP028197__1__plus	IPOGBM_024	14567	15907	+	446	F9c5dc466	4	4	no	ISNCY family transposase	UniRef50_A0A927DXE0	no
+CP028197__CP028197__1__plus	IPOGBM_025	16329	17567	+	412	F5dbb1fdc	4	4	yes	IS110 family ISEsa2 transposase	UniRef50_A0AAN2FG40	no
+CP028197__CP028197__1__plus	IPOGBM_026	17727	17939	-	70	F61fefa1c	4	4	yes	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_027	18043	18615	+	190	F2bc0d751	4	4	yes	Cytochrome b561 bacterial/Ni-hydrogenase domain-containing protein	UniRef50_A0A7H0UCN9	no
+CP028197__CP028197__1__plus	IPOGBM_028	18815	19738	+	307	F97780e40	4	4	yes	Cation-efflux pump	UniRef50_A0A2T4UNA1	no
+CP028197__CP028197__1__plus	IPOGBM_029	19782	19949	-	55	F0e2e43c1	4	4	yes	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_030	20001	20240	+	79	Feff4f214	5	5	no	type II toxin-antitoxin system antitoxin RelB	UniRef50_P0C079	no
+CP028197__CP028197__1__plus	IPOGBM_031	20240	20527	+	95	F7b88ed79	5	5	no	type II toxin-antitoxin system mRNA interferase RelE	UniRef50_A0A378B2C3	no
+CP028197__CP028197__1__plus	IPOGBM_032	21245	21391	+	48	F136f251f	2	2	no	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_033	21348	21587	+	79	F74c2a652	2	2	no	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_034	21759	22082	+	107	Fc07683de	3	3	no	hypothetical protein	UniRef50_A0A1V0M1Q7	no
+CP028197__CP028197__1__plus	IPOGBM_035	22218	22574	-	118	F5988a3dc	3	3	no	Phage protein	UniRef50_J7FWB3	no
+CP028197__CP028197__1__plus	IPOGBM_036	22628	23227	-	199	F921c6b29	3	3	no	DUF551 domain-containing protein	UniRef50_A0A444RF90	no
+CP028197__CP028197__1__plus	IPOGBM_037	23326	24270	-	314	F6fc82cb9	3	3	no	DUF5417 domain-containing protein	UniRef50_A0A385FZ60	no
+CP028197__CP028197__1__plus	IPOGBM_038	24781	24957	+	58	Ff2376eac	3	3	no	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_039	25374	26558	+	394	F139218ae	3	3	no	DNA-binding protein	UniRef50_A0A6G6AKA9	no
+CP028197__CP028197__1__plus	IPOGBM_040	26624	26905	+	93	F860a94e0	3	3	no	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_041	27220	27921	+	233	F2495a3ab	3	3	no	Inner membrane protein	UniRef50_A0A2P5GH12	no
+CP028197__CP028197__1__plus	IPOGBM_042	28397	28834	+	145	F9bd7e6a6	3	3	no	hypothetical protein	UniRef50_A0A1S6KR47	no
+CP028197__CP028197__1__plus	IPOGBM_043	28902	29438	+	178	F47031772	3	3	no	NUDIX hydrolase	UniRef50_A0A626FEC6	no
+CP028197__CP028197__1__plus	IPOGBM_044	29664	30032	+	122	Ffc3aa974	3	3	no	hypothetical protein	UniRef50_A0A0D0M981	no
+CP028197__CP028197__1__plus	IPOGBM_045	30465	30764	+	99	Fe69c968e	3	3	no	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_046	31121	31405	+	94	F7329bc77	3	3	no	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_047	31516	31824	+	102	F990ab390	3	3	no	hypothetical protein		no
+CP028197__CP028197__1__plus	IPOGBM_048	32111	32842	-	243	F2163e82a	3	3	no	NERD domain-containing protein	UniRef50_A0A6G6ALC3	no
+CP028197__CP028197__1__plus	IPOGBM_049	32844	34025	-	393	F7dba99d9	3	3	no	Protease 4	UniRef50_A0A1X1LKN8	no
+CP028197__CP028197__1__plus	IPOGBM_050	34036	34716	-	226	F8763b724	3	3	no	DUF4400 domain-containing protein	UniRef50_A0A381KQ03	no
+CP028197__CP028197__1__plus	IPOGBM_051	34685	35794	-	369	F52f89954	3	3	no	DUF4942 domain-containing protein	UniRef50_V9SHR7	no
+CP028197__CP028197__1__plus	IPOGBM_052	35794	37878	-	694	F258719fc	3	3	no	Type IV secretion system coupling protein TraD DNA-binding domain-containing protein	UniRef50_A0A5V6MEL9	no
+CP028197__CP028197__1__plus	IPOGBM_053	37878	40358	-	826	Fcf2440c7	3	3	no	hypothetical protein		no
+CP028537__CP028537__1__minus	NLOBPE_001	483	659	-	58	F7e5abb8b	2	2	yes	hypothetical protein		no
+CP028537__CP028537__1__minus	NLOBPE_002	781	1005	-	74	F68dbfa6a	2	2	yes	Transcriptional regulator	UniRef50_A0AAD0RR37	no
+CP028537__CP028537__1__minus	NLOBPE_003	1002	1739	-	245	F54d65850	2	2	yes	Resolvase/invertase-type recombinase catalytic domain-containing protein	UniRef50_A0A3M3GBB7	no
+CP028537__CP028537__1__minus	NLOBPE_004	1806	2189	+	127	F87358056	2	2	yes	hypothetical protein		no
+CP028537__CP028537__1__minus	NLOBPE_005	2371	3075	-	234	F37bb35d6	7	2	yes	IS6 family IS15DIV transposase	UniRef50_A9QNU6	no
+CP028537__CP028537__1__minus	NLOBPE_006	3087	3743	-	218	Fb2fa882f	1	1	yes	tetracycline resistance transcriptional repressor TetR(D)	UniRef50_P0ACT4	no
+CP028537__CP028537__1__minus	NLOBPE_007	3839	5023	+	394	Fb54aac9e	1	1	yes	tetracycline efflux MFS transporter Tet(D)	UniRef50_P02980	no
+CP028537__CP028537__1__minus	NLOBPE_008	5118	6227	+	369	Fa4f8e445	1	1	yes	S-(hydroxymethyl)glutathione dehydrogenase	UniRef50_P25437	no
+CP028537__CP028537__1__minus	NLOBPE_009	6249	6683	+	144	Fafd0e260	1	1	yes	S-formylglutathione hydrolase FrmB	UniRef50_C6G9U2	no
+CP028537__CP028537__1__minus	NLOBPE_010	6717	7421	-	234	F37bb35d6	7	2	no	IS6 family IS15DIV transposase	UniRef50_A9QNU6	no
+CP028537__CP028537__1__minus	NLOBPE_011	7541	7741	+	66	F84b34afe	2	2	yes	hypothetical protein		no
+CP028537__CP028537__1__minus	NLOBPE_012	7731	8537	+	268	F2b3c4c65	2	2	yes	KlaC	UniRef50_A0AAE5BBN8	no
+CP028537__CP028537__1__minus	NLOBPE_013	8798	9025	+	75	F3061cd2e	2	2	yes	hypothetical protein	UniRef50_A0A0B1MYQ4	no
+CP028537__CP028537__1__minus	NLOBPE_014	9204	9524	+	106	F5dba79e0	2	2	yes	hypothetical protein	UniRef50_A0A0B1N2L6	no
+CP028537__CP028537__1__minus	NLOBPE_015	10357	10848	+	163	Fe5e4f054	2	2	yes	DUF3085 domain-containing protein	UniRef50_A0AAD1X4B3	no
+CP028537__CP028537__1__minus	NLOBPE_016	10928	11221	+	97	F4585662c	1	1	yes	hypothetical protein	UniRef50_A0A379Y216	no
+CP028537__CP028537__1__minus	NLOBPE_017	11401	11604	+	67	Ffbacaf0c	2	2	yes	Inner membrane protein	UniRef50_A0A0B1N2L9	no
+CP028537__CP028537__1__minus	NLOBPE_018	11659	11883	+	74	Fd93bd5ee	2	2	yes	Phage protein	UniRef50_A0A379Y233	no
+CP028537__CP028537__1__minus	NLOBPE_019	11923	12123	+	66	F12da4958	2	2	yes	hypothetical protein	UniRef50_A0A5B9ARK0	no
+CP028537__CP028537__1__minus	NLOBPE_020	12346	12657	+	103	Fff85f9cb	2	2	yes	Cytoplasmic protein	UniRef50_A0A6Y0XDS7	no
+CP028537__CP028537__1__minus	NLOBPE_021	12711	12887	+	58	F97c373a1	2	2	yes	hypothetical protein	UniRef50_A0A142CPP8	no
+CP028537__CP028537__1__minus	NLOBPE_022	13033	13314	+	93	F2e01a4df	2	2	yes	Integrase	UniRef50_A0A379Y1T7	no
+CP028537__CP028537__1__minus	NLOBPE_023	13531	14136	+	201	F3dc35cda	2	2	yes	Inner membrane protein	UniRef50_A0A0B1N2M3	no
+CP028537__CP028537__1__minus	NLOBPE_025	14567	15907	+	446	F9c5dc466	4	4	no	ISNCY family transposase	UniRef50_A0A927DXE0	no
+CP028537__CP028537__1__minus	NLOBPE_026	16329	17567	+	412	F5dbb1fdc	4	4	no	IS110 family ISEsa2 transposase	UniRef50_A0AAN2FG40	no
+CP028537__CP028537__1__minus	NLOBPE_027	17727	17939	-	70	F61fefa1c	4	4	no	hypothetical protein		no
+CP028537__CP028537__1__minus	NLOBPE_028	18043	18615	+	190	F2bc0d751	4	4	no	Cytochrome b561 bacterial/Ni-hydrogenase domain-containing protein	UniRef50_A0A7H0UCN9	no
+CP028537__CP028537__1__minus	NLOBPE_029	18815	19738	+	307	F97780e40	4	4	no	Cation-efflux pump	UniRef50_A0A2T4UNA1	no
+CP028537__CP028537__1__minus	NLOBPE_030	19782	19976	-	64	F0e2e43c1	4	4	no	hypothetical protein		no
+CP028537__CP028537__1__minus	NLOBPE_031	20001	20240	+	79	Feff4f214	5	5	no	type II toxin-antitoxin system antitoxin RelB	UniRef50_P0C079	no
+CP028537__CP028537__1__minus	NLOBPE_032	20240	20527	+	95	F7b88ed79	5	5	no	type II toxin-antitoxin system mRNA interferase RelE	UniRef50_A0A378B2C3	no
+CP028537__CP028537__1__minus	NLOBPE_033	21245	21391	+	48	F136f251f	2	2	yes	hypothetical protein		no
+CP028537__CP028537__1__minus	NLOBPE_034	21366	21686	-	106	F1f9c9eb5	1	1	yes	hypothetical protein		no
+CP028537__CP028537__1__minus	NLOBPE_035	21759	22082	+	107	Fc07683de	3	3	yes	hypothetical protein	UniRef50_A0A1V0M1Q7	no
+CP028537__CP028537__1__minus	NLOBPE_036	22218	22568	-	116	F5988a3dc	3	3	yes	Phage protein	UniRef50_J7FWB3	no
+CP028537__CP028537__1__minus	NLOBPE_037	22628	23227	-	199	F921c6b29	3	3	yes	DUF551 domain-containing protein	UniRef50_A0A444RF90	no
+CP028537__CP028537__1__minus	NLOBPE_038	23326	24270	-	314	F6fc82cb9	3	3	yes	DUF5417 domain-containing protein	UniRef50_A0A385FZ60	no
+CP028537__CP028537__1__minus	NLOBPE_039	24781	24957	+	58	Ff2376eac	3	3	yes	hypothetical protein		no
+CP028537__CP028537__1__minus	NLOBPE_040	25374	26558	+	394	F139218ae	3	3	yes	DNA-binding protein	UniRef50_A0A6G6AKA9	no
+CP028537__CP028537__1__minus	NLOBPE_041	26624	26905	+	93	F860a94e0	3	3	yes	hypothetical protein		no
+CP028537__CP028537__1__minus	NLOBPE_042	27220	27906	+	228	F2495a3ab	3	3	yes	Inner membrane protein	UniRef50_A0A2P5GH12	no
+CP028537__CP028537__1__minus	NLOBPE_043	28396	28833	+	145	F9bd7e6a6	3	3	yes	hypothetical protein	UniRef50_A0A1S6KR47	no
+CP028537__CP028537__1__minus	NLOBPE_044	28901	29437	+	178	F47031772	3	3	yes	NUDIX hydrolase	UniRef50_A0A626FEC6	no
+CP028537__CP028537__1__minus	NLOBPE_045	29663	30031	+	122	Ffc3aa974	3	3	yes	hypothetical protein	UniRef50_A0A0D0M981	no
+CP028537__CP028537__1__minus	NLOBPE_046	30464	30763	+	99	Fe69c968e	3	3	yes	hypothetical protein		no
+CP028537__CP028537__1__minus	NLOBPE_047	31120	31404	+	94	F7329bc77	3	3	yes	hypothetical protein		no
+CP028537__CP028537__1__minus	NLOBPE_048	31470	31823	+	117	F990ab390	3	3	yes	Baseplate protein	UniRef50_A0A379Y237	no
+CP028537__CP028537__1__minus	NLOBPE_049	32110	32841	-	243	F2163e82a	3	3	yes	NERD domain-containing protein	UniRef50_A0A6G6ALC3	no
+CP028537__CP028537__1__minus	NLOBPE_050	32843	34024	-	393	F7dba99d9	3	3	yes	Protease 4	UniRef50_A0A1X1LKN8	no
+CP028537__CP028537__1__minus	NLOBPE_051	34035	34697	-	220	F8763b724	3	3	yes	DUF4400 domain-containing protein	UniRef50_A0A381KQ03	no
+CP028537__CP028537__1__minus	NLOBPE_052	34684	35793	-	369	F52f89954	3	3	yes	DUF4942 domain-containing protein	UniRef50_V9SHR7	no
+CP028537__CP028537__1__minus	NLOBPE_053	35793	37877	-	694	F258719fc	3	3	yes	Type IV secretion system coupling protein TraD DNA-binding domain-containing protein	UniRef50_A0A5V6MEL9	no
+CP028537__CP028537__1__minus	NLOBPE_054	37877	40357	-	826	Fcf2440c7	3	3	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_001	87	1418	+	443	F352d9946	1	1	yes	arsenite efflux transporter membrane subunit ArsB	UniRef50_A0A520CCY7	no
+LT991956__LT991956__1__plus	HFNGAC_002	1891	2427	-	178	Fd06bac0d	1	1	yes	N-acetyltransferase domain-containing protein	UniRef50_K8P1L2	no
+LT991956__LT991956__1__plus	HFNGAC_003	2552	3517	-	321	F458a7cdc	1	1	yes	AAA+ ATPase domain-containing protein	UniRef50_T0XNW1	no
+LT991956__LT991956__1__plus	HFNGAC_004	3752	3970	+	72	F6e6c8941	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_005	4330	4692	-	120	Faa113be6	1	1	yes	Arsenic metallochaperone ArsD family protein	UniRef50_A0AAP5XR95	no
+LT991956__LT991956__1__plus	HFNGAC_006	4768	5313	-	181	F1906991d	1	1	yes	RNA polymerase sigma factor sigM	UniRef50_A0A291DXE6	no
+LT991956__LT991956__1__plus	HFNGAC_007	5322	6035	-	237	F3aa15478	1	1	yes	NADPH-dependent FMN reductase ArsH	UniRef50_B7J950	no
+LT991956__LT991956__1__plus	HFNGAC_008	6037	6429	-	130	Fa2c21908	1	1	yes	HTH arsR-type domain-containing protein	UniRef50_A0A142B705	no
+LT991956__LT991956__1__plus	HFNGAC_009	6660	6926	+	88	F72133314	1	1	yes	DUF1778 domain-containing protein	UniRef50_A0A291E5R7	no
+LT991956__LT991956__1__plus	HFNGAC_010	6914	7399	+	161	F227fb2d7	1	1	yes	tRNA-acetylating toxin 1	UniRef50_Q8ZL98	no
+LT991956__LT991956__1__plus	HFNGAC_011	8267	8542	-	91	Fae2bd40a	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_012	8721	9209	+	162	F6de3451c	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_013	9413	9835	-	140	F6fd9fc7d	2	2	yes	nickel resistance OB fold protein NcrY	UniRef50_A0A6H2ZUC1	no
+LT991956__LT991956__1__plus	HFNGAC_014	9997	11127	-	376	F96153772	2	2	yes	Ni(II)/Co(II) efflux transporter permease subunit NcrC	UniRef50_P76425	no
+LT991956__LT991956__1__plus	HFNGAC_015	11140	11409	-	89	F3551d07b	2	2	yes	nickel-sensing transcriptional repressor NcrB	UniRef50_A0A1A8TQ72	no
+LT991956__LT991956__1__plus	HFNGAC_016	11515	12813	-	432	Fa014a7cc	2	2	yes	nickel resistance membrane nickel efflux protein NcrA	UniRef50_A0A7Z7LP76	no
+LT991956__LT991956__1__plus	HFNGAC_017	12885	13250	+	121	F47b2798c	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_018	13407	13658	+	83	F25378db6	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_019	14015	14515	+	166	F0290aeba	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_020	14842	15213	-	123	F445297aa	2	2	yes	DUF2946 domain-containing protein	UniRef50_A0A5B8R2V0	no
+LT991956__LT991956__1__plus	HFNGAC_021	15560	16537	+	325	F12d87f81	2	2	yes	Chromate resistance protein	UniRef50_A0A8B6IKD6	no
+LT991956__LT991956__1__plus	HFNGAC_022	16491	17870	+	459	F71d7c59d	1	1	yes	Chromate transporter	UniRef50_G0ADP9	no
+LT991956__LT991956__1__plus	HFNGAC_023	17901	18209	-	102	Fd9b9fb7b	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_024	18213	18437	+	74	Fdc36de03	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_025	18460	18612	+	50	F16906b4e	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_026	18604	19341	-	245	F65436cc7	2	2	yes	HupE/UreJ family protein	UniRef50_A0A2T7UKG1	no
+LT991956__LT991956__1__plus	HFNGAC_027	19490	19756	+	88	F39bf094b	2	2	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_028	20016	20363	-	115	Fd6764eab	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_029	20411	21628	-	405	Fe69936e7	3	3	yes	Integrase catalytic domain-containing protein	UniRef50_A0A8A6WRG3	no
+LT991956__LT991956__1__plus	HFNGAC_030	21700	21858	+	52	F043528ea	2	2	yes	Hok/Gef family protein	UniRef50_M1EXW0	no
+LT991956__LT991956__1__plus	HFNGAC_031	22588	22791	+	67	F656c539b	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_032	22734	23048	+	104	F9c143dd3	1	1	yes	hypothetical protein	UniRef50_A0A348DMN0	no
+LT991956__LT991956__1__plus	HFNGAC_033	23109	23570	+	153	F7bdbca51	1	1	yes	DUF1419 domain-containing protein	UniRef50_A0A0M7JVH9	no
+LT991956__LT991956__1__plus	HFNGAC_034	23658	23858	+	66	F7a12fa6b	1	1	yes	Succinate dehydrogenase flavoprotein subunit	UniRef50_A0A3R8Z640	no
+LT991956__LT991956__1__plus	HFNGAC_035	23899	24690	+	263	F677481b7	1	1	yes	DNA methylase adenine-specific domain-containing protein	UniRef50_A0A348DML9	no
+LT991956__LT991956__1__plus	HFNGAC_036	24732	25067	+	111	Ff0c356e1	1	1	yes	hypothetical protein	UniRef50_A0A0H3CU73	no
+LT991956__LT991956__1__plus	HFNGAC_037	25756	26049	+	97	F1e927029	1	1	yes	hypothetical protein	UniRef50_A0A8I0KQ59	no
+LT991956__LT991956__1__plus	HFNGAC_038	26066	26887	+	273	F8ce699d5	1	1	yes	DUF945 domain-containing protein	UniRef50_G7UNZ3	no
+LT991956__LT991956__1__plus	HFNGAC_039	26916	27389	-	157	Ff586311b	1	1	yes	Lytic transglycosylase	UniRef50_A0A071LQU5	no
+LT991956__LT991956__1__plus	HFNGAC_040	27412	27594	+	60	F3f5c9f85	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_041	27849	28424	+	191	F897c2484	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_042	28457	29143	-	228	F41d298df	1	1	yes	Arc-like DNA binding domain-containing protein	UniRef50_A0A0H3CTC2	no
+LT991956__LT991956__1__plus	HFNGAC_043	29295	29648	+	117	F408a1ab9	1	1	yes	Pilin	UniRef50_A0A9Q4XNT1	no
+LT991956__LT991956__1__plus	HFNGAC_044	29652	29954	+	100	Fde1d7424	1	1	yes	Protein TraL	UniRef50_A0A085FZ23	no
+LT991956__LT991956__1__plus	HFNGAC_045	29960	30541	+	193	F88079c37	1	1	yes	Conjugal transfer protein TraE	UniRef50_A0A455W6P2	no
+LT991956__LT991956__1__plus	HFNGAC_046	30553	31293	+	246	Fa3604e6c	1	1	yes	Type-F conjugative transfer system secretin TraK	UniRef50_A0A2T4XTT8	no
+LT991956__LT991956__1__plus	HFNGAC_047	31290	32693	+	467	Fb3ec8c68	1	1	yes	Conjugal transfer protein TraB	UniRef50_A0AAJ1D298	no
+LT991956__LT991956__1__plus	HFNGAC_048	32802	32948	+	48	F0692c1e1	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_049	32969	33364	+	131	F4b3b1841	1	1	yes	Holin	UniRef50_A0A1S6XY88	no
+LT991956__LT991956__1__plus	HFNGAC_050	33423	33962	+	179	F6fb3fc92	1	1	yes	Type IV conjugative transfer system protein TraV	UniRef50_A0A2N0VUU0	no
+LT991956__LT991956__1__plus	HFNGAC_051	33959	34213	+	84	F369ee4ec	1	1	yes	hypothetical protein	UniRef50_A0A0H3CW23	no
+LT991956__LT991956__1__plus	HFNGAC_052	34210	36819	+	869	Fde44ade7	1	1	yes	Type IV secretion system protein TraC	UniRef50_A0A318NS27	no
+LT991956__LT991956__1__plus	HFNGAC_053	36816	37229	+	137	Fcd75f7ab	1	1	yes	TrbI family plasmid conjugative transfer protein	UniRef50_A0A085FZ17	no
+LT991956__LT991956__1__plus	HFNGAC_054	37226	37861	+	211	F7def7ba1	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_055	37858	38250	+	130	F5338d921	1	1	yes	hypothetical protein		no
+LT991956__LT991956__1__plus	HFNGAC_056	38241	38519	+	92	F76d637e0	1	1	yes	hypothetical protein	UniRef50_W7NGC6	no
+LT991956__LT991956__1__plus	HFNGAC_057	38510	39055	+	181	F5abcf799	1	1	yes	Conjugal transfer protein	UniRef50_A0A8E6L766	no
+LT991956__LT991956__1__plus	HFNGAC_058	39159	39380	+	73	Fcfd9681a	1	1	yes	hypothetical protein	UniRef50_A0A402WM68	no
+LT991956__LT991956__1__plus	HFNGAC_059	39436	39759	+	107	Fd4a14661	1	1	yes	Prophage protein	UniRef50_A0A0H3CUD6	no
+LT991956__LT991956__1__plus	HFNGAC_060	39786	40226	-	146	F13a824c7	1	1	yes	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_001	64	720	+	218	Fe2129e0d	1	1	yes	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_002	753	980	+	75	F57c020cc	1	1	yes	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_003	1746	4166	-	806	F4419568d	1	1	yes	DUF4165 domain-containing protein	UniRef50_A0A330G4L5	no
+MF344582__MF344582__1__minus	NHOFKA_004	4631	5218	-	195	F7506280f	1	1	yes	Morphogenetic protein	UniRef50_A0A0H0JCJ8	no
+MF344582__MF344582__1__minus	NHOFKA_005	5262	5525	-	87	Fb4cd42d1	1	1	yes	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_006	5619	6443	-	274	Fdc7dd493	1	1	yes	Methyltransferase small domain-containing protein	UniRef50_A0A1B8HMR2	no
+MF344582__MF344582__1__minus	NHOFKA_007	6461	7225	-	254	Fc8f6af2c	1	1	yes	hypothetical protein	UniRef50_V9SHU6	no
+MF344582__MF344582__1__minus	NHOFKA_008	7548	8072	+	174	F92dbdde6	1	1	yes	Phage protein	UniRef50_A0AAE4NF41	no
+MF344582__MF344582__1__minus	NHOFKA_009	8176	8607	+	143	F689c422f	1	1	yes	Phage protein	UniRef50_A0A890DDA3	no
+MF344582__MF344582__1__minus	NHOFKA_010	8600	8857	+	85	F10baf52e	1	1	yes	Toxin-antitoxin system HicB family antitoxin	UniRef50_A0A5W3IRQ4	no
+MF344582__MF344582__1__minus	NHOFKA_011	8844	9032	+	62	F7c5811b1	1	1	yes	hypothetical protein	UniRef50_A0A2I5SY74	no
+MF344582__MF344582__1__minus	NHOFKA_012	9065	9316	+	83	F22b55264	1	1	yes	DUF2622 domain-containing protein	UniRef50_A0A2T9HUN9	no
+MF344582__MF344582__1__minus	NHOFKA_013	9516	9791	-	91	Fdfc566d9	1	1	yes	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_014	9864	10232	-	122	Fdb8b4cf4	1	1	yes	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_015	10239	10493	-	84	Ff3eebfdd	1	1	yes	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_016	10919	13309	+	796	F5102f253	1	1	yes	DUF4165 domain-containing protein	UniRef50_A0A3S7L6U7	no
+MF344582__MF344582__1__minus	NHOFKA_017	13393	13545	-	50	Fd83c6f0d	1	1	yes	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_018	13627	13887	-	86	Fe7d931be	1	1	yes	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_019	13907	14782	+	291	Ff89dbdb5	1	1	yes	Zinc-type alcohol dehydrogenase-like protein	UniRef50_A0A1G6U6S6	no
+MF344582__MF344582__1__minus	NHOFKA_020	14828	15577	-	249	F90738331	1	1	yes	Transposase IS4-like domain-containing protein	UniRef50_A0A2H5BRV6	no
+MF344582__MF344582__1__minus	NHOFKA_021	16329	17567	+	412	F5dbb1fdc	4	4	no	IS110 family ISEsa2 transposase	UniRef50_A0AAN2FG40	no
+MF344582__MF344582__1__minus	NHOFKA_022	17727	17939	-	70	F61fefa1c	4	4	no	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_023	18043	18615	+	190	F2bc0d751	4	4	no	Cytochrome b561 bacterial/Ni-hydrogenase domain-containing protein	UniRef50_A0A7H0UCN9	no
+MF344582__MF344582__1__minus	NHOFKA_024	18815	19738	+	307	F97780e40	4	4	no	Cation-efflux pump	UniRef50_A0A2T4UNA1	no
+MF344582__MF344582__1__minus	NHOFKA_025	19782	19976	-	64	F0e2e43c1	4	4	no	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_026	20001	20240	+	79	Feff4f214	5	5	no	type II toxin-antitoxin system antitoxin RelB	UniRef50_P0C079	no
+MF344582__MF344582__1__minus	NHOFKA_027	20240	20527	+	95	F7b88ed79	5	5	no	type II toxin-antitoxin system mRNA interferase RelE	UniRef50_A0A378B2C3	no
+MF344582__MF344582__1__minus	NHOFKA_028	21348	21587	+	79	F74c2a652	2	2	yes	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_029	21759	22082	+	107	Fc07683de	3	3	no	hypothetical protein	UniRef50_A0A1V0M1Q7	no
+MF344582__MF344582__1__minus	NHOFKA_030	22218	22574	-	118	F5988a3dc	3	3	no	Phage protein	UniRef50_J7FWB3	no
+MF344582__MF344582__1__minus	NHOFKA_031	22628	23227	-	199	F921c6b29	3	3	no	DUF551 domain-containing protein	UniRef50_A0A444RF90	no
+MF344582__MF344582__1__minus	NHOFKA_032	23326	24270	-	314	F6fc82cb9	3	3	no	DUF5417 domain-containing protein	UniRef50_A0A385FZ60	no
+MF344582__MF344582__1__minus	NHOFKA_033	24385	24630	-	81	F7df27aed	1	1	yes	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_034	24781	24957	+	58	Ff2376eac	3	3	no	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_035	25374	26558	+	394	F139218ae	3	3	no	DNA-binding protein	UniRef50_A0A6G6AKA9	no
+MF344582__MF344582__1__minus	NHOFKA_036	26624	26905	+	93	F860a94e0	3	3	no	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_037	27220	27921	+	233	F2495a3ab	3	3	no	Inner membrane protein	UniRef50_A0A2P5GH12	no
+MF344582__MF344582__1__minus	NHOFKA_038	28056	28352	+	98	F2644a454	1	1	yes	hypothetical protein	UniRef50_A0A0B1MXP0	no
+MF344582__MF344582__1__minus	NHOFKA_039	28397	28834	+	145	F9bd7e6a6	3	3	no	hypothetical protein	UniRef50_A0A1S6KR47	no
+MF344582__MF344582__1__minus	NHOFKA_040	28902	29438	+	178	F47031772	3	3	no	NUDIX hydrolase	UniRef50_A0A626FEC6	no
+MF344582__MF344582__1__minus	NHOFKA_041	29664	30032	+	122	Ffc3aa974	3	3	no	hypothetical protein	UniRef50_A0A0D0M981	no
+MF344582__MF344582__1__minus	NHOFKA_042	30465	30764	+	99	Fe69c968e	3	3	no	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_043	31121	31405	+	94	F7329bc77	3	3	no	hypothetical protein		no
+MF344582__MF344582__1__minus	NHOFKA_044	31471	31824	+	117	F990ab390	3	3	no	Baseplate protein	UniRef50_A0A379Y237	no
+MF344582__MF344582__1__minus	NHOFKA_045	32111	32842	-	243	F2163e82a	3	3	no	NERD domain-containing protein	UniRef50_A0A6G6ALC3	no
+MF344582__MF344582__1__minus	NHOFKA_046	32844	34025	-	393	F7dba99d9	3	3	no	Protease 4	UniRef50_A0A1X1LKN8	no
+MF344582__MF344582__1__minus	NHOFKA_047	34036	34698	-	220	F8763b724	3	3	no	DUF4400 domain-containing protein	UniRef50_A0A381KQ03	no
+MF344582__MF344582__1__minus	NHOFKA_048	34685	35794	-	369	F52f89954	3	3	no	DUF4942 domain-containing protein	UniRef50_V9SHR7	no
+MF344582__MF344582__1__minus	NHOFKA_049	35794	37878	-	694	F258719fc	3	3	no	Type IV secretion system coupling protein TraD DNA-binding domain-containing protein	UniRef50_A0A5V6MEL9	no
+MF344582__MF344582__1__minus	NHOFKA_050	37878	40358	-	826	Fcf2440c7	3	3	no	hypothetical protein		no

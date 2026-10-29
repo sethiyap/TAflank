@@ -194,6 +194,10 @@ process BAKTA {
     cpus 4
     input:  path locus
     output: tuple val(locus.baseName), path("${locus.baseName}.gff3"), emit: gff
+            path "${locus.baseName}.faa",                            emit: faa
+    // .faa is what Stage 3 clusters. Without it declared here,
+    // publishDir copies only the GFF3 and the proteins die with the
+    // work directory -- which on Gadi is \$PBS_JOBFS, gone at job end.
     when:   params.run_bakta
     script:
     """
