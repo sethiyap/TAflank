@@ -424,23 +424,52 @@ qsub -v BAIT=/g/data/rg42/TAflank/anchors/relBE_seed.fa,DB=/scratch/rg42/ps1744/
      env/gadi_run.sh
 ```
 
-### If you change the bait, change two other things with it
+### If you change the bait, change `ENDS` with it
 
-`BAIT` on its own is not enough, and the pipeline will not warn you:
+`ENDS` names the IS elements that bracket the core, and that is what
+COMPLETE / DECAYED / HALF-CORE / NO CORE is measured against. `ISEsa1,ISEsa2`
+belong to the **relBE metal-resistance lineage**. Leave them in place for a
+different bait and every locus comes back NO CORE — not because the vehicle is
+absent, but because you asked about the wrong vehicle, and nothing warns you.
 
-| variable | default | why it must follow the bait |
-|---|---|---|
-| `SUBREGIONS` | `relB:1-240,relE:240-527` | names the parts of the bait so per-gene coverage is reported, and so a half hit can be called ORPHAN-ANTITOXIN or ORPHAN-TOXIN rather than just "short". Coordinates that describe relB and relE are meaningless on another gene. Use `SUBREGIONS=none` for a bait with no named parts. |
-| `ENDS` | `ISEsa1,ISEsa2` | the IS elements that bracket the core, which is what COMPLETE / DECAYED / HALF-CORE / NO CORE is measured against. These two belong to the **relBE metal-resistance lineage**. Leave them in place for a different bait and every locus comes back NO CORE — not because the vehicle is absent, but because you asked about the wrong vehicle. |
+It is load-bearing, not cosmetic. On the current seven loci the default gives
+3 COMPLETE / 1 DECAYED / 2 HALF-CORE / 1 NO CORE; `ENDS=IS26,IS903B` on the
+very same data gives 1 COMPLETE / 3 HALF-CORE / 3 NO CORE.
 
 ```bash
-qsub -v BAIT=/g/data/rg42/TAflank/anchors/parDE.fa,SUBREGIONS=parD:1-250,ENDS=IS26 \
+qsub -v BAIT=/g/data/rg42/TAflank/anchors/parDE.fa,ENDS=IS26 env/gadi_run.sh
+```
+
+### `SUBREGIONS` is optional — you do not have to supply coordinates
+
+It cannot change what is filtered, for three independent reasons:
+
+1. `FULL` and `PARALOGUE` are decided **before** subregions are consulted, so
+   subregions can never alter either call;
+2. `qcov >= 95` already excludes any single-gene hit anyway — relB alone is
+   240 bp of a 527 bp bait, i.e. 45% coverage;
+3. `tier_a=FULL` then drops `ORPHAN_*` and `PARTIAL` **identically**, so naming
+   them differently changes nothing downstream.
+
+What it adds is two reporting columns, `cov_relB` and `cov_relE`. On the one
+non-FULL hit in the 16 records they read `relB 0.8%, relE 90.6%` — a bare
+relE-family toxin with no antitoxin partner, which is the RelE/ParE superfamily
+background confirmed rather than assumed. Useful to read; never decisive.
+
+Omit it, or set `SUBREGIONS=none`, and nothing breaks:
+
+```bash
+qsub -v BAIT=/g/data/rg42/TAflank/anchors/parDE.fa,SUBREGIONS=none,ENDS=IS26 \
      env/gadi_run.sh
 ```
 
-`ENDS` is load-bearing, not cosmetic. On the current seven loci, the default
-gives 3 COMPLETE / 1 DECAYED / 2 HALF-CORE / 1 NO CORE; `ENDS=IS26,IS903B` on
-the very same data gives 1 COMPLETE / 3 HALF-CORE / 3 NO CORE.
+Name the parts only if you intend to run `TIER=all` and study half hits, where
+the label becomes `ORPHAN_PARD` / `ORPHAN_PARE` instead of a flat `PARTIAL`:
+
+```bash
+qsub -v BAIT=/path/parDE.fa,SUBREGIONS=parD:1-250,parE:250-550,TIER=all,ENDS=IS26 \
+     env/gadi_run.sh
+```
 
 ### See all the settings
 

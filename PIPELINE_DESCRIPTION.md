@@ -691,15 +691,28 @@ qsub -v BAIT=/g/data/rg42/TAflank/anchors/relBE_seed.fa env/gadi_run.sh
 qsub -v BAIT=/path/parDE.fa,SUBREGIONS=parD:1-250,ENDS=IS26 env/gadi_run.sh
 ```
 
-`BAIT` alone is not enough. `SUBREGIONS` names the parts of the bait, so a half
-hit resolves to ORPHAN-ANTITOXIN or ORPHAN-TOXIN instead of merely "short";
-`relB:1-240,relE:240-527` is meaningless on another gene (`none` for a bait with
-no named parts). `ENDS` names the IS elements that bracket the core and so
-decides COMPLETE / DECAYED / HALF-CORE / NO CORE — `ISEsa1,ISEsa2` is specific
+`ENDS` must follow the bait. It names the IS elements that bracket the core and
+so decides COMPLETE / DECAYED / HALF-CORE / NO CORE; `ISEsa1,ISEsa2` is specific
 to the relBE metal-resistance lineage, and leaving it in place for a different
-bait returns NO CORE everywhere. It is load-bearing: on the seven plasmid loci
-the default gives 3/1/2/1 while `ENDS=IS26,IS903B` gives 1 COMPLETE /
-3 HALF-CORE / 3 NO CORE from identical input.
+bait returns NO CORE everywhere, silently. It is load-bearing: on the seven
+plasmid loci the default gives 3/1/2/1 while `ENDS=IS26,IS903B` gives
+1 COMPLETE / 3 HALF-CORE / 3 NO CORE from identical input.
+
+**`SUBREGIONS` is optional and cannot change what is filtered**, for three
+independent reasons: `FULL` and `PARALOGUE` are decided before subregions are
+consulted; `qcov >= 95` already excludes any single-gene hit (relB alone covers
+45% of the 527 bp bait); and `tier_a=FULL` then drops `ORPHAN_*` and `PARTIAL`
+alike. All it adds is `cov_<part>` reporting columns — on the one non-FULL hit
+in the 16 records, `cov_relB 0.8 / cov_relE 90.6`, which confirms the RelE/ParE
+superfamily background rather than leaving it assumed. It earns its keep only
+under `TIER=all`, where a half hit resolves to `ORPHAN_<part>` instead of a flat
+`PARTIAL`. `SUBREGIONS=none` is a legitimate way to run the pipeline.
+
+Note that `qcov` is per-HSP: there is no grouping by subject accession, so a
+bait whose parts are split by an insertion yields two low-coverage HSPs and both
+are dropped at `TIER=FULL` even though both parts are present. relBE is largely
+immune (its ORFs overlap by 1 bp) but this is a real limitation of the current
+Tier A, and one of the reasons `TIER=all` exists.
 
 The job echoes every setting before it starts work, and exits immediately if
 `BAIT` is missing or `DB` is not a BLAST nucleotide database.

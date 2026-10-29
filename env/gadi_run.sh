@@ -31,14 +31,20 @@
 # WHAT TO SEARCH WITH (the query / bait):
 #   qsub -v BAIT=/g/data/rg42/TAflank/anchors/relBE_seed.fa env/gadi_run.sh
 #
-#   A different bait almost always needs SUBREGIONS and ENDS changed too:
-#   qsub -v BAIT=/path/parDE.fa,SUBREGIONS=parD:1-250,ENDS=IS26 env/gadi_run.sh
+#   A different bait needs ENDS changed with it:
+#   qsub -v BAIT=/path/parDE.fa,ENDS=IS26 env/gadi_run.sh
 #
-#   SUBREGIONS names the parts of the bait, so per-gene coverage is reported
-#   (use SUBREGIONS=none for a bait with no named parts). ENDS names the IS
-#   elements that bracket the core; ISEsa1/ISEsa2 belong to the relBE
-#   metal-resistance lineage, so leaving them in place for another bait makes
-#   every locus report NO CORE.
+#   ENDS names the IS elements that bracket the core, so it decides
+#   COMPLETE / DECAYED / HALF-CORE / NO CORE. ISEsa1/ISEsa2 are specific to the
+#   relBE metal-resistance lineage; left in place for another bait, every locus
+#   reports NO CORE and nothing warns you.
+#
+#   SUBREGIONS is OPTIONAL and cannot change what is filtered: FULL and
+#   PARALOGUE are decided before it is consulted, qcov>=95 already excludes
+#   single-gene hits, and tier_a=FULL drops ORPHAN_* and PARTIAL alike. It only
+#   adds cov_<part> reporting columns, and only earns its keep with TIER=all,
+#   where a half hit resolves to ORPHAN_<part> instead of a flat PARTIAL.
+#   SUBREGIONS=none is a perfectly good way to run this.
 
 set -euo pipefail
 
