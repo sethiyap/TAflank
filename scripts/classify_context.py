@@ -31,12 +31,18 @@ def read_tsv(p):
 
 
 def vehicle_class(is_rows, ends=('ISEsa1', 'ISEsa2')):
-    """COMPLETE / DECAYED / HALF-CORE / NO CORE, following PIPELINE.md F3."""
-    present, interrupted = {}, set()
+    """COMPLETE / DECAYED / HALF-CORE / NO CORE, following PIPELINE.md F3.
+
+    Returns (class, ends_present, interrupted, edge_clipped).
+    """
+    present, interrupted, clipped = {}, set(), {}
     for h in is_rows:
         e = h['element']
         if e not in ends:
             continue
+        cov_h = float(h.get('query_cov') or 0)
+        if cov_h >= clipped.get(e, (-1.0, False))[0]:
+            clipped[e] = (cov_h, h.get('clip_cause') == 'window')
         # BEST coverage per element, not per HSP. An element split in two by a
         # later insertion contributes a large piece and a small one; judging on
         # the small one alone would call a 96%-covered ISEsa1 "decayed" purely
@@ -46,15 +52,24 @@ def vehicle_class(is_rows, ends=('ISEsa1', 'ISEsa2')):
         if h.get('nested_in') in ends:
             interrupted.add(h['nested_in'])
 
-    degraded = {e for e, cov in present.items() if cov < 90}
+    # An end whose best HSP was cut by the window edge has an UNKNOWN true
+    # coverage -- the rest of the element lies outside what we extracted. Low
+    # coverage there is not decay, so it must not drive the DECAYED call. The
+    # element is reported as edge_clipped instead: a prompt to widen the window,
+    # not a conclusion about the vehicle.
+    edge_clipped = {e for e, (_, c) in clipped.items() if c}
+    degraded = {e for e, cov in present.items()
+                if cov < 90 and e not in edge_clipped}
 
+    ec = ','.join(sorted(edge_clipped))
     n = len(present)
     if n == 0:
-        return 'NO CORE', '', ''
+        return 'NO CORE', '', '', ec
     if n == 1:
-        return 'HALF-CORE', next(iter(present)), ';'.join(sorted(interrupted))
+        return ('HALF-CORE', next(iter(present)),
+                ';'.join(sorted(interrupted)), ec)
     cls = 'DECAYED' if degraded else 'COMPLETE'
-    return cls, ','.join(sorted(present)), ';'.join(sorted(interrupted))
+    return cls, ','.join(sorted(present)), ';'.join(sorted(interrupted)), ec
 
 
 def main():
@@ -75,15 +90,17 @@ def main():
             cargo_by.setdefault(r['locus_id'], []).append(r)
 
     hdr = ['locus_id', 'accession', 'replicon_type', 'vehicle_class',
-           'vehicle_ends', 'vehicle_interrupted', 'n_is', 'n_is_fragment',
-           'cargo_families', 'has_czc', 'has_cytb', 'has_hok_gef',
+           'vehicle_ends', 'vehicle_interrupted', 'vehicle_edge_clipped',
+           'n_is', 'n_is_fragment',
+           'n_is_fragment_real', 'cargo_families',
+           'has_czc', 'has_cytb', 'has_hok_gef',
            'czc_offset', 'hok_gef_offset', 'metal_module', 'note']
     rows = []
     for L in loci:
         lid = L['locus_id']
         ish = is_by.get(lid, [])
         car = cargo_by.get(lid, [])
-        vcls, vends, vint = vehicle_class(ish)
+        vcls, vends, vint, vclip = vehicle_class(ish)
         fams = sorted({c['family'] for c in car})
         off = {}
         for c in car:
@@ -91,8 +108,12 @@ def main():
         czc, cytb = 'czc' in fams, 'cytb' in fams
         rows.append([
             lid, L['accession'], L.get('replicon_type', ''),
-            vcls, vends, vint,
+            vcls, vends, vint, vclip or '-',
             len(ish), sum(1 for h in ish if h.get('is_fragment') == 'yes'),
+            # fragments the window edge cut are excluded: they say nothing
+            # about decay, only about where we stopped looking
+            sum(1 for h in ish if h.get('is_fragment') == 'yes'
+                and h.get('clip_cause') != 'window'),
             ','.join(fams) or '-',
             'yes' if czc else 'no', 'yes' if cytb else 'no',
             'yes' if 'hok_gef' in fams else 'no',
@@ -107,14 +128,21 @@ def main():
         for r in rows:
             fh.write('\t'.join(str(v) for v in r) + '\n')
 
+    # index by NAME -- these were positional and silently went stale when
+    # columns were inserted ahead of them
+    ix = {k: i for i, k in enumerate(hdr)}
     c = {}
     for r in rows:
-        c[r[3]] = c.get(r[3], 0) + 1
+        c[r[ix['vehicle_class']]] = c.get(r[ix['vehicle_class']], 0) + 1
     print(f'{len(rows)} loci -> {a.out}')
     for k in sorted(c):
         print(f'  {k:<11} {c[k]}')
-    m = sum(1 for r in rows if r[14] == 'yes')
+    m = sum(1 for r in rows if r[ix['metal_module']] == 'yes')
     print(f'  with the czc+cytb metal module: {m}/{len(rows)}')
+    nclip = sum(1 for r in rows if r[ix['vehicle_edge_clipped']] != '-')
+    if nclip:
+        print(f'  NOTE {nclip} locus/loci have a vehicle end cut by the window '
+              f'edge -- coverage there is unknown, not decayed')
 
 
 if __name__ == '__main__':

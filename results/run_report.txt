@@ -1,6 +1,6 @@
 TAflank run report
 ============================================================
-  generated : 2026-10-28 16:04
+  generated : 2026-10-29 11:54
   results   : /Users/pooja/Documents/mobile_genetic_elements/results
   parameters: tier_a=FULL replicon_type=plasmid min_flank=0 flank=20000
 
@@ -29,6 +29,8 @@ MGE LAYER  (ISfinder, no length cutoff)
     complete                                     32  
     partial                                       1  
     fragment                                     12  
+    of which cut by window edge                   2  
+    fragments usable as remnants                 10  
   distinct elements                              24  
   nesting events                                  1  
   loci with ISEsa1                                6  

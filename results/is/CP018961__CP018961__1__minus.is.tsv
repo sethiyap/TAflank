@@ -1,10 +1,10 @@
-locus_id	element	family	group	win_start	win_end	length	strand	pident	query_cov	cov_class	is_fragment	offset_from_bait	sub_start	sub_end	slen	nested_in	interrupts	evalue	bitscore
-CP018961__CP018961__1__minus	ISEc41	IS200/IS605	IS605	1485	1699	215	+	78.14	11.7	fragment	yes	-18516	72	286	1841			3.06e-42	177.0
-CP018961__CP018961__1__minus	ISKpn41	IS200/IS605	IS1341	1700	2370	671	+	94.784	47.1	fragment	yes	-18301	756	1426	1426			0.0	1053.0
-CP018961__CP018961__1__minus	ISKpn28	IS481	unknown	8322	9417	1096	-	100.0	100.0	complete	no	-11679	1	1096	1096			0.0	1977.0
-CP018961__CP018961__1__minus	ISEsa1	ISNCY	IS1202	9447	10986	1540	+	91.364	95.7	complete	no	-10554	1	1540	1609			0.0	2178.0
-CP018961__CP018961__1__minus	ISKpn21	ISNCY	IS1202	10984	13261	2278	-	100.0	100.0	complete	no	-9017	1	2278	2278	ISEsa1	ISEsa1	0.0	4109.0
-CP018961__CP018961__1__minus	ISEsa1	ISNCY	IS1202	13262	13325	64	+	96.875	4.0	fragment	yes	-6739	1533	1596	1609			1.30e-21	107.0
-CP018961__CP018961__1__minus	ISEsa2	IS110	unknown	13326	14817	1493	+	94.508	100.0	complete	no	-6675	1	1493	1493			0.0	2320.0
-CP018961__CP018961__1__minus	ISEcp1	IS1380	unknown	16041	17696	1656	+	100.0	100.0	complete	no	-3960	1	1656	1656			0.0	2987.0
-CP018961__CP018961__1__minus	ISEcp1	IS1380	unknown	26029	27684	1656	+	100.0	100.0	complete	no	6028	1	1656	1656			0.0	2987.0
+locus_id	element	family	group	win_start	win_end	length	strand	pident	query_cov	cov_class	is_fragment	clipped_at_window_edge	clip_cause	clipped_missing_bp	offset_from_bait	sub_start	sub_end	slen	nested_in	interrupts	evalue	bitscore
+CP018961__CP018961__1__minus	ISEc41	IS200/IS605	IS605	1485	1699	215	+	78.14	11.7	fragment	yes	no	-	0	-18516	72	286	1841			3.06e-42	177.0
+CP018961__CP018961__1__minus	ISKpn41	IS200/IS605	IS1341	1700	2370	671	+	94.784	47.1	fragment	yes	no	-	0	-18301	756	1426	1426			0.0	1053.0
+CP018961__CP018961__1__minus	ISKpn28	IS481	unknown	8322	9417	1096	-	100.0	100.0	complete	no	no	-	0	-11679	1	1096	1096			0.0	1977.0
+CP018961__CP018961__1__minus	ISEsa1	ISNCY	IS1202	9447	10986	1540	+	91.364	95.7	complete	no	no	-	0	-10554	1	1540	1609			0.0	2178.0
+CP018961__CP018961__1__minus	ISKpn21	ISNCY	IS1202	10984	13261	2278	-	100.0	100.0	complete	no	no	-	0	-9017	1	2278	2278	ISEsa1	ISEsa1	0.0	4109.0
+CP018961__CP018961__1__minus	ISEsa1	ISNCY	IS1202	13262	13325	64	+	96.875	4.0	fragment	yes	no	-	0	-6739	1533	1596	1609			1.30e-21	107.0
+CP018961__CP018961__1__minus	ISEsa2	IS110	unknown	13326	14817	1493	+	94.508	100.0	complete	no	no	-	0	-6675	1	1493	1493			0.0	2320.0
+CP018961__CP018961__1__minus	ISEcp1	IS1380	unknown	16041	17696	1656	+	100.0	100.0	complete	no	no	-	0	-3960	1	1656	1656			0.0	2987.0
+CP018961__CP018961__1__minus	ISEcp1	IS1380	unknown	26029	27684	1656	+	100.0	100.0	complete	no	no	-	0	6028	1	1656	1656			0.0	2987.0

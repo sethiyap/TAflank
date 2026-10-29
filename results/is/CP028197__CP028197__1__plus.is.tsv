@@ -1,7 +1,7 @@
-locus_id	element	family	group	win_start	win_end	length	strand	pident	query_cov	cov_class	is_fragment	offset_from_bait	sub_start	sub_end	slen	nested_in	interrupts	evalue	bitscore
-CP028197__CP028197__1__plus	IS4321R	IS110	IS1111	1	163	163	+	99.387	12.3	fragment	yes	-20000	1164	1326	1326			1.93e-76	290.0
-CP028197__CP028197__1__plus	ISVsa3	IS91	unknown	1963	2939	977	-	100.0	100.0	complete	no	-18038	1	977	977			0.0	1763.0
-CP028197__CP028197__1__plus	IS26	IS6	unknown	5218	6037	820	-	100.0	100.0	complete	no	-14783	1	820	820			0.0	1480.0
-CP028197__CP028197__1__plus	ISKpn8	IS3	IS150	12976	14418	1443	+	100.0	100.0	complete	no	-7025	1	1443	1443			0.0	2603.0
-CP028197__CP028197__1__plus	ISEsa1	ISNCY	IS1202	14507	16102	1596	+	91.667	99.2	complete	no	-5494	1	1596	1609			0.0	2279.0
-CP028197__CP028197__1__plus	ISEsa2	IS110	unknown	16103	17595	1493	+	100.0	100.0	complete	no	-3898	1	1493	1493			0.0	2693.0
+locus_id	element	family	group	win_start	win_end	length	strand	pident	query_cov	cov_class	is_fragment	clipped_at_window_edge	clip_cause	clipped_missing_bp	offset_from_bait	sub_start	sub_end	slen	nested_in	interrupts	evalue	bitscore
+CP028197__CP028197__1__plus	IS4321R	IS110	IS1111	1	163	163	+	99.387	12.3	fragment	yes	left	window	1163	-20000	1164	1326	1326			1.93e-76	290.0
+CP028197__CP028197__1__plus	ISVsa3	IS91	unknown	1963	2939	977	-	100.0	100.0	complete	no	no	-	0	-18038	1	977	977			0.0	1763.0
+CP028197__CP028197__1__plus	IS26	IS6	unknown	5218	6037	820	-	100.0	100.0	complete	no	no	-	0	-14783	1	820	820			0.0	1480.0
+CP028197__CP028197__1__plus	ISKpn8	IS3	IS150	12976	14418	1443	+	100.0	100.0	complete	no	no	-	0	-7025	1	1443	1443			0.0	2603.0
+CP028197__CP028197__1__plus	ISEsa1	ISNCY	IS1202	14507	16102	1596	+	91.667	99.2	complete	no	no	-	0	-5494	1	1596	1609			0.0	2279.0
+CP028197__CP028197__1__plus	ISEsa2	IS110	unknown	16103	17595	1493	+	100.0	100.0	complete	no	no	-	0	-3898	1	1493	1493			0.0	2693.0

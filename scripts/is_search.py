@@ -13,6 +13,24 @@ Tiling uses TOLERANCE=30, never 0. PIPELINE.md records a real incident where a
 3 bp overlap at zero tolerance discarded a 1,540 bp ISEsa1 alignment, making a
 near-complete element look like a bare stub and inverting the biological
 reading. Adjacent elements legitimately share a few bases at TSDs.
+
+A low query_cov has two unrelated causes and the Stage 5 test only cares about
+one of them. An element can be a genuine decayed remnant sitting in open DNA,
+or it can be whole in the real replicon and merely sliced by the edge of the
++/-20 kb window we chose. Both come out of blastn as `is_fragment=yes`. Counting
+them together would put phantom remnants at exactly +/-20000 in the ISEsa1
+offset distribution -- the one plot the ancestral-vehicle conclusion rests on.
+So edge contact is recorded explicitly, with the two causes kept apart:
+
+  clipped_at_window_edge  no | left | right | both
+  clip_cause              -  | window   (we cut it: discount as evidence)
+                             | replicon (the replicon/contig truly ends here:
+                                         real truncation, a signal per CLAUDE.md)
+                             | mixed    (one of each)
+  clipped_missing_bp      how much of the element lies beyond the edge
+
+Nothing is filtered. `is_fragment` keeps its plain meaning (query_cov < 50) and
+the new columns say whether that number can be read as decay.
 """
 
 import argparse, os, re, subprocess, sys
@@ -28,6 +46,12 @@ def hdr_field(path, key, default=None):
         h = fh.readline()
     m = re.search(rf'{key}=(\S+)', h)
     return m.group(1) if m else default
+
+
+def seq_len(path):
+    with open(path) as fh:
+        fh.readline()                      # header
+        return sum(len(l.strip()) for l in fh)
 
 
 def main():
@@ -52,6 +76,10 @@ def main():
     lid = os.path.basename(a.locus).rsplit('.', 1)[0]
     bait = hdr_field(a.locus, 'bait', '1-1')
     bait_start = int(bait.split('-')[0])
+    win_len = seq_len(a.locus)
+    # post-reorientation, so truncated_up is the LEFT edge of this FASTA
+    trunc_left = hdr_field(a.locus, 'truncated_up', 'no') == 'yes'
+    trunc_right = hdr_field(a.locus, 'truncated_dn', 'no') == 'yes'
 
     cmd = [resolve('blastn', a.blast_bin),
            '-query', a.locus, '-db', a.db, '-task', 'blastn',
@@ -108,6 +136,31 @@ def main():
         h['is_fragment'] = 'yes' if cov < 50 else 'no'
         h['offset_from_bait'] = h['win_start'] - bait_start
 
+    # ---- window-edge clipping ----
+    # An alignment touching an edge is only CLIPPED if part of the subject is
+    # left unaccounted for on that same side -- i.e. the element carries on past
+    # where we stopped looking. Which subject end that is depends on strand:
+    # on '-' the subject runs backwards relative to the window.
+    for h in kept:
+        if h['strand'] == '+':
+            miss_l, miss_r = h['sub_start'] - 1, h['slen'] - h['sub_end']
+        else:
+            miss_l, miss_r = h['slen'] - h['sub_end'], h['sub_start'] - 1
+        sides, causes, missing = [], [], 0
+        if h['win_start'] <= 1 and miss_l > 0:
+            sides.append('left')
+            causes.append('replicon' if trunc_left else 'window')
+            missing += miss_l
+        if h['win_end'] >= win_len and miss_r > 0:
+            sides.append('right')
+            causes.append('replicon' if trunc_right else 'window')
+            missing += miss_r
+        h['clipped_at_window_edge'] = ('both' if len(sides) == 2
+                                       else sides[0] if sides else 'no')
+        h['clip_cause'] = ('-' if not causes else
+                           causes[0] if len(set(causes)) == 1 else 'mixed')
+        h['clipped_missing_bp'] = missing
+
     # ---- nesting: element B lies inside the window span of element A, where A
     # survives as two HSPs whose SUBJECT ranges are near-contiguous ----
     by_elem = {}
@@ -146,8 +199,9 @@ def main():
 
     cols = ['locus_id', 'element', 'family', 'group', 'win_start', 'win_end',
             'length', 'strand', 'pident', 'query_cov', 'cov_class',
-            'is_fragment', 'offset_from_bait', 'sub_start', 'sub_end', 'slen',
-            'nested_in', 'interrupts', 'evalue', 'bitscore']
+            'is_fragment', 'clipped_at_window_edge', 'clip_cause',
+            'clipped_missing_bp', 'offset_from_bait', 'sub_start', 'sub_end',
+            'slen', 'nested_in', 'interrupts', 'evalue', 'bitscore']
     os.makedirs(os.path.dirname(a.out) or '.', exist_ok=True)
     with open(a.out, 'w') as fh:
         fh.write('\t'.join(cols) + '\n')
@@ -156,8 +210,11 @@ def main():
             fh.write('\t'.join(str(h[c]) for c in cols) + '\n')
 
     nf = sum(1 for h in kept if h['is_fragment'] == 'yes')
+    nclip = sum(1 for h in kept
+                if h['is_fragment'] == 'yes' and h['clip_cause'] == 'window')
     print(f'{lid}: {len(hsps)} HSPs -> {len(kept)} tiled '
-          f'({nf} fragment) -> {a.out}')
+          f'({nf} fragment, of which {nclip} cut by the window edge; '
+          f'{nf - nclip} usable as remnants) -> {a.out}')
 
 
 if __name__ == '__main__':

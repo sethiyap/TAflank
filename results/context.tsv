@@ -1,8 +1,8 @@
-locus_id	accession	replicon_type	vehicle_class	vehicle_ends	vehicle_interrupted	n_is	n_is_fragment	cargo_families	has_czc	has_cytb	has_hok_gef	czc_offset	hok_gef_offset	metal_module	note
-CP006642__CP006642__1__minus	CP006642	plasmid	NO CORE			13	4	ars,intI,relB,relE,sil	no	no	no			no	
-CP018961__CP018961__1__minus	CP018961	plasmid	COMPLETE	ISEsa1,ISEsa2	ISEsa1	9	3	cytb,czc,hok_gef,qnr,relB,relE,tra	yes	yes	yes	-1184	600	yes	
-CP023893__CP023893__1__plus	CP023893	plasmid	HALF-CORE	ISEsa1		5	1	hok_gef,relB,relE,tra	no	no	yes		1697	no	
-CP028197__CP028197__1__plus	CP028197	plasmid	COMPLETE	ISEsa1,ISEsa2		6	1	cytb,czc,hok_gef,relB,relE,tra	yes	yes	yes	-1184	596	yes	
-CP028537__CP028537__1__minus	CP028537	plasmid	COMPLETE	ISEsa1,ISEsa2		5	1	cytb,czc,hok_gef,relB,relE,tra	yes	yes	yes	-1184	596	yes	
-LT991956__LT991956__1__plus	LT991956	plasmid	HALF-CORE	ISEsa1		3	1	ars,hok_gef,relB,relE,tra	no	no	yes		1697	no	
-MF344582__MF344582__1__minus	MF344582	plasmid	DECAYED	ISEsa1,ISEsa2		4	1	cytb,czc,hok_gef,relB,relE,tra	yes	yes	yes	-1184	596	yes	
+locus_id	accession	replicon_type	vehicle_class	vehicle_ends	vehicle_interrupted	vehicle_edge_clipped	n_is	n_is_fragment	n_is_fragment_real	cargo_families	has_czc	has_cytb	has_hok_gef	czc_offset	hok_gef_offset	metal_module	note
+CP006642__CP006642__1__minus	CP006642	plasmid	NO CORE			-	13	4	4	ars,intI,relB,relE,sil	no	no	no			no	
+CP018961__CP018961__1__minus	CP018961	plasmid	COMPLETE	ISEsa1,ISEsa2	ISEsa1	-	9	3	3	cytb,czc,hok_gef,qnr,relB,relE,tra	yes	yes	yes	-1184	600	yes	
+CP023893__CP023893__1__plus	CP023893	plasmid	HALF-CORE	ISEsa1		-	5	1	1	hok_gef,relB,relE,tra	no	no	yes		1697	no	
+CP028197__CP028197__1__plus	CP028197	plasmid	COMPLETE	ISEsa1,ISEsa2		-	6	1	0	cytb,czc,hok_gef,relB,relE,tra	yes	yes	yes	-1184	596	yes	
+CP028537__CP028537__1__minus	CP028537	plasmid	COMPLETE	ISEsa1,ISEsa2		-	5	1	0	cytb,czc,hok_gef,relB,relE,tra	yes	yes	yes	-1184	596	yes	
+LT991956__LT991956__1__plus	LT991956	plasmid	HALF-CORE	ISEsa1		-	3	1	1	ars,hok_gef,relB,relE,tra	no	no	yes		1697	no	
+MF344582__MF344582__1__minus	MF344582	plasmid	DECAYED	ISEsa1,ISEsa2		-	4	1	1	cytb,czc,hok_gef,relB,relE,tra	yes	yes	yes	-1184	596	yes	

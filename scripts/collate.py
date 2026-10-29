@@ -84,8 +84,8 @@ def main():
            'replicon_name', 'plasmidfinder_replicons', 'replicon_len',
            'topology', 'window_len', 'flank_up', 'flank_dn',
            'truncated_up', 'truncated_dn', 'n_is', 'n_is_complete',
-           'n_is_fragment', 'is_elements', 'has_ISEsa1', 'has_ISEsa2',
-           'nested_events']
+           'n_is_fragment', 'n_is_fragment_clipped', 'n_is_fragment_real',
+           'is_elements', 'has_ISEsa1', 'has_ISEsa2', 'nested_events']
     out = []
     for L in loci:
         h = is_by_locus.get(L['locus_id'], [])
@@ -100,6 +100,12 @@ def main():
             len(h),
             sum(1 for x in h if x['cov_class'] == 'complete'),
             sum(1 for x in h if x['is_fragment'] == 'yes'),
+            # a fragment the window edge cut is not evidence of decay; the
+            # Stage 5 offset plot must count only the _real column
+            sum(1 for x in h if x['is_fragment'] == 'yes'
+                and x.get('clip_cause') == 'window'),
+            sum(1 for x in h if x['is_fragment'] == 'yes'
+                and x.get('clip_cause') != 'window'),
             ','.join(els) or '-',
             'yes' if 'ISEsa1' in els else 'no',
             'yes' if 'ISEsa2' in els else 'no',
@@ -112,10 +118,15 @@ def main():
         for r in out:
             fh.write('\t'.join(str(v) for v in r) + '\n')
 
-    missing = [r[0] for r in out if r[13] == 0]
+    ix = {k: i for i, k in enumerate(hdr)}
+    missing = [r[ix['locus_id']] for r in out if r[ix['n_is']] == 0]
+    clipped = sum(r[ix['n_is_fragment_clipped']] for r in out)
     print(f'{len(is_rows)} IS calls across {len(is_by_locus)} loci -> {a.out_mge}')
     print(f'{len(pf_rows)} replicon hits -> {a.out_rep}')
     print(f'{len(out)} loci -> {a.out_summary}')
+    if clipped:
+        print(f'  NOTE {clipped} IS fragment(s) cut by the window edge, '
+              f'excluded from n_is_fragment_real')
     if missing:
         print(f'  NOTE {len(missing)} locus/loci with zero IS calls: {missing}')
 

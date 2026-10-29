@@ -1,64 +1,64 @@
-locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	nested_in	colour_key	colour_source	annot_source	offset_from_bait
-CP006642__CP006642__1__minus	CDS	mrkC		1	2026	+				mrkC	annotation	genbank	-20000
-CP006642__CP006642__1__minus	CDS	mrkD		2017	3012	+				mrkD	annotation	genbank	-17984
-CP006642__CP006642__1__minus	CDS	mrkF		3035	3661	+				mrkF	annotation	genbank	-16966
-CP006642__CP006642__1__minus	CDS	C'-terminal of MrkJ		3696	3947	-				C'-terminal of MrkJ	annotation	genbank	-16305
-CP006642__CP006642__1__minus	IS	IS903B	IS5	3895	4951	+	complete	no		IS903B	isfinder	genbank	-16106
-CP006642__CP006642__1__minus	CDS	IS4 transposase		3972	4895	+				IS903B	isfinder	genbank	-16029
-CP006642__CP006642__1__minus	CDS	blaT		5177	6037	-				blaT	annotation	genbank	-14824
-CP006642__CP006642__1__minus	CDS	Tn3 resolvase		6220	6777	-				Tn3 resolvase	annotation	genbank	-13781
-CP006642__CP006642__1__minus	CDS	replication initiator protein		6923	7102	-				replication initiator protein	annotation	genbank	-13078
-CP006642__CP006642__1__minus	IS	IS15DI	IS6	7030	7848	+	complete	no		IS15DI	isfinder	genbank	-12971
-CP006642__CP006642__1__minus	CDS	IS26 transposase		7075	7797	+				IS15DI	isfinder	genbank	-12926
-CP006642__CP006642__1__minus	IS	ISVsa5	IS4	7849	8514	-	partial	no		ISVsa5	isfinder	genbank	-12152
-CP006642__CP006642__1__minus	CDS	transposase		7978	8130	-				ISVsa5	isfinder	genbank	-12023
-CP006642__CP006642__1__minus	CDS	aac(3)-II		8550	9410	+				aac(3)-II	annotation	genbank	-11451
-CP006642__CP006642__1__minus	CDS	AAA ATPase protein		9423	9965	+				AAA ATPase protein	annotation	genbank	-10578
-CP006642__CP006642__1__minus	CDS	hypothetical protein		10447	10638	-				hypothetical protein	annotation	genbank	-9554
-CP006642__CP006642__1__minus	CDS	hypothetical protein		10644	10889	+				hypothetical protein	annotation	genbank	-9357
-CP006642__CP006642__1__minus	CDS	hypothetical protein		10976	12067	+				hypothetical protein	annotation	genbank	-9025
-CP006642__CP006642__1__minus	IS	IS26	IS6	12041	12860	+	complete	no		IS26	isfinder	genbank	-7960
-CP006642__CP006642__1__minus	CDS	IS26 transposase		12086	12808	+				IS26	isfinder	genbank	-7915
-CP006642__CP006642__1__minus	CDS	aadA4		12842	13363	-				aadA4	annotation	genbank	-7159
-CP006642__CP006642__1__minus	CDS	Dihydrofolate reductase		13494	14042	-				Dihydrofolate reductase	annotation	genbank	-6507
-CP006642__CP006642__1__minus	CDS	intI1		14125	15138	+				intI1	annotation	genbank	-5876
-CP006642__CP006642__1__minus	cargo	intI		14127	15140	+				intI	cargo	genbank	-5874
-CP006642__CP006642__1__minus	CDS	Transposon Tn21 modulator protein		15341	15691	+				Transposon Tn21 modulator protein	annotation	genbank	-4660
-CP006642__CP006642__1__minus	CDS	Transposon Tn21 resolvase		15817	16377	+				Transposon Tn21 resolvase	annotation	genbank	-4184
-CP006642__CP006642__1__minus	CDS	Tn3 family transposase		16380	19346	+				Tn3 family transposase	annotation	genbank	-3621
-CP006642__CP006642__1__minus	CDS	hypothetical protein		19510	19659	-				hypothetical protein	annotation	genbank	-491
-CP006642__CP006642__1__minus	IS	ISPeat2	IS3	19668	19834	-	fragment	yes		ISPeat2	isfinder	genbank	-333
-CP006642__CP006642__1__minus	CDS	hypothetical protein		19745	19867	+				ISPeat2	isfinder	genbank	-256
-CP006642__CP006642__1__minus	CDS	relB		20001	20240	+				relB	annotation	genbank	0
-CP006642__CP006642__1__minus	cargo	relB		20003	20242	+				relB	cargo	genbank	2
-CP006642__CP006642__1__minus	CDS	relE		20240	20527	+				relE	annotation	genbank	239
-CP006642__CP006642__1__minus	cargo	relE		20242	20529	+				relE	cargo	genbank	241
-CP006642__CP006642__1__minus	IS	ISSen3	IS21	20763	22718	+	complete	no		ISSen3	isfinder	genbank	762
-CP006642__CP006642__1__minus	CDS	transposase/IS protein		20831	21610	-				ISSen3	isfinder	genbank	830
-CP006642__CP006642__1__minus	CDS	transposase for insertion sequence		21610	22632	-				ISSen3	isfinder	genbank	1609
-CP006642__CP006642__1__minus	IS	ISSpu1	IS3	23099	23133	+	fragment	yes		ISSpu1	isfinder	genbank	3098
-CP006642__CP006642__1__minus	IS	IS15DI	IS6	23172	23991	-	complete	no		IS15DI	isfinder	genbank	3171
-CP006642__CP006642__1__minus	CDS	IS26 transposase		23224	23946	-				IS15DI	isfinder	genbank	3223
-CP006642__CP006642__1__minus	CDS	oqxA		24248	25423	+				oqxA	annotation	genbank	4247
-CP006642__CP006642__1__minus	CDS	oqxB		25447	28599	+				oqxB	annotation	genbank	5446
-CP006642__CP006642__1__minus	CDS	Transcriptional regulator		28669	29244	-				Transcriptional regulator	annotation	genbank	8668
-CP006642__CP006642__1__minus	IS	IS15DI	IS6	29198	30017	-	complete	no		IS15DI	isfinder	genbank	9197
-CP006642__CP006642__1__minus	CDS	transposase		29250	29966	-				IS15DI	isfinder	genbank	9249
-CP006642__CP006642__1__minus	CDS	hypothetical protein		30001	30546	-				hypothetical protein	annotation	genbank	10000
-CP006642__CP006642__1__minus	CDS	Type-2 restriction enzyme EcoRII		30786	32000	+				Type-2 restriction enzyme EcoRII	annotation	genbank	10785
-CP006642__CP006642__1__minus	CDS	Modification methylase EcoRII		32034	33467	-				Modification methylase EcoRII	annotation	genbank	12033
-CP006642__CP006642__1__minus	IS	IS1X2	IS1	33547	33848	+	fragment	yes		IS1X2	isfinder	genbank	13546
-CP006642__CP006642__1__minus	CDS	IS1 transposase		33567	33833	+				IS1X2	isfinder	genbank	13566
-CP006642__CP006642__1__minus	IS	IS26	IS6	33852	34671	+	complete	no		IS26	isfinder	genbank	13851
-CP006642__CP006642__1__minus	CDS	transposase for IS26		33915	34619	+				IS26	isfinder	genbank	13914
-CP006642__CP006642__1__minus	CDS	hypothetical protein		34625	34900	+				IS1S	isfinder	genbank	14624
-CP006642__CP006642__1__minus	IS	IS1S	IS1	34670	34915	+	fragment	yes		IS1S	isfinder	genbank	14669
-CP006642__CP006642__1__minus	cargo	ars		34916	35054	+				ars	cargo	genbank	14915
-CP006642__CP006642__1__minus	CDS	hypothetical protein		35111	35275	-				hypothetical protein	annotation	genbank	15110
-CP006642__CP006642__1__minus	IS	IS102	IS5	35285	36340	-	complete	no		IS102	isfinder	genbank	15284
-CP006642__CP006642__1__minus	CDS	IS4 transposase		35340	36263	-				IS102	isfinder	genbank	15339
-CP006642__CP006642__1__minus	CDS	hypothetical protein		36652	36849	-				hypothetical protein	annotation	genbank	16651
-CP006642__CP006642__1__minus	CDS	silP		36890	39337	-				silP	annotation	genbank	16889
-CP006642__CP006642__1__minus	cargo	sil		36892	39339	-				sil	cargo	genbank	16891
-CP006642__CP006642__1__minus	CDS	Exported protein		39465	39911	-				Exported protein	annotation	genbank	19464
-CP006642__CP006642__1__minus	CDS	silA		39992	40527	-				silA	annotation	genbank	19991
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP006642__CP006642__1__minus	CDS	mrkC		1	2026	+					mrkC	annotation	genbank	-20000
+CP006642__CP006642__1__minus	CDS	mrkD		2017	3012	+					mrkD	annotation	genbank	-17984
+CP006642__CP006642__1__minus	CDS	mrkF		3035	3661	+					mrkF	annotation	genbank	-16966
+CP006642__CP006642__1__minus	CDS	C'-terminal of MrkJ		3696	3947	-					C'-terminal of MrkJ	annotation	genbank	-16305
+CP006642__CP006642__1__minus	IS	IS903B	IS5	3895	4951	+	complete	no	no		IS903B	isfinder	genbank	-16106
+CP006642__CP006642__1__minus	CDS	IS4 transposase		3972	4895	+					IS903B	isfinder	genbank	-16029
+CP006642__CP006642__1__minus	CDS	blaT		5177	6037	-					blaT	annotation	genbank	-14824
+CP006642__CP006642__1__minus	CDS	Tn3 resolvase		6220	6777	-					Tn3 resolvase	annotation	genbank	-13781
+CP006642__CP006642__1__minus	CDS	replication initiator protein		6923	7102	-					replication initiator protein	annotation	genbank	-13078
+CP006642__CP006642__1__minus	IS	IS15DI	IS6	7030	7848	+	complete	no	no		IS15DI	isfinder	genbank	-12971
+CP006642__CP006642__1__minus	CDS	IS26 transposase		7075	7797	+					IS15DI	isfinder	genbank	-12926
+CP006642__CP006642__1__minus	IS	ISVsa5	IS4	7849	8514	-	partial	no	no		ISVsa5	isfinder	genbank	-12152
+CP006642__CP006642__1__minus	CDS	transposase		7978	8130	-					ISVsa5	isfinder	genbank	-12023
+CP006642__CP006642__1__minus	CDS	aac(3)-II		8550	9410	+					aac(3)-II	annotation	genbank	-11451
+CP006642__CP006642__1__minus	CDS	AAA ATPase protein		9423	9965	+					AAA ATPase protein	annotation	genbank	-10578
+CP006642__CP006642__1__minus	CDS	hypothetical protein		10447	10638	-					hypothetical protein	annotation	genbank	-9554
+CP006642__CP006642__1__minus	CDS	hypothetical protein		10644	10889	+					hypothetical protein	annotation	genbank	-9357
+CP006642__CP006642__1__minus	CDS	hypothetical protein		10976	12067	+					hypothetical protein	annotation	genbank	-9025
+CP006642__CP006642__1__minus	IS	IS26	IS6	12041	12860	+	complete	no	no		IS26	isfinder	genbank	-7960
+CP006642__CP006642__1__minus	CDS	IS26 transposase		12086	12808	+					IS26	isfinder	genbank	-7915
+CP006642__CP006642__1__minus	CDS	aadA4		12842	13363	-					aadA4	annotation	genbank	-7159
+CP006642__CP006642__1__minus	CDS	Dihydrofolate reductase		13494	14042	-					Dihydrofolate reductase	annotation	genbank	-6507
+CP006642__CP006642__1__minus	CDS	intI1		14125	15138	+					intI1	annotation	genbank	-5876
+CP006642__CP006642__1__minus	cargo	intI		14127	15140	+			no		intI	cargo	genbank	-5874
+CP006642__CP006642__1__minus	CDS	Transposon Tn21 modulator protein		15341	15691	+					Transposon Tn21 modulator protein	annotation	genbank	-4660
+CP006642__CP006642__1__minus	CDS	Transposon Tn21 resolvase		15817	16377	+					Transposon Tn21 resolvase	annotation	genbank	-4184
+CP006642__CP006642__1__minus	CDS	Tn3 family transposase		16380	19346	+					Tn3 family transposase	annotation	genbank	-3621
+CP006642__CP006642__1__minus	CDS	hypothetical protein		19510	19659	-					hypothetical protein	annotation	genbank	-491
+CP006642__CP006642__1__minus	IS	ISPeat2	IS3	19668	19834	-	fragment	yes	no		ISPeat2	isfinder	genbank	-333
+CP006642__CP006642__1__minus	CDS	hypothetical protein		19745	19867	+					ISPeat2	isfinder	genbank	-256
+CP006642__CP006642__1__minus	CDS	relB		20001	20240	+					relB	annotation	genbank	0
+CP006642__CP006642__1__minus	cargo	relB		20003	20242	+			no		relB	cargo	genbank	2
+CP006642__CP006642__1__minus	CDS	relE		20240	20527	+					relE	annotation	genbank	239
+CP006642__CP006642__1__minus	cargo	relE		20242	20529	+			no		relE	cargo	genbank	241
+CP006642__CP006642__1__minus	IS	ISSen3	IS21	20763	22718	+	complete	no	no		ISSen3	isfinder	genbank	762
+CP006642__CP006642__1__minus	CDS	transposase/IS protein		20831	21610	-					ISSen3	isfinder	genbank	830
+CP006642__CP006642__1__minus	CDS	transposase for insertion sequence		21610	22632	-					ISSen3	isfinder	genbank	1609
+CP006642__CP006642__1__minus	IS	ISSpu1	IS3	23099	23133	+	fragment	yes	no		ISSpu1	isfinder	genbank	3098
+CP006642__CP006642__1__minus	IS	IS15DI	IS6	23172	23991	-	complete	no	no		IS15DI	isfinder	genbank	3171
+CP006642__CP006642__1__minus	CDS	IS26 transposase		23224	23946	-					IS15DI	isfinder	genbank	3223
+CP006642__CP006642__1__minus	CDS	oqxA		24248	25423	+					oqxA	annotation	genbank	4247
+CP006642__CP006642__1__minus	CDS	oqxB		25447	28599	+					oqxB	annotation	genbank	5446
+CP006642__CP006642__1__minus	CDS	Transcriptional regulator		28669	29244	-					Transcriptional regulator	annotation	genbank	8668
+CP006642__CP006642__1__minus	IS	IS15DI	IS6	29198	30017	-	complete	no	no		IS15DI	isfinder	genbank	9197
+CP006642__CP006642__1__minus	CDS	transposase		29250	29966	-					IS15DI	isfinder	genbank	9249
+CP006642__CP006642__1__minus	CDS	hypothetical protein		30001	30546	-					hypothetical protein	annotation	genbank	10000
+CP006642__CP006642__1__minus	CDS	Type-2 restriction enzyme EcoRII		30786	32000	+					Type-2 restriction enzyme EcoRII	annotation	genbank	10785
+CP006642__CP006642__1__minus	CDS	Modification methylase EcoRII		32034	33467	-					Modification methylase EcoRII	annotation	genbank	12033
+CP006642__CP006642__1__minus	IS	IS1X2	IS1	33547	33848	+	fragment	yes	no		IS1X2	isfinder	genbank	13546
+CP006642__CP006642__1__minus	CDS	IS1 transposase		33567	33833	+					IS1X2	isfinder	genbank	13566
+CP006642__CP006642__1__minus	IS	IS26	IS6	33852	34671	+	complete	no	no		IS26	isfinder	genbank	13851
+CP006642__CP006642__1__minus	CDS	transposase for IS26		33915	34619	+					IS26	isfinder	genbank	13914
+CP006642__CP006642__1__minus	CDS	hypothetical protein		34625	34900	+					IS1S	isfinder	genbank	14624
+CP006642__CP006642__1__minus	IS	IS1S	IS1	34670	34915	+	fragment	yes	no		IS1S	isfinder	genbank	14669
+CP006642__CP006642__1__minus	cargo	ars		34916	35054	+			no		ars	cargo	genbank	14915
+CP006642__CP006642__1__minus	CDS	hypothetical protein		35111	35275	-					hypothetical protein	annotation	genbank	15110
+CP006642__CP006642__1__minus	IS	IS102	IS5	35285	36340	-	complete	no	no		IS102	isfinder	genbank	15284
+CP006642__CP006642__1__minus	CDS	IS4 transposase		35340	36263	-					IS102	isfinder	genbank	15339
+CP006642__CP006642__1__minus	CDS	hypothetical protein		36652	36849	-					hypothetical protein	annotation	genbank	16651
+CP006642__CP006642__1__minus	CDS	silP		36890	39337	-					silP	annotation	genbank	16889
+CP006642__CP006642__1__minus	cargo	sil		36892	39339	-			no		sil	cargo	genbank	16891
+CP006642__CP006642__1__minus	CDS	Exported protein		39465	39911	-					Exported protein	annotation	genbank	19464
+CP006642__CP006642__1__minus	CDS	silA		39992	40527	-					silA	annotation	genbank	19991

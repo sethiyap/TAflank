@@ -139,6 +139,7 @@ def main():
         s, e = int(h['win_start']), int(h['win_end'])
         rows.append([lid, 'IS', h['element'], h['family'], s, e, h['strand'],
                      h.get('cov_class', ''), h.get('is_fragment', ''),
+                     h.get('clipped_at_window_edge', ''),
                      h.get('nested_in', ''), h['element'], 'isfinder', src,
                      int(h.get('offset_from_bait', s - wm['bait_start']))])
 
@@ -156,27 +157,36 @@ def main():
         key, srcname = (el, 'isfinder') if el else (
             (c['label'] or c['product'][:40]), 'annotation')
         rows.append([lid, 'CDS', c['label'] or c['product'][:40], '', s, e,
-                     c['strand'], '', '', '', key, srcname, src,
+                     c['strand'], '', '', '', '', key, srcname, src,
                      s - wm['bait_start']])
 
     for c in cargo:
         s, e = int(c['win_start']), int(c['win_end'])
         rows.append([lid, 'cargo', c['family'], '', s, e, c['strand'], '', '',
-                     '', c['family'], 'cargo', src, int(c['offset_from_bait'])])
+                     c.get('clipped_at_window_edge', ''), '', c['family'],
+                     'cargo', src, int(c['offset_from_bait'])])
 
     rows.sort(key=lambda r: r[4])
     cols = ['locus_id', 'feature_type', 'name', 'family', 'start', 'end',
-            'strand', 'cov_class', 'is_fragment', 'nested_in',
-            'colour_key', 'colour_source', 'annot_source', 'offset_from_bait']
+            'strand', 'cov_class', 'is_fragment', 'clipped_at_window_edge',
+            'nested_in', 'colour_key', 'colour_source', 'annot_source',
+            'offset_from_bait']
     os.makedirs(os.path.dirname(a.out) or '.', exist_ok=True)
     with open(a.out, 'w') as fh:
         fh.write('\t'.join(cols) + '\n')
         for r in rows:
             fh.write('\t'.join(str(v) for v in r) + '\n')
 
-    n_is = sum(1 for r in rows if r[11] == 'isfinder')
+    # index by NAME -- r[11] was positional and pointed at colour_source only
+    # until a column was inserted ahead of it
+    ix = {k: i for i, k in enumerate(cols)}
+    n_is = sum(1 for r in rows if r[ix['feature_type']] == 'CDS'
+               and r[ix['colour_source']] == 'isfinder')
+    nclip = sum(1 for r in rows
+                if r[ix['clipped_at_window_edge']] not in ('', 'no'))
+    note = f', {nclip} touching a window edge' if nclip else ''
     print(f'{lid}: {len(rows)} features  (annot={src}, {len(cds)} CDS, '
-          f'{n_is} coloured by IS element) -> {a.out}')
+          f'{n_is} CDS coloured by IS element{note}) -> {a.out}')
 
 
 if __name__ == '__main__':

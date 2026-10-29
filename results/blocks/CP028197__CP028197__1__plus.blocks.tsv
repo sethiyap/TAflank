@@ -1,71 +1,71 @@
-locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	nested_in	colour_key	colour_source	annot_source	offset_from_bait
-CP028197__CP028197__1__plus	IS	IS4321R	IS110	1	163	+	fragment	yes		IS4321R	isfinder	genbank	-20000
-CP028197__CP028197__1__plus	CDS	TetR family transcriptional regulator		1	40527	+				TetR family transcriptional regulator	annotation	genbank	-20000
-CP028197__CP028197__1__plus	CDS	DUF4102 domain-containing protein		90	266	-				DUF4102 domain-containing protein	annotation	genbank	-19911
-CP028197__CP028197__1__plus	CDS	transcriptional regulator		495	572	-				transcriptional regulator	annotation	genbank	-19506
-CP028197__CP028197__1__plus	CDS	sulfonamide-resistant dihydropteroate sy		596	1411	+				sulfonamide-resistant dihydropteroate sy	annotation	genbank	-19405
-CP028197__CP028197__1__plus	CDS	phosphoglucosamine mutase		1498	1800	+				phosphoglucosamine mutase	annotation	genbank	-18503
-CP028197__CP028197__1__plus	CDS	hypothetical protein		1694	1945	-				hypothetical protein	annotation	genbank	-18307
-CP028197__CP028197__1__plus	IS	ISVsa3	IS91	1963	2939	-	complete	no		ISVsa3	isfinder	genbank	-18038
-CP028197__CP028197__1__plus	CDS	IS91 family transposase		1976	3469	-				ISVsa3	isfinder	genbank	-18025
-CP028197__CP028197__1__plus	CDS	hypothetical protein		3680	3904	-				hypothetical protein	annotation	genbank	-16321
-CP028197__CP028197__1__plus	CDS	resolvase		3901	4638	-				resolvase	annotation	genbank	-16100
-CP028197__CP028197__1__plus	CDS	hypothetical protein		4745	5236	+				hypothetical protein	annotation	genbank	-15256
-CP028197__CP028197__1__plus	IS	IS26	IS6	5218	6037	-	complete	no		IS26	isfinder	genbank	-14783
-CP028197__CP028197__1__plus	CDS	IS6 family transposase IS15DIV		5270	5974	-				IS26	isfinder	genbank	-14731
-CP028197__CP028197__1__plus	CDS	hypothetical protein		5951	6294	+				hypothetical protein	annotation	genbank	-14050
-CP028197__CP028197__1__plus	CDS	hypothetical protein		6284	7177	+				hypothetical protein	annotation	genbank	-13717
-CP028197__CP028197__1__plus	CDS	hypothetical protein		7349	7579	+				hypothetical protein	annotation	genbank	-12652
-CP028197__CP028197__1__plus	CDS	hypothetical protein		7758	8078	+				hypothetical protein	annotation	genbank	-12243
-CP028197__CP028197__1__plus	CDS	hypothetical protein		8175	8393	+				hypothetical protein	annotation	genbank	-11826
-CP028197__CP028197__1__plus	CDS	DUF957 domain-containing protein		8595	8906	+				DUF957 domain-containing protein	annotation	genbank	-11406
-CP028197__CP028197__1__plus	CDS	DUF3085 domain-containing protein		8911	9402	+				DUF3085 domain-containing protein	annotation	genbank	-11090
-CP028197__CP028197__1__plus	CDS	hypothetical protein		9482	9775	+				hypothetical protein	annotation	genbank	-10519
-CP028197__CP028197__1__plus	CDS	hypothetical protein		9955	10158	+				hypothetical protein	annotation	genbank	-10046
-CP028197__CP028197__1__plus	CDS	hypothetical protein		10213	10437	+				hypothetical protein	annotation	genbank	-9788
-CP028197__CP028197__1__plus	CDS	hypothetical protein		10477	10677	+				hypothetical protein	annotation	genbank	-9524
-CP028197__CP028197__1__plus	CDS	hypothetical protein		10900	11211	+				hypothetical protein	annotation	genbank	-9101
-CP028197__CP028197__1__plus	CDS	hypothetical protein		11587	11868	+				hypothetical protein	annotation	genbank	-8414
-CP028197__CP028197__1__plus	CDS	hypothetical protein		12085	12690	+				hypothetical protein	annotation	genbank	-7916
-CP028197__CP028197__1__plus	IS	ISKpn8	IS3	12976	14418	+	complete	no		ISKpn8	isfinder	genbank	-7025
-CP028197__CP028197__1__plus	CDS	IS3-like element ISKpn8 family transposa		13023	14392	+				ISKpn8	isfinder	genbank	-6978
-CP028197__CP028197__1__plus	IS	ISEsa1	ISNCY	14507	16102	+	complete	no		ISEsa1	isfinder	genbank	-5494
-CP028197__CP028197__1__plus	CDS	ISNCY family transposase		14567	15907	+				ISEsa1	isfinder	genbank	-5434
-CP028197__CP028197__1__plus	IS	ISEsa2	IS110	16103	17595	+	complete	no		ISEsa2	isfinder	genbank	-3898
-CP028197__CP028197__1__plus	CDS	IS110 family transposase		16329	17567	+				ISEsa2	isfinder	genbank	-3672
-CP028197__CP028197__1__plus	cargo	cytb		18041	18613	+				cytb	cargo	genbank	-1960
-CP028197__CP028197__1__plus	CDS	cytochrome b/b6 domain-containing protei		18043	18615	+				cytochrome b/b6 domain-containing protei	annotation	genbank	-1958
-CP028197__CP028197__1__plus	CDS	cation transporter		18815	19738	+				cation transporter	annotation	genbank	-1186
-CP028197__CP028197__1__plus	cargo	czc		18817	19740	+				czc	cargo	genbank	-1184
-CP028197__CP028197__1__plus	CDS	hypothetical protein		19782	19976	-				hypothetical protein	annotation	genbank	-219
-CP028197__CP028197__1__plus	cargo	relB		19999	20238	+				relB	cargo	genbank	-2
-CP028197__CP028197__1__plus	CDS	antitoxin RelB		20001	20240	+				antitoxin RelB	annotation	genbank	0
-CP028197__CP028197__1__plus	CDS	mRNA interferase RelE		20240	20527	+				mRNA interferase RelE	annotation	genbank	239
-CP028197__CP028197__1__plus	cargo	relE		20242	20529	+				relE	cargo	genbank	241
-CP028197__CP028197__1__plus	cargo	hok_gef		20597	20755	+				hok_gef	cargo	genbank	596
-CP028197__CP028197__1__plus	CDS	Hok/Gef family protein		20599	20757	+				Hok/Gef family protein	annotation	genbank	598
-CP028197__CP028197__1__plus	CDS	hypothetical protein		21366	21686	-				hypothetical protein	annotation	genbank	1365
-CP028197__CP028197__1__plus	CDS	hypothetical protein		21968	22171	-				hypothetical protein	annotation	genbank	1967
-CP028197__CP028197__1__plus	CDS	hypothetical protein		22218	22568	-				hypothetical protein	annotation	genbank	2217
-CP028197__CP028197__1__plus	CDS	hypothetical protein		22628	23230	-				hypothetical protein	annotation	genbank	2627
-CP028197__CP028197__1__plus	CDS	hypothetical protein		23326	24270	-				hypothetical protein	annotation	genbank	3325
-CP028197__CP028197__1__plus	CDS	hypothetical protein		24763	24957	+				hypothetical protein	annotation	genbank	4762
-CP028197__CP028197__1__plus	CDS	DNA-binding protein		25374	26558	+				DNA-binding protein	annotation	genbank	5373
-CP028197__CP028197__1__plus	CDS	hypothetical protein		26624	26905	+				hypothetical protein	annotation	genbank	6623
-CP028197__CP028197__1__plus	CDS	hypothetical protein		27220	27921	+				hypothetical protein	annotation	genbank	7219
-CP028197__CP028197__1__plus	CDS	hypothetical protein		28056	28352	+				hypothetical protein	annotation	genbank	8055
-CP028197__CP028197__1__plus	CDS	hypothetical protein		28397	28834	+				hypothetical protein	annotation	genbank	8396
-CP028197__CP028197__1__plus	CDS	hypothetical protein		28902	29438	+				hypothetical protein	annotation	genbank	8901
-CP028197__CP028197__1__plus	CDS	hypothetical protein		29664	30032	+				hypothetical protein	annotation	genbank	9663
-CP028197__CP028197__1__plus	CDS	hypothetical protein		30465	30764	+				hypothetical protein	annotation	genbank	10464
-CP028197__CP028197__1__plus	CDS	hypothetical protein		31121	31405	+				hypothetical protein	annotation	genbank	11120
-CP028197__CP028197__1__plus	CDS	hypothetical protein		31471	31824	+				hypothetical protein	annotation	genbank	11470
-CP028197__CP028197__1__plus	CDS	NERD domain-containing protein		32111	32842	-				NERD domain-containing protein	annotation	genbank	12110
-CP028197__CP028197__1__plus	CDS	S49 family peptidase		32844	34025	-				S49 family peptidase	annotation	genbank	12843
-CP028197__CP028197__1__plus	cargo	tra		34034	34696	-				tra	cargo	genbank	14033
-CP028197__CP028197__1__plus	CDS	DUF4400 domain-containing protein		34036	34698	-				DUF4400 domain-containing protein	annotation	genbank	14035
-CP028197__CP028197__1__plus	CDS	hypothetical protein		34685	35794	-				hypothetical protein	annotation	genbank	14684
-CP028197__CP028197__1__plus	CDS	hypothetical protein		35794	37878	-				hypothetical protein	annotation	genbank	15793
-CP028197__CP028197__1__plus	cargo	tra		35796	37778	-				tra	cargo	genbank	15795
-CP028197__CP028197__1__plus	CDS	helicase		37878	40527	-				helicase	annotation	genbank	17877
-CP028197__CP028197__1__plus	cargo	tra		37880	40527	-				tra	cargo	genbank	17879
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP028197__CP028197__1__plus	IS	IS4321R	IS110	1	163	+	fragment	yes	left		IS4321R	isfinder	genbank	-20000
+CP028197__CP028197__1__plus	CDS	TetR family transcriptional regulator		1	40527	+					TetR family transcriptional regulator	annotation	genbank	-20000
+CP028197__CP028197__1__plus	CDS	DUF4102 domain-containing protein		90	266	-					DUF4102 domain-containing protein	annotation	genbank	-19911
+CP028197__CP028197__1__plus	CDS	transcriptional regulator		495	572	-					transcriptional regulator	annotation	genbank	-19506
+CP028197__CP028197__1__plus	CDS	sulfonamide-resistant dihydropteroate sy		596	1411	+					sulfonamide-resistant dihydropteroate sy	annotation	genbank	-19405
+CP028197__CP028197__1__plus	CDS	phosphoglucosamine mutase		1498	1800	+					phosphoglucosamine mutase	annotation	genbank	-18503
+CP028197__CP028197__1__plus	CDS	hypothetical protein		1694	1945	-					hypothetical protein	annotation	genbank	-18307
+CP028197__CP028197__1__plus	IS	ISVsa3	IS91	1963	2939	-	complete	no	no		ISVsa3	isfinder	genbank	-18038
+CP028197__CP028197__1__plus	CDS	IS91 family transposase		1976	3469	-					ISVsa3	isfinder	genbank	-18025
+CP028197__CP028197__1__plus	CDS	hypothetical protein		3680	3904	-					hypothetical protein	annotation	genbank	-16321
+CP028197__CP028197__1__plus	CDS	resolvase		3901	4638	-					resolvase	annotation	genbank	-16100
+CP028197__CP028197__1__plus	CDS	hypothetical protein		4745	5236	+					hypothetical protein	annotation	genbank	-15256
+CP028197__CP028197__1__plus	IS	IS26	IS6	5218	6037	-	complete	no	no		IS26	isfinder	genbank	-14783
+CP028197__CP028197__1__plus	CDS	IS6 family transposase IS15DIV		5270	5974	-					IS26	isfinder	genbank	-14731
+CP028197__CP028197__1__plus	CDS	hypothetical protein		5951	6294	+					hypothetical protein	annotation	genbank	-14050
+CP028197__CP028197__1__plus	CDS	hypothetical protein		6284	7177	+					hypothetical protein	annotation	genbank	-13717
+CP028197__CP028197__1__plus	CDS	hypothetical protein		7349	7579	+					hypothetical protein	annotation	genbank	-12652
+CP028197__CP028197__1__plus	CDS	hypothetical protein		7758	8078	+					hypothetical protein	annotation	genbank	-12243
+CP028197__CP028197__1__plus	CDS	hypothetical protein		8175	8393	+					hypothetical protein	annotation	genbank	-11826
+CP028197__CP028197__1__plus	CDS	DUF957 domain-containing protein		8595	8906	+					DUF957 domain-containing protein	annotation	genbank	-11406
+CP028197__CP028197__1__plus	CDS	DUF3085 domain-containing protein		8911	9402	+					DUF3085 domain-containing protein	annotation	genbank	-11090
+CP028197__CP028197__1__plus	CDS	hypothetical protein		9482	9775	+					hypothetical protein	annotation	genbank	-10519
+CP028197__CP028197__1__plus	CDS	hypothetical protein		9955	10158	+					hypothetical protein	annotation	genbank	-10046
+CP028197__CP028197__1__plus	CDS	hypothetical protein		10213	10437	+					hypothetical protein	annotation	genbank	-9788
+CP028197__CP028197__1__plus	CDS	hypothetical protein		10477	10677	+					hypothetical protein	annotation	genbank	-9524
+CP028197__CP028197__1__plus	CDS	hypothetical protein		10900	11211	+					hypothetical protein	annotation	genbank	-9101
+CP028197__CP028197__1__plus	CDS	hypothetical protein		11587	11868	+					hypothetical protein	annotation	genbank	-8414
+CP028197__CP028197__1__plus	CDS	hypothetical protein		12085	12690	+					hypothetical protein	annotation	genbank	-7916
+CP028197__CP028197__1__plus	IS	ISKpn8	IS3	12976	14418	+	complete	no	no		ISKpn8	isfinder	genbank	-7025
+CP028197__CP028197__1__plus	CDS	IS3-like element ISKpn8 family transposa		13023	14392	+					ISKpn8	isfinder	genbank	-6978
+CP028197__CP028197__1__plus	IS	ISEsa1	ISNCY	14507	16102	+	complete	no	no		ISEsa1	isfinder	genbank	-5494
+CP028197__CP028197__1__plus	CDS	ISNCY family transposase		14567	15907	+					ISEsa1	isfinder	genbank	-5434
+CP028197__CP028197__1__plus	IS	ISEsa2	IS110	16103	17595	+	complete	no	no		ISEsa2	isfinder	genbank	-3898
+CP028197__CP028197__1__plus	CDS	IS110 family transposase		16329	17567	+					ISEsa2	isfinder	genbank	-3672
+CP028197__CP028197__1__plus	cargo	cytb		18041	18613	+			no		cytb	cargo	genbank	-1960
+CP028197__CP028197__1__plus	CDS	cytochrome b/b6 domain-containing protei		18043	18615	+					cytochrome b/b6 domain-containing protei	annotation	genbank	-1958
+CP028197__CP028197__1__plus	CDS	cation transporter		18815	19738	+					cation transporter	annotation	genbank	-1186
+CP028197__CP028197__1__plus	cargo	czc		18817	19740	+			no		czc	cargo	genbank	-1184
+CP028197__CP028197__1__plus	CDS	hypothetical protein		19782	19976	-					hypothetical protein	annotation	genbank	-219
+CP028197__CP028197__1__plus	cargo	relB		19999	20238	+			no		relB	cargo	genbank	-2
+CP028197__CP028197__1__plus	CDS	antitoxin RelB		20001	20240	+					antitoxin RelB	annotation	genbank	0
+CP028197__CP028197__1__plus	CDS	mRNA interferase RelE		20240	20527	+					mRNA interferase RelE	annotation	genbank	239
+CP028197__CP028197__1__plus	cargo	relE		20242	20529	+			no		relE	cargo	genbank	241
+CP028197__CP028197__1__plus	cargo	hok_gef		20597	20755	+			no		hok_gef	cargo	genbank	596
+CP028197__CP028197__1__plus	CDS	Hok/Gef family protein		20599	20757	+					Hok/Gef family protein	annotation	genbank	598
+CP028197__CP028197__1__plus	CDS	hypothetical protein		21366	21686	-					hypothetical protein	annotation	genbank	1365
+CP028197__CP028197__1__plus	CDS	hypothetical protein		21968	22171	-					hypothetical protein	annotation	genbank	1967
+CP028197__CP028197__1__plus	CDS	hypothetical protein		22218	22568	-					hypothetical protein	annotation	genbank	2217
+CP028197__CP028197__1__plus	CDS	hypothetical protein		22628	23230	-					hypothetical protein	annotation	genbank	2627
+CP028197__CP028197__1__plus	CDS	hypothetical protein		23326	24270	-					hypothetical protein	annotation	genbank	3325
+CP028197__CP028197__1__plus	CDS	hypothetical protein		24763	24957	+					hypothetical protein	annotation	genbank	4762
+CP028197__CP028197__1__plus	CDS	DNA-binding protein		25374	26558	+					DNA-binding protein	annotation	genbank	5373
+CP028197__CP028197__1__plus	CDS	hypothetical protein		26624	26905	+					hypothetical protein	annotation	genbank	6623
+CP028197__CP028197__1__plus	CDS	hypothetical protein		27220	27921	+					hypothetical protein	annotation	genbank	7219
+CP028197__CP028197__1__plus	CDS	hypothetical protein		28056	28352	+					hypothetical protein	annotation	genbank	8055
+CP028197__CP028197__1__plus	CDS	hypothetical protein		28397	28834	+					hypothetical protein	annotation	genbank	8396
+CP028197__CP028197__1__plus	CDS	hypothetical protein		28902	29438	+					hypothetical protein	annotation	genbank	8901
+CP028197__CP028197__1__plus	CDS	hypothetical protein		29664	30032	+					hypothetical protein	annotation	genbank	9663
+CP028197__CP028197__1__plus	CDS	hypothetical protein		30465	30764	+					hypothetical protein	annotation	genbank	10464
+CP028197__CP028197__1__plus	CDS	hypothetical protein		31121	31405	+					hypothetical protein	annotation	genbank	11120
+CP028197__CP028197__1__plus	CDS	hypothetical protein		31471	31824	+					hypothetical protein	annotation	genbank	11470
+CP028197__CP028197__1__plus	CDS	NERD domain-containing protein		32111	32842	-					NERD domain-containing protein	annotation	genbank	12110
+CP028197__CP028197__1__plus	CDS	S49 family peptidase		32844	34025	-					S49 family peptidase	annotation	genbank	12843
+CP028197__CP028197__1__plus	cargo	tra		34034	34696	-			no		tra	cargo	genbank	14033
+CP028197__CP028197__1__plus	CDS	DUF4400 domain-containing protein		34036	34698	-					DUF4400 domain-containing protein	annotation	genbank	14035
+CP028197__CP028197__1__plus	CDS	hypothetical protein		34685	35794	-					hypothetical protein	annotation	genbank	14684
+CP028197__CP028197__1__plus	CDS	hypothetical protein		35794	37878	-					hypothetical protein	annotation	genbank	15793
+CP028197__CP028197__1__plus	cargo	tra		35796	37778	-			no		tra	cargo	genbank	15795
+CP028197__CP028197__1__plus	CDS	helicase		37878	40527	-					helicase	annotation	genbank	17877
+CP028197__CP028197__1__plus	cargo	tra		37880	40527	-			right		tra	cargo	genbank	17879

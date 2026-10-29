@@ -124,6 +124,11 @@ def main():
         add('IS calls', len(mge))
         for k in ('complete', 'partial', 'fragment'):
             add('  %s' % k, sum(1 for r in mge if r.get('cov_class') == k))
+        nclip = sum(1 for r in mge if r.get('clip_cause') == 'window')
+        add('  of which cut by window edge', nclip)
+        add('  fragments usable as remnants',
+            sum(1 for r in mge if r.get('is_fragment') == 'yes'
+                and r.get('clip_cause') != 'window'))
         add('distinct elements', len({r['element'] for r in mge}))
         add('nesting events', sum(1 for r in mge if r.get('nested_in')))
         add('loci with ISEsa1', len({r['locus_id'] for r in mge

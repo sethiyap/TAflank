@@ -176,13 +176,30 @@ done
 **Look at one locus:**
 
 ```bash
-cut -f2,3,5,6,10,11,12,13 \
+cut -f2,3,5,6,10,11,12,13,14,16 \
   /scratch/rg42/ps1744/myrun/is/CP018961*.is.tsv | column -t -s$'\t'
 ```
 
 **The one to find:** a row saying `ISEsa1 ... 64 ... fragment ... -6739`.
 That 64-base scrap is the single most important piece of evidence in the whole
 project — it is what shows the same vehicle carried relBE into each plasmid.
+
+**Check the `clip_cause` column before believing any `fragment`.** A short
+alignment has two possible explanations and they mean opposite things:
+
+| `clip_cause` | what happened | what it means |
+|---|---|---|
+| `-` | the element really is a short remnant in open DNA | **evidence** — this is what Stage 5 counts |
+| `window` | the element is whole, but our ±20 kb cut sliced it | **not evidence** — we just stopped looking there |
+| `replicon` | the replicon itself ends there | real truncation, a signal in its own right |
+
+The ISEsa1 row at −6739 says `-`, so it is genuine. Two rows in the whole set
+say `window` (in CP028197 and CP028537) and both are unrelated IS110-family
+elements sitting on the window boundary. The script prints the split for you:
+
+```
+... (1 fragment, of which 1 cut by the window edge; 0 usable as remnants)
+```
 
 ---
 
@@ -200,12 +217,36 @@ done
 **Look at one:**
 
 ```bash
-cut -f2,8,9,10 \
+cut -f2,8,9,10,11,13 \
   /scratch/rg42/ps1744/myrun/cargo/CP028197*.cargo.tsv | column -t -s$'\t'
 ```
 
 **What to notice:** `czc` sits at position **−1184** in every plasmid that has
 it. Not approximately — exactly. That is a strong hint they share an ancestor.
+
+The reading order upstream → downstream is `cytb` (−1960), `czc` (−1184),
+`relB` (−2), `relE` (+241), `hok_gef` (+596) — the complete core, with a second
+toxin–antitoxin system right behind it — then `tra` conjugation genes at +14 kb.
+`tra` genes are **not** transposable elements: they move the whole plasmid into
+another cell, they do not cut and paste themselves into DNA. They are backbone
+context. The vehicle that inserted relBE is in the IS table from step 6.
+
+Note the last `tra` row: `cov` 84.1% but `clip_cause` = `window`, 499 bp
+missing. The gene is not degraded — it runs off the end of the window.
+
+**Now the column that carries the actual result**, which the view above hides:
+
+```bash
+cut -f2,3,9,13 \
+  /scratch/rg42/ps1744/myrun/cargo/CP028197*.cargo.tsv | column -t -s$'\t'
+```
+
+`source` names the record each reference gene came from. For CP028197 the
+`cytb`, `czc`, `relB` and `relE` matches are 100% identical to copies taken
+from **four different records across three genera** — *Citrobacter*,
+*Enterobacter* and *Escherichia*, two chromosomes and two plasmids. Four
+adjacent genes do not stay 100% identical across three genera by descent. The
+whole ~2.5 kb block moved recently, horizontally, as one unit.
 
 ---
 

@@ -183,6 +183,42 @@ look like a bare stub and inverting the biological reading.
 **Coverage class** by subject coverage — `complete` ≥90%, `partial` 50–90%,
 `fragment` <50%. Fragments are kept; they are the evidence.
 
+**Window-edge clipping** (`clipped_at_window_edge`, `clip_cause`,
+`clipped_missing_bp`). A low `query_cov` has two unrelated causes, and the
+decisive test only cares about one of them:
+
+- the element is a **genuine decayed remnant** sitting in open DNA — evidence;
+- the element is **whole in the real replicon** and was merely sliced by the
+  edge of the ±20 kb window *we chose* — an artefact of construction.
+
+Both arrive from `blastn` as `is_fragment=yes`. Counted together they would put
+phantom remnants at exactly ±20000 in the ISEsa1 offset distribution — the one
+plot the ancestral-vehicle conclusion rests on.
+
+An alignment touching an edge is only called clipped if part of the subject is
+left unaccounted for **on that same side**, i.e. the element demonstrably runs
+on past where we stopped looking. Which subject end that is depends on strand:
+on `-` the subject runs backwards relative to the window.
+
+`clip_cause` keeps the two causes apart, and the distinction is not cosmetic:
+
+| `clip_cause` | meaning | how to read it |
+|---|---|---|
+| `window` | the ±20 kb cut ended there while the replicon continued | **discount as evidence** — widen the window to resolve |
+| `replicon` | the replicon or contig genuinely ends there (header says `truncated_up/dn=yes`) | **real truncation** — a signal, per CLAUDE.md |
+| `mixed` | one edge of each | both |
+
+Nothing is filtered. `is_fragment` keeps its plain meaning (`query_cov < 50`)
+and the new columns say whether that number can be read as decay.
+Downstream, `n_is_fragment_real` (context, summary) and
+`n_is_fragment_clipped` (summary) separate the counts, and
+`vehicle_edge_clipped` names any ISEsa1/ISEsa2 end whose true coverage is
+**unknown** rather than low — such an end must never drive a `DECAYED` call.
+
+`cargo_search.py` carries the same three columns for the same reason: a gene
+lying across the boundary reports low `cov` because we stopped looking, not
+because the gene is broken.
+
 **Nesting** (`nested_in` / `interrupts`) requires *both*:
 1. element B lies within the window span of element A, and
 2. A's own HSPs are **near-contiguous in subject coordinates** and sum to no
@@ -554,10 +590,10 @@ figure. All offsets assume the bait on `+`.
 | `results/record_metadata.tsv` | source record | `replicon_type, replicon_name, genus, slen, topology, is_complete, replicon_type_evidence` |
 | `results/loci_selected.tsv` | hit | `locus_id, flank_up, flank_dn, truncated_*, wrapped, whole_replicon, selected, deselect_reason` |
 | `results/loci.tsv` | extracted window | `window_len, bait_in_window, reoriented, source_interval` |
-| `results/mge_hits.tsv` | IS call | `element, family, win_start, win_end, query_cov, cov_class, is_fragment, offset_from_bait, nested_in, interrupts` |
+| `results/mge_hits.tsv` | IS call | `element, family, win_start, win_end, query_cov, cov_class, is_fragment, clipped_at_window_edge, clip_cause, clipped_missing_bp, offset_from_bait, nested_in, interrupts` |
 | `results/replicons.tsv` | replicon hit | `accession, replicon, pident, qcovs, start, end` |
-| `results/context.tsv` | locus | `vehicle_class, vehicle_ends, vehicle_interrupted, cargo_families, czc_offset, hok_gef_offset` |
-| `results/blocks/*.blocks.tsv` | drawable feature | `feature_type, name, start, end, colour_key, colour_source, annot_source` — the figure's input |
+| `results/context.tsv` | locus | `vehicle_class, vehicle_ends, vehicle_interrupted, vehicle_edge_clipped, n_is_fragment, n_is_fragment_real, cargo_families, czc_offset, hok_gef_offset` |
+| `results/blocks/*.blocks.tsv` | drawable feature | `feature_type, name, start, end, clipped_at_window_edge, colour_key, colour_source, annot_source` — the figure's input |
 | `results/summary.tsv` | locus | one line per locus joining all of the above, incl. `lab_alias`, `plasmidfinder_replicons`, `has_ISEsa1`, `has_ISEsa2`, `nested_events` |
 | `loci/plasmids/*.fa` | locus | the window itself; the FASTA header carries flank, truncation, wrap and bait position |
 

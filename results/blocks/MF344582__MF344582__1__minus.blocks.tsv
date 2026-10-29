@@ -1,65 +1,65 @@
-locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	nested_in	colour_key	colour_source	annot_source	offset_from_bait
-MF344582__MF344582__1__minus	CDS	hypothetical protein		64	720	+				hypothetical protein	annotation	genbank	-19937
-MF344582__MF344582__1__minus	CDS	putative periplasmic protein		1746	4166	-				putative periplasmic protein	annotation	genbank	-18255
-MF344582__MF344582__1__minus	CDS	hypothetical protein		4471	4602	+				hypothetical protein	annotation	genbank	-15530
-MF344582__MF344582__1__minus	CDS	hypothetical protein		4631	5218	-				hypothetical protein	annotation	genbank	-15370
-MF344582__MF344582__1__minus	CDS	hypothetical protein		5262	5525	-				hypothetical protein	annotation	genbank	-14739
-MF344582__MF344582__1__minus	CDS	hypothetical protein		5619	6380	-				hypothetical protein	annotation	genbank	-14382
-MF344582__MF344582__1__minus	CDS	hypothetical protein		6461	7225	-				hypothetical protein	annotation	genbank	-13540
-MF344582__MF344582__1__minus	CDS	hypothetical protein		7392	7532	-				hypothetical protein	annotation	genbank	-12609
-MF344582__MF344582__1__minus	CDS	hypothetical protein		7548	8072	+				hypothetical protein	annotation	genbank	-12453
-MF344582__MF344582__1__minus	CDS	Phage protein		8176	8607	+				Phage protein	annotation	genbank	-11825
-MF344582__MF344582__1__minus	CDS	hypothetical protein		8600	8857	+				hypothetical protein	annotation	genbank	-11401
-MF344582__MF344582__1__minus	CDS	hypothetical protein		8844	9032	+				hypothetical protein	annotation	genbank	-11157
-MF344582__MF344582__1__minus	CDS	hypothetical protein		9065	9316	+				hypothetical protein	annotation	genbank	-10936
-MF344582__MF344582__1__minus	CDS	hypothetical protein		9476	9589	-				ISKpn26	isfinder	genbank	-10525
-MF344582__MF344582__1__minus	IS	ISKpn26	IS5	9520	10715	+	complete	no		ISKpn26	isfinder	genbank	-10481
-MF344582__MF344582__1__minus	CDS	Mobile element protein		9588	10568	+				ISKpn26	isfinder	genbank	-10413
-MF344582__MF344582__1__minus	CDS	Aspartate aminotransferase		10550	10807	+				ISKpn26	isfinder	genbank	-9451
-MF344582__MF344582__1__minus	CDS	hypothetical protein		10791	10904	+				hypothetical protein	annotation	genbank	-9210
-MF344582__MF344582__1__minus	CDS	orf; hypothetical protein		10919	13309	+				orf; hypothetical protein	annotation	genbank	-9082
-MF344582__MF344582__1__minus	CDS	Mobile element protein		13627	13887	-				Mobile element protein	annotation	genbank	-6374
-MF344582__MF344582__1__minus	CDS	Bifunctional protein: zinc-containing al		13886	14782	+				Bifunctional protein: zinc-containing al	annotation	genbank	-6115
-MF344582__MF344582__1__minus	IS	IS903B	IS5	14772	15828	-	complete	no		IS903B	isfinder	genbank	-5229
-MF344582__MF344582__1__minus	CDS	Mobile element protein		14828	15796	-				IS903B	isfinder	genbank	-5173
-MF344582__MF344582__1__minus	CDS	hypothetical protein		15776	15907	+				ISEsa1	isfinder	genbank	-4225
-MF344582__MF344582__1__minus	IS	ISEsa1	ISNCY	15828	16102	+	fragment	yes		ISEsa1	isfinder	genbank	-4173
-MF344582__MF344582__1__minus	IS	ISEsa2	IS110	16103	17595	+	complete	no		ISEsa2	isfinder	genbank	-3898
-MF344582__MF344582__1__minus	CDS	Mobile element protein		16329	17567	+				ISEsa2	isfinder	genbank	-3672
-MF344582__MF344582__1__minus	cargo	cytb		18041	18613	+				cytb	cargo	genbank	-1960
-MF344582__MF344582__1__minus	CDS	hypothetical protein		18466	18615	+				hypothetical protein	annotation	genbank	-1535
-MF344582__MF344582__1__minus	CDS	Cobalt-zinc-cadmium resistance protein		18815	19738	+				Cobalt-zinc-cadmium resistance protein	annotation	genbank	-1186
-MF344582__MF344582__1__minus	cargo	czc		18817	19740	+				czc	cargo	genbank	-1184
-MF344582__MF344582__1__minus	cargo	relB		19999	20238	+				relB	cargo	genbank	-2
-MF344582__MF344582__1__minus	CDS	RelB/StbD replicon stabilization protein		20001	20240	+				RelB/StbD replicon stabilization protein	annotation	genbank	0
-MF344582__MF344582__1__minus	CDS	RelE/StbE replicon stabilization toxin		20240	20527	+				RelE/StbE replicon stabilization toxin	annotation	genbank	239
-MF344582__MF344582__1__minus	cargo	relE		20242	20529	+				relE	cargo	genbank	241
-MF344582__MF344582__1__minus	CDS	hypothetical protein		20511	20675	-				hypothetical protein	annotation	genbank	510
-MF344582__MF344582__1__minus	cargo	hok_gef		20597	20755	+				hok_gef	cargo	genbank	596
-MF344582__MF344582__1__minus	CDS	hypothetical protein		21366	21686	-				hypothetical protein	annotation	genbank	1365
-MF344582__MF344582__1__minus	CDS	hypothetical protein		21968	22171	-				hypothetical protein	annotation	genbank	1967
-MF344582__MF344582__1__minus	CDS	hypothetical protein		22218	22574	-				hypothetical protein	annotation	genbank	2217
-MF344582__MF344582__1__minus	CDS	hypothetical protein		22628	23230	-				hypothetical protein	annotation	genbank	2627
-MF344582__MF344582__1__minus	CDS	hypothetical protein		23326	24270	-				hypothetical protein	annotation	genbank	3325
-MF344582__MF344582__1__minus	CDS	hypothetical protein		24727	24957	+				hypothetical protein	annotation	genbank	4726
-MF344582__MF344582__1__minus	CDS	hypothetical protein		25374	26558	+				hypothetical protein	annotation	genbank	5373
-MF344582__MF344582__1__minus	CDS	hypothetical protein		26624	26905	+				hypothetical protein	annotation	genbank	6623
-MF344582__MF344582__1__minus	CDS	hypothetical protein		27220	27921	+				hypothetical protein	annotation	genbank	7219
-MF344582__MF344582__1__minus	CDS	hypothetical protein		28056	28352	+				hypothetical protein	annotation	genbank	8055
-MF344582__MF344582__1__minus	CDS	hypothetical protein		28397	28834	+				hypothetical protein	annotation	genbank	8396
-MF344582__MF344582__1__minus	CDS	hypothetical protein		28896	29438	+				hypothetical protein	annotation	genbank	8895
-MF344582__MF344582__1__minus	CDS	hypothetical protein		29664	30032	+				hypothetical protein	annotation	genbank	9663
-MF344582__MF344582__1__minus	CDS	hypothetical protein		30224	30373	+				hypothetical protein	annotation	genbank	10223
-MF344582__MF344582__1__minus	CDS	hypothetical protein		30465	30764	+				hypothetical protein	annotation	genbank	10464
-MF344582__MF344582__1__minus	CDS	hypothetical protein		31121	31405	+				hypothetical protein	annotation	genbank	11120
-MF344582__MF344582__1__minus	CDS	hypothetical protein		31471	31824	+				hypothetical protein	annotation	genbank	11470
-MF344582__MF344582__1__minus	CDS	hypothetical protein		31962	32084	-				hypothetical protein	annotation	genbank	11961
-MF344582__MF344582__1__minus	CDS	putative periplasmic protein		32111	32842	-				putative periplasmic protein	annotation	genbank	12110
-MF344582__MF344582__1__minus	CDS	putative peptidase		32844	34025	-				putative peptidase	annotation	genbank	12843
-MF344582__MF344582__1__minus	cargo	tra		34034	34696	-				tra	cargo	genbank	14033
-MF344582__MF344582__1__minus	CDS	hypothetical protein		34036	34698	-				hypothetical protein	annotation	genbank	14035
-MF344582__MF344582__1__minus	CDS	orf; hypothetical protein		34685	35794	-				orf; hypothetical protein	annotation	genbank	14684
-MF344582__MF344582__1__minus	CDS	IncF plasmid conjugative transfer protei		35794	37776	-				IncF plasmid conjugative transfer protei	annotation	genbank	15793
-MF344582__MF344582__1__minus	cargo	tra		35796	37778	-				tra	cargo	genbank	15795
-MF344582__MF344582__1__minus	CDS	TraI		37878	40527	-				TraI	annotation	genbank	17877
-MF344582__MF344582__1__minus	cargo	tra		37880	40527	-				tra	cargo	genbank	17879
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+MF344582__MF344582__1__minus	CDS	hypothetical protein		64	720	+					hypothetical protein	annotation	genbank	-19937
+MF344582__MF344582__1__minus	CDS	putative periplasmic protein		1746	4166	-					putative periplasmic protein	annotation	genbank	-18255
+MF344582__MF344582__1__minus	CDS	hypothetical protein		4471	4602	+					hypothetical protein	annotation	genbank	-15530
+MF344582__MF344582__1__minus	CDS	hypothetical protein		4631	5218	-					hypothetical protein	annotation	genbank	-15370
+MF344582__MF344582__1__minus	CDS	hypothetical protein		5262	5525	-					hypothetical protein	annotation	genbank	-14739
+MF344582__MF344582__1__minus	CDS	hypothetical protein		5619	6380	-					hypothetical protein	annotation	genbank	-14382
+MF344582__MF344582__1__minus	CDS	hypothetical protein		6461	7225	-					hypothetical protein	annotation	genbank	-13540
+MF344582__MF344582__1__minus	CDS	hypothetical protein		7392	7532	-					hypothetical protein	annotation	genbank	-12609
+MF344582__MF344582__1__minus	CDS	hypothetical protein		7548	8072	+					hypothetical protein	annotation	genbank	-12453
+MF344582__MF344582__1__minus	CDS	Phage protein		8176	8607	+					Phage protein	annotation	genbank	-11825
+MF344582__MF344582__1__minus	CDS	hypothetical protein		8600	8857	+					hypothetical protein	annotation	genbank	-11401
+MF344582__MF344582__1__minus	CDS	hypothetical protein		8844	9032	+					hypothetical protein	annotation	genbank	-11157
+MF344582__MF344582__1__minus	CDS	hypothetical protein		9065	9316	+					hypothetical protein	annotation	genbank	-10936
+MF344582__MF344582__1__minus	CDS	hypothetical protein		9476	9589	-					ISKpn26	isfinder	genbank	-10525
+MF344582__MF344582__1__minus	IS	ISKpn26	IS5	9520	10715	+	complete	no	no		ISKpn26	isfinder	genbank	-10481
+MF344582__MF344582__1__minus	CDS	Mobile element protein		9588	10568	+					ISKpn26	isfinder	genbank	-10413
+MF344582__MF344582__1__minus	CDS	Aspartate aminotransferase		10550	10807	+					ISKpn26	isfinder	genbank	-9451
+MF344582__MF344582__1__minus	CDS	hypothetical protein		10791	10904	+					hypothetical protein	annotation	genbank	-9210
+MF344582__MF344582__1__minus	CDS	orf; hypothetical protein		10919	13309	+					orf; hypothetical protein	annotation	genbank	-9082
+MF344582__MF344582__1__minus	CDS	Mobile element protein		13627	13887	-					Mobile element protein	annotation	genbank	-6374
+MF344582__MF344582__1__minus	CDS	Bifunctional protein: zinc-containing al		13886	14782	+					Bifunctional protein: zinc-containing al	annotation	genbank	-6115
+MF344582__MF344582__1__minus	IS	IS903B	IS5	14772	15828	-	complete	no	no		IS903B	isfinder	genbank	-5229
+MF344582__MF344582__1__minus	CDS	Mobile element protein		14828	15796	-					IS903B	isfinder	genbank	-5173
+MF344582__MF344582__1__minus	CDS	hypothetical protein		15776	15907	+					ISEsa1	isfinder	genbank	-4225
+MF344582__MF344582__1__minus	IS	ISEsa1	ISNCY	15828	16102	+	fragment	yes	no		ISEsa1	isfinder	genbank	-4173
+MF344582__MF344582__1__minus	IS	ISEsa2	IS110	16103	17595	+	complete	no	no		ISEsa2	isfinder	genbank	-3898
+MF344582__MF344582__1__minus	CDS	Mobile element protein		16329	17567	+					ISEsa2	isfinder	genbank	-3672
+MF344582__MF344582__1__minus	cargo	cytb		18041	18613	+			no		cytb	cargo	genbank	-1960
+MF344582__MF344582__1__minus	CDS	hypothetical protein		18466	18615	+					hypothetical protein	annotation	genbank	-1535
+MF344582__MF344582__1__minus	CDS	Cobalt-zinc-cadmium resistance protein		18815	19738	+					Cobalt-zinc-cadmium resistance protein	annotation	genbank	-1186
+MF344582__MF344582__1__minus	cargo	czc		18817	19740	+			no		czc	cargo	genbank	-1184
+MF344582__MF344582__1__minus	cargo	relB		19999	20238	+			no		relB	cargo	genbank	-2
+MF344582__MF344582__1__minus	CDS	RelB/StbD replicon stabilization protein		20001	20240	+					RelB/StbD replicon stabilization protein	annotation	genbank	0
+MF344582__MF344582__1__minus	CDS	RelE/StbE replicon stabilization toxin		20240	20527	+					RelE/StbE replicon stabilization toxin	annotation	genbank	239
+MF344582__MF344582__1__minus	cargo	relE		20242	20529	+			no		relE	cargo	genbank	241
+MF344582__MF344582__1__minus	CDS	hypothetical protein		20511	20675	-					hypothetical protein	annotation	genbank	510
+MF344582__MF344582__1__minus	cargo	hok_gef		20597	20755	+			no		hok_gef	cargo	genbank	596
+MF344582__MF344582__1__minus	CDS	hypothetical protein		21366	21686	-					hypothetical protein	annotation	genbank	1365
+MF344582__MF344582__1__minus	CDS	hypothetical protein		21968	22171	-					hypothetical protein	annotation	genbank	1967
+MF344582__MF344582__1__minus	CDS	hypothetical protein		22218	22574	-					hypothetical protein	annotation	genbank	2217
+MF344582__MF344582__1__minus	CDS	hypothetical protein		22628	23230	-					hypothetical protein	annotation	genbank	2627
+MF344582__MF344582__1__minus	CDS	hypothetical protein		23326	24270	-					hypothetical protein	annotation	genbank	3325
+MF344582__MF344582__1__minus	CDS	hypothetical protein		24727	24957	+					hypothetical protein	annotation	genbank	4726
+MF344582__MF344582__1__minus	CDS	hypothetical protein		25374	26558	+					hypothetical protein	annotation	genbank	5373
+MF344582__MF344582__1__minus	CDS	hypothetical protein		26624	26905	+					hypothetical protein	annotation	genbank	6623
+MF344582__MF344582__1__minus	CDS	hypothetical protein		27220	27921	+					hypothetical protein	annotation	genbank	7219
+MF344582__MF344582__1__minus	CDS	hypothetical protein		28056	28352	+					hypothetical protein	annotation	genbank	8055
+MF344582__MF344582__1__minus	CDS	hypothetical protein		28397	28834	+					hypothetical protein	annotation	genbank	8396
+MF344582__MF344582__1__minus	CDS	hypothetical protein		28896	29438	+					hypothetical protein	annotation	genbank	8895
+MF344582__MF344582__1__minus	CDS	hypothetical protein		29664	30032	+					hypothetical protein	annotation	genbank	9663
+MF344582__MF344582__1__minus	CDS	hypothetical protein		30224	30373	+					hypothetical protein	annotation	genbank	10223
+MF344582__MF344582__1__minus	CDS	hypothetical protein		30465	30764	+					hypothetical protein	annotation	genbank	10464
+MF344582__MF344582__1__minus	CDS	hypothetical protein		31121	31405	+					hypothetical protein	annotation	genbank	11120
+MF344582__MF344582__1__minus	CDS	hypothetical protein		31471	31824	+					hypothetical protein	annotation	genbank	11470
+MF344582__MF344582__1__minus	CDS	hypothetical protein		31962	32084	-					hypothetical protein	annotation	genbank	11961
+MF344582__MF344582__1__minus	CDS	putative periplasmic protein		32111	32842	-					putative periplasmic protein	annotation	genbank	12110
+MF344582__MF344582__1__minus	CDS	putative peptidase		32844	34025	-					putative peptidase	annotation	genbank	12843
+MF344582__MF344582__1__minus	cargo	tra		34034	34696	-			no		tra	cargo	genbank	14033
+MF344582__MF344582__1__minus	CDS	hypothetical protein		34036	34698	-					hypothetical protein	annotation	genbank	14035
+MF344582__MF344582__1__minus	CDS	orf; hypothetical protein		34685	35794	-					orf; hypothetical protein	annotation	genbank	14684
+MF344582__MF344582__1__minus	CDS	IncF plasmid conjugative transfer protei		35794	37776	-					IncF plasmid conjugative transfer protei	annotation	genbank	15793
+MF344582__MF344582__1__minus	cargo	tra		35796	37778	-			no		tra	cargo	genbank	15795
+MF344582__MF344582__1__minus	CDS	TraI		37878	40527	-					TraI	annotation	genbank	17877
+MF344582__MF344582__1__minus	cargo	tra		37880	40527	-			right		tra	cargo	genbank	17879

@@ -1,12 +1,12 @@
-locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	nested_in	colour_key	colour_source	annot_source	offset_from_bait
-LT991956__LT991956__1__plus	cargo	ars		127	1416	+				ars	cargo	genbank	-19874
-LT991956__LT991956__1__plus	cargo	ars		2559	4311	-				ars	cargo	genbank	-17442
-LT991956__LT991956__1__plus	cargo	ars		4329	4690	-				ars	cargo	genbank	-15672
-LT991956__LT991956__1__plus	cargo	ars		5324	6027	-				ars	cargo	genbank	-14677
-LT991956__LT991956__1__plus	IS	IS150	IS3	7626	7665	+	fragment	yes		IS150	isfinder	genbank	-12375
-LT991956__LT991956__1__plus	IS	ISEsa1	ISNCY	7757	9362	+	complete	no		ISEsa1	isfinder	genbank	-12244
-LT991956__LT991956__1__plus	cargo	relB		19999	20238	+				relB	cargo	genbank	-2
-LT991956__LT991956__1__plus	cargo	relE		20242	20529	+				relE	cargo	genbank	241
-LT991956__LT991956__1__plus	IS	ISKpn28	IS481	20591	21686	-	complete	no		ISKpn28	isfinder	genbank	590
-LT991956__LT991956__1__plus	cargo	hok_gef		21698	21856	+				hok_gef	cargo	genbank	1697
-LT991956__LT991956__1__plus	cargo	tra		39754	40527	+				tra	cargo	genbank	19753
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+LT991956__LT991956__1__plus	cargo	ars		127	1416	+			no		ars	cargo	genbank	-19874
+LT991956__LT991956__1__plus	cargo	ars		2559	4311	-			no		ars	cargo	genbank	-17442
+LT991956__LT991956__1__plus	cargo	ars		4329	4690	-			no		ars	cargo	genbank	-15672
+LT991956__LT991956__1__plus	cargo	ars		5324	6027	-			no		ars	cargo	genbank	-14677
+LT991956__LT991956__1__plus	IS	IS150	IS3	7626	7665	+	fragment	yes	no		IS150	isfinder	genbank	-12375
+LT991956__LT991956__1__plus	IS	ISEsa1	ISNCY	7757	9362	+	complete	no	no		ISEsa1	isfinder	genbank	-12244
+LT991956__LT991956__1__plus	cargo	relB		19999	20238	+			no		relB	cargo	genbank	-2
+LT991956__LT991956__1__plus	cargo	relE		20242	20529	+			no		relE	cargo	genbank	241
+LT991956__LT991956__1__plus	IS	ISKpn28	IS481	20591	21686	-	complete	no	no		ISKpn28	isfinder	genbank	590
+LT991956__LT991956__1__plus	cargo	hok_gef		21698	21856	+			no		hok_gef	cargo	genbank	1697
+LT991956__LT991956__1__plus	cargo	tra		39754	40527	+			right		tra	cargo	genbank	19753
