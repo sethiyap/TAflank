@@ -52,14 +52,27 @@ def write_blast6(path, fmt, lines, applied, provenance):
 
 
 def parse_subregions(spec):
-    """'relB:1-240,relE:240-527' -> [('relB',1,240), ('relE',240,527)]"""
+    """'relB:1-240,relE:240-527' -> [('relB',1,240), ('relE',240,527)]
+
+    A bait with no named parts is legitimate, so an empty spec is empty, not
+    an error. Nextflow turns `--subregions ''` on the command line into the
+    BOOLEAN true, which reaches here as the string 'true'; accept that and the
+    other no-op spellings rather than dying on `'true'.split(':')`.
+    """
     out = []
-    if not spec:
+    if not spec or spec.strip().lower() in ('none', 'true', 'all', 'any', '-'):
         return out
     for part in spec.split(','):
-        name, rng = part.split(':')
-        a, b = rng.split('-')
-        out.append((name.strip(), int(a), int(b)))
+        if ':' not in part or '-' not in part.split(':', 1)[1]:
+            sys.exit(f"bad --subregions entry {part!r}: expected "
+                     f"name:start-end, e.g. relB:1-240")
+        name, rng = part.split(':', 1)
+        a, b = rng.split('-', 1)
+        try:
+            out.append((name.strip(), int(a), int(b)))
+        except ValueError:
+            sys.exit(f"bad --subregions coordinates in {part!r}: "
+                     f"{a!r}-{b!r} are not integers")
     return out
 
 

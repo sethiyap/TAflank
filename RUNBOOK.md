@@ -391,3 +391,63 @@ qsub env/gadi_run.sh
 
 It produces identical results — verified. The only difference is that you do
 not watch each step go past.
+
+## Telling it what to search, and what to search with
+
+Nothing is edited. Everything is set with `qsub -v NAME=VALUE`, and several at
+once are comma separated with **no spaces anywhere** in the `-v` argument.
+
+**What to search** (the subject). Pick one of these two, not both:
+
+```bash
+# (a) build a database from a directory of FASTA files
+qsub -v GENOMES=/g/data/rg42/TAflank/data/public_16/fasta env/gadi_run.sh
+
+# (b) use a database that is already formatted — give the path with NO extension
+qsub -v DB=/scratch/rg42/ps1744/blastdb/nt_prok env/gadi_run.sh
+```
+
+`GENOMES` is the default, pointing at the 16 records. `DB` overrides it: with a
+pre-formatted database there are no FASTA files to read, so each window is
+pulled back out of the database itself with `blastdbcmd`.
+
+**What to search with** (the query, i.e. the bait):
+
+```bash
+qsub -v BAIT=/g/data/rg42/TAflank/anchors/relBE_seed.fa env/gadi_run.sh
+```
+
+Both together:
+
+```bash
+qsub -v BAIT=/g/data/rg42/TAflank/anchors/relBE_seed.fa,DB=/scratch/rg42/ps1744/blastdb/nt_prok \
+     env/gadi_run.sh
+```
+
+### If you change the bait, change two other things with it
+
+`BAIT` on its own is not enough, and the pipeline will not warn you:
+
+| variable | default | why it must follow the bait |
+|---|---|---|
+| `SUBREGIONS` | `relB:1-240,relE:240-527` | names the parts of the bait so per-gene coverage is reported, and so a half hit can be called ORPHAN-ANTITOXIN or ORPHAN-TOXIN rather than just "short". Coordinates that describe relB and relE are meaningless on another gene. Use `SUBREGIONS=none` for a bait with no named parts. |
+| `ENDS` | `ISEsa1,ISEsa2` | the IS elements that bracket the core, which is what COMPLETE / DECAYED / HALF-CORE / NO CORE is measured against. These two belong to the **relBE metal-resistance lineage**. Leave them in place for a different bait and every locus comes back NO CORE — not because the vehicle is absent, but because you asked about the wrong vehicle. |
+
+```bash
+qsub -v BAIT=/g/data/rg42/TAflank/anchors/parDE.fa,SUBREGIONS=parD:1-250,ENDS=IS26 \
+     env/gadi_run.sh
+```
+
+`ENDS` is load-bearing, not cosmetic. On the current seven loci, the default
+gives 3 COMPLETE / 1 DECAYED / 2 HALF-CORE / 1 NO CORE; `ENDS=IS26,IS903B` on
+the very same data gives 1 COMPLETE / 3 HALF-CORE / 3 NO CORE.
+
+### See all the settings
+
+```bash
+sed -n '19,56p' /g/data/rg42/TAflank/env/gadi_run.sh
+```
+
+The job prints every one of them at the top of its log before doing any work,
+and stops immediately with a readable message if `BAIT` does not exist or `DB`
+is not a BLAST database — rather than failing twenty minutes into the queue.

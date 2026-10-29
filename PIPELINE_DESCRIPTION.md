@@ -680,9 +680,29 @@ at `BUILD_DB` with an empty input directory. The script is idempotent.
 qsub env/gadi_run.sh                                    # plasmids, defaults
 qsub -v REPLICON=chromosome env/gadi_run.sh             # chromosomes
 qsub -v TIER=all,REPLICON=all env/gadi_run.sh           # keep everything
-qsub -v DB=/scratch/rg42/blastdb/nt_prok env/gadi_run.sh  # the sweep
 qsub -v BAKTA=true,BAKTA_DB=/g/data/rg42/bakta_db/db-light env/gadi_run.sh
+
+# what to search (subject) -- GENOMES builds a db, DB uses a formatted one
+qsub -v GENOMES=/g/data/rg42/TAflank/data/public_16/fasta env/gadi_run.sh
+qsub -v DB=/scratch/rg42/blastdb/nt_prok env/gadi_run.sh   # the sweep
+
+# what to search with (query) -- and the two settings that must follow it
+qsub -v BAIT=/g/data/rg42/TAflank/anchors/relBE_seed.fa env/gadi_run.sh
+qsub -v BAIT=/path/parDE.fa,SUBREGIONS=parD:1-250,ENDS=IS26 env/gadi_run.sh
 ```
+
+`BAIT` alone is not enough. `SUBREGIONS` names the parts of the bait, so a half
+hit resolves to ORPHAN-ANTITOXIN or ORPHAN-TOXIN instead of merely "short";
+`relB:1-240,relE:240-527` is meaningless on another gene (`none` for a bait with
+no named parts). `ENDS` names the IS elements that bracket the core and so
+decides COMPLETE / DECAYED / HALF-CORE / NO CORE — `ISEsa1,ISEsa2` is specific
+to the relBE metal-resistance lineage, and leaving it in place for a different
+bait returns NO CORE everywhere. It is load-bearing: on the seven plasmid loci
+the default gives 3/1/2/1 while `ENDS=IS26,IS903B` gives 1 COMPLETE /
+3 HALF-CORE / 3 NO CORE from identical input.
+
+The job echoes every setting before it starts work, and exits immediately if
+`BAIT` is missing or `DB` is not a BLAST nucleotide database.
 
 Monitor with `qstat -u $USER`; output lands in `/scratch/rg42/$USER/taflank_run`.
 

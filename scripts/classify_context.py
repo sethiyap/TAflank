@@ -21,7 +21,7 @@ Nothing here filters. Every locus gets a row, including loci with no IS and no
 cargo at all.
 """
 
-import argparse, glob, os
+import argparse, glob, os, sys
 
 
 def read_tsv(p):
@@ -78,10 +78,20 @@ def main():
     p.add_argument('--is-dir', required=True)
     p.add_argument('--cargo-dir', required=True)
     p.add_argument('--out', required=True)
+    p.add_argument('--ends', default='ISEsa1,ISEsa2',
+                   help='comma-separated IS elements that bracket the core. '
+                        'These are lineage-specific: ISEsa1/ISEsa2 belong to '
+                        'the relBE metal-resistance lineage, so a DIFFERENT '
+                        'bait almost certainly needs different ends, or every '
+                        'locus comes back NO CORE.')
     a = p.parse_args()
 
     loci = read_tsv(a.loci)
     is_by, cargo_by = {}, {}
+    ends = tuple(x.strip() for x in a.ends.split(',') if x.strip())
+    if not ends:
+        sys.exit('--ends must name at least one element')
+
     for f in glob.glob(os.path.join(a.is_dir, '*.is.tsv')):
         for r in read_tsv(f):
             is_by.setdefault(r['locus_id'], []).append(r)
@@ -100,7 +110,7 @@ def main():
         lid = L['locus_id']
         ish = is_by.get(lid, [])
         car = cargo_by.get(lid, [])
-        vcls, vends, vint, vclip = vehicle_class(ish)
+        vcls, vends, vint, vclip = vehicle_class(ish, ends=ends)
         fams = sorted({c['family'] for c in car})
         off = {}
         for c in car:

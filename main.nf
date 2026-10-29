@@ -47,7 +47,7 @@ process BAIT_SEARCH {
     """
     BLAST_BIN='${params.blast_bin}' ${PY()} ${projectDir}/scripts/bait_search.py \\
         --bait ${bait} --db ${db} --out bait_hits.tsv \\
-        --subregions '${params.subregions}' \\
+        --subregions '${filterOf(params.subregions)}' \\
         --full-pident ${params.full_pident} --full-qcov ${params.full_qcov} \\
         --paralogue-max-pident ${params.paralogue_max_pident} \\
         --task ${params.blast_task} --evalue ${params.evalue} \\
@@ -73,7 +73,7 @@ process IMPORT_BLAST {
     """
     ${PY()} ${projectDir}/scripts/import_blast.py \\
         --hit-table ${hit_table} --bait ${bait} --out bait_hits.tsv \\
-        --subregions '${params.subregions}' \\
+        --subregions '${filterOf(params.subregions)}' \\
         --full-pident ${params.full_pident} --full-qcov ${params.full_qcov} \\
         --paralogue-max-pident ${params.paralogue_max_pident} \\
         --raw-out blast/01_raw.tsv --kept-out blast/02_tier_a.tsv
@@ -234,7 +234,8 @@ process CLASSIFY_CONTEXT {
     script:
     """
     ${PY()} ${projectDir}/scripts/classify_context.py \\
-        --loci ${loci_tsv} --is-dir . --cargo-dir . --out context.tsv
+        --loci ${loci_tsv} --is-dir . --cargo-dir . --out context.tsv \
+        --ends '${params.vehicle_ends}'
     """
 }
 
