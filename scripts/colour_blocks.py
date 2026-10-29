@@ -24,6 +24,23 @@ carry trustworthy names are coloured:
   IS     -- ISfinder element names, from is_search.py
   cargo  -- the curated gene set, from cargo_search.py
 
+COLOUR: FAMILY IS THE HUE, ELEMENT IS THE SHADE
+-----------------------------------------------
+Twenty-four elements given twenty-four unrelated colours is a lookup table, not
+a picture -- nothing can be read off it without crossing to the legend. IS names
+already carry their family (ISfinder `ISEsa1_ISNCY_IS1202` -> family ISNCY), so
+the family sets the hue and elements within it differ only in lightness. Twelve
+hues instead of twenty-four, and related elements now look related.
+
+Two things this makes visible that per-element colour hid:
+
+  * ISEsa1 is **ISNCY** and ISEsa2 is **IS110** -- the two ends of the candidate
+    vehicle are NOT the same family, so the "two IS of the same family flanking
+    the cargo" composite-transposon rule does not describe it.
+  * ISEsa1 and ISKpn21 **are** the same family and group (ISNCY/IS1202). They
+    now share a hue, which is precisely the pair that makes a naive
+    same-family rule fire on a nested element that flanks nothing.
+
 COLOUR STABILITY
 ----------------
 Cluster indices renumber whenever the dataset grows, which would recolour the
@@ -40,10 +57,49 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle, FancyArrow
 from matplotlib.lines import Line2D
 
-# Hand-pinned: these carry the argument, so their colours must never drift.
+import colorsys
+
+# Family hues. ISNCY and IS110 keep the red/orange of the elements that made
+# them matter, so the figure stays comparable with earlier versions.
+FAMILY = {
+    'ISNCY':     '#d62728',   # ISEsa1, ISKpn21
+    'IS110':     '#ff7f0e',   # ISEsa2
+    'IS3':       '#2b7bba',
+    'IS5':       '#8c6d31',
+    'IS6':       '#6a3d9a',
+    'IS1':       '#17becf',
+    'IS4':       '#b15928',
+    'IS21':      '#1b9e77',
+    'IS91':      '#e7298a',
+    'IS481':     '#66a61e',
+    'IS1380':    '#7570b3',
+    'IS200/IS605': '#a6761d',
+}
+# Darkest shade inside a family goes to the element that carries the argument.
+ELEMENT_RANK = {'ISEsa1': 0, 'ISEsa2': 0, 'ISKpn21': 1}
+
+
+def shade(base, i, n):
+    """i-th of n lightness steps on `base`; i=0 is the base colour itself."""
+    if n <= 1 or i == 0:
+        return base
+    r, g, b = (int(base[k:k + 2], 16) / 255 for k in (1, 3, 5))
+    h, l, sat = colorsys.rgb_to_hls(r, g, b)
+    l = min(0.90, l + (0.86 - l) * (i / n))
+    sat = max(0.18, sat * (1 - 0.30 * i / n))
+    return '#%02x%02x%02x' % tuple(
+        int(round(c * 255)) for c in colorsys.hls_to_rgb(h, l, sat))
+
+
+def family_colour(fam):
+    if fam in FAMILY:
+        return FAMILY[fam]
+    h = int(hashlib.sha1(fam.encode()).hexdigest(), 16)
+    return SPARE[h % len(SPARE)]
+
+
+# Hand-pinned cargo colours: these carry the argument, so they must not drift.
 PINNED = {
-    'ISEsa1': '#d62728',   # the candidate ancestral vehicle
-    'ISEsa2': '#ff7f0e',   # its partner at the -3898 boundary
     'relB':   '#1f77b4',   # the bait
     'relE':   '#17becf',
     'czc':    '#2ca02c',   # cobalt-zinc-cadmium, the metal-resistance core
@@ -72,6 +128,60 @@ def read_tsv(path):
         return list(csv.DictReader(fh, delimiter='\t'))
 
 
+
+def legend_blocks(fam_seen, is_colour, seen):
+    """Legend content as uniform (header, colour, [(label, swatch-spec)]) blocks.
+
+    Everything -- families, cargo, the hatch/dash key -- is one kind of object,
+    so the layout code below does not special-case any of them."""
+    fams = sorted(fam_seen, key=lambda f: (-len(fam_seen[f]), f))
+    blocks = [(f, family_colour(f),
+               [(e, dict(facecolor=is_colour[e]))
+                for e in sorted(fam_seen[f],
+                                key=lambda x: (ELEMENT_RANK.get(x, 9), x))])
+              for f in fams]
+    cargo = sorted(n for n in seen if seen[n][1] != 'IS')
+    for i in range(0, len(cargo), 6):
+        blocks.append(('cargo genes' if i == 0 else '', '#333333',
+                       [(n, dict(facecolor=seen[n][0])) for n in cargo[i:i + 6]]))
+    blocks.append(('key', '#333333', [
+        ('CDS (no family yet)', dict(facecolor='#f0f0f0', edgecolor='#bdbdbd')),
+        ('fragment <50% cov', dict(facecolor='white', hatch='///')),
+        ('runs off the window', dict(facecolor='white',
+                                     linestyle=(0, (1.4, 1.0)))),
+    ]))
+    return blocks
+
+
+def draw_legend(lg, blocks, ncol=6):
+    """Pack the blocks into `ncol` columns, each row as tall as its tallest."""
+    rows, row = [], []
+    for b in blocks:
+        row.append(b)
+        if len(row) == ncol:
+            rows.append(row); row = []
+    if row:
+        rows.append(row)
+    heights = [max(len(b[2]) for b in r) + 1.45 for r in rows]
+    total = sum(heights)
+    lg.set_xlim(0, ncol); lg.set_ylim(total, 0); lg.axis('off')
+    y0 = 0.0
+    for r, h in zip(rows, heights):
+        for k, (name, hcol, items) in enumerate(r):
+            if name:
+                lg.text(k + 0.03, y0 + 0.5, name, fontsize=7.2,
+                        fontweight='bold', va='center', color=hcol)
+            for j, (label, spec) in enumerate(items):
+                yy = y0 + 1.45 + j
+                lg.add_patch(Rectangle(
+                    (k + 0.06, yy - 0.30), 0.115, 0.56,
+                    edgecolor=spec.pop('edgecolor', 'black'), lw=0.55,
+                    clip_on=False, **spec))
+                lg.text(k + 0.24, yy, label, fontsize=6.5, va='center')
+        y0 += h
+    return total
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--blocks', required=True, help='directory of *.blocks.tsv')
@@ -94,6 +204,19 @@ def main():
         for r in read_tsv(a.metadata):
             meta[r['accession']] = r
 
+    # element -> family, and a colour per element: family hue, element shade
+    fam_of = {r['name']: (r['family'] or 'unclassified')
+              for r in rows if r['feature_type'] == 'IS'}
+    fam_members = {}
+    for e, f in fam_of.items():
+        fam_members.setdefault(f, []).append(e)
+    is_colour = {}
+    for f, members in fam_members.items():
+        members.sort(key=lambda e: (ELEMENT_RANK.get(e, 9), e))
+        base = family_colour(f)
+        for i, e in enumerate(members):
+            is_colour[e] = shade(base, i, len(members))
+
     by_locus = {}
     for r in rows:
         by_locus.setdefault(r['locus_id'], []).append(r)
@@ -112,12 +235,32 @@ def main():
         CLASS_ORDER.get(ctx.get(l, {}).get('vehicle_class', ''), 9),
         esa1_offset(l), l))
 
-    # ---------------- panel A: aligned colour blocks ----------------
-    PITCH = 1.75          # vertical distance between loci
-    fig, ax = plt.subplots(figsize=(15, 0.95 * PITCH * len(loci) + 2.6))
-    H_CDS, H_IS, H_CARGO = 0.17, 0.40, 0.30
+    # ---- figure geometry is settled BEFORE drawing, so the legend gets a real
+    # gridspec row instead of being hung off the bottom with negative
+    # coordinates (which bbox_inches='tight' then expands into a huge void) ----
     seen = {}
+    for r in rows:
+        if r['feature_type'] in ('IS', 'cargo'):
+            seen[r['name']] = (is_colour.get(r['name']) if r['feature_type'] == 'IS'
+                               else colour(r['name']), r['feature_type'])
+    fam_seen = {}
+    for e, f in fam_of.items():
+        fam_seen.setdefault(f, set()).add(e)
+    blocks = legend_blocks(fam_seen, is_colour, seen)
 
+    PITCH = 1.75                       # vertical distance between loci
+    NCOL = 6
+    n_lrow = -(-len(blocks) // NCOL)
+    leg_h = 0.20 * sum(max(len(b[2]) for b in blocks[i * NCOL:(i + 1) * NCOL]) + 1.45
+                       for i in range(n_lrow))
+    main_h = 0.95 * PITCH * len(loci) + 2.0
+
+    fig = plt.figure(figsize=(15, main_h + leg_h))
+    gs = fig.add_gridspec(2, 1, height_ratios=[main_h, leg_h],
+                      hspace=0.10 + 0.9 / main_h)
+    ax, lg = fig.add_subplot(gs[0]), fig.add_subplot(gs[1])
+
+    H_CDS, H_IS, H_CARGO = 0.17, 0.40, 0.30
     for i, lid in enumerate(loci):
         y = (len(loci) - 1 - i) * PITCH
         label_y = []      # x-ranges already labelled on this row, for stacking
@@ -142,15 +285,13 @@ def main():
 
             h = H_IS if ft == 'IS' else H_CARGO
             yy = y + 0.34 if ft == 'IS' else y - 0.36
-            c = colour(nm)
+            c = is_colour.get(nm) if ft == 'IS' else colour(nm)
             frag = r.get('cov_class') == 'fragment'
             ax.add_patch(Rectangle(
                 (o, yy - h / 2), w, h, facecolor=c,
-                edgecolor='black' if not clipped else '#555555',
-                lw=0.9 if not clipped else 0.9,
+                edgecolor='black' if not clipped else '#555555', lw=0.9,
                 linestyle='-' if not clipped else (0, (1.4, 1.0)),
                 hatch='///' if frag else None, alpha=0.95, zorder=3))
-            seen.setdefault(nm, (c, ft))
             # name the vehicle and the small-but-decisive fragments
             if nm.startswith('ISEsa') or (frag and ft == 'IS'):
                 # Short elements sit shoulder to shoulder and their labels
@@ -185,8 +326,8 @@ def main():
                 fontweight='bold')
 
     ax.axvline(0, color='#1f77b4', lw=1.3, ls='--', zorder=4)
-    ax.text(0, (len(loci) - 1) * PITCH + 0.95, ' relB start (bait = 0)', fontsize=7.5,
-            color='#1f77b4', ha='left', va='bottom')
+    ax.text(0, (len(loci) - 1) * PITCH + 0.95, ' relB start (bait = 0)',
+            fontsize=7.5, color='#1f77b4', ha='left', va='bottom')
     # the recurring boundary, drawn so it can be checked rather than asserted
     ax.axvline(-3898, color='#ff7f0e', lw=0.9, ls=':', zorder=2)
     ax.text(-3898, -1.35, '-3898', fontsize=6.5, color='#ff7f0e', ha='center')
@@ -194,40 +335,21 @@ def main():
     ax.set_xlim(-a.flank * 1.30, a.flank * 1.22)
     ax.set_ylim(-1.55, (len(loci) - 1) * PITCH + 1.30)
     ax.set_yticks([])
-    ax.set_xlabel('position relative to relB start (bp)', fontsize=9)
+    ax.set_xlabel('position relative to relB start (bp)', fontsize=9,
+              labelpad=6)
     ax.set_xticks(range(-a.flank, a.flank + 1, 5000))
     ax.set_xticklabels([f'{v//1000:+d} kb' if v else '0'
                         for v in range(-a.flank, a.flank + 1, 5000)], fontsize=7.5)
-    for s in ('top', 'right', 'left'):
-        ax.spines[s].set_visible(False)
-
-    def sq(c, lab, ec='black'):
-        return Line2D([0], [0], marker='s', ls='', markersize=7,
-                      markerfacecolor=c, markeredgecolor=ec,
-                      markeredgewidth=0.5, label=lab)
-
-    is_names = sorted(n for n in seen if seen[n][1] == 'IS')
-    cg_names = sorted(n for n in seen if seen[n][1] != 'IS')
-    handles = ([sq('none', 'IS elements:', 'none')]
-               + [sq(seen[n][0], n) for n in is_names]
-               + [sq('none', '', 'none')] * ((-len(is_names) - 1) % 7)
-               + [sq('none', 'cargo genes:', 'none')]
-               + [sq(seen[n][0], n) for n in cg_names])
-    handles += [
-        Line2D([0], [0], marker='s', ls='', markersize=7, markerfacecolor='#f0f0f0',
-               markeredgecolor='#bdbdbd', label='CDS (no family colour yet)'),
-        Line2D([0], [0], marker='s', ls='', markersize=7, markerfacecolor='white',
-               markeredgecolor='black', label='hatched = fragment (<50% cov)'),
-    ]
-    ax.legend(handles=handles, loc='upper center', bbox_to_anchor=(0.5, -0.11),
-              ncol=7, fontsize=6.6, frameon=False, handletextpad=0.35,
-              columnspacing=1.0)
+    for sp in ('top', 'right', 'left'):
+        ax.spines[sp].set_visible(False)
     ax.set_title('relBE flanking architecture, aligned on the bait\n'
-                 'IS track above each line, curated cargo below; CDS grey '
-                 '(families not yet called)', fontsize=10, pad=12)
+                 'IS colour = family, shade = element within it; '
+                 'cargo below each line; CDS grey (families not yet called)',
+                 fontsize=10, pad=12)
+
+    draw_legend(lg, blocks, NCOL)
 
     os.makedirs(a.outdir, exist_ok=True)
-    fig.tight_layout()
     for ext in ('png', 'svg'):
         fig.savefig(os.path.join(a.outdir, f'colour_blocks.{ext}'),
                     dpi=200, bbox_inches='tight')
@@ -235,33 +357,43 @@ def main():
 
     # ---------------- panel B: IS presence/absence heatmap ----------------
     is_rows = [r for r in rows if r['feature_type'] == 'IS']
-    elems = {}
-    for r in is_rows:
-        elems.setdefault(r['name'], []).append(int(r['offset_from_bait']))
-    # order by how many loci carry it, then by median offset: the recurring
-    # elements collect on the left, the one-off graffiti trails off right
     n_loci_with = {e: len({r['locus_id'] for r in is_rows if r['name'] == e})
-                   for e in elems}
-    order_e = sorted(elems, key=lambda e: (-n_loci_with[e],
-                                           sorted(elems[e])[len(elems[e]) // 2]))
+                   for e in fam_of}
+    # group the columns by family, families ordered by how widely they occur,
+    # so the heatmap carries the same classification as the figure above
+    fam_rank = {f: (-max(n_loci_with[e] for e in es), -len(es), f)
+                for f, es in fam_members.items()}
+    order_e = sorted(fam_of, key=lambda e: (fam_rank[fam_of[e]],
+                                            -n_loci_with[e], e))
 
     cell = {}
     for r in is_rows:
         k = (r['locus_id'], r['name'])
-        prev = cell.get(k)
-        if prev is None or r['cov_class'] == 'complete':
+        if cell.get(k) is None or r['cov_class'] == 'complete':
             cell[k] = r['cov_class']
 
     figb, axb = plt.subplots(figsize=(0.42 * len(order_e) + 4.2,
-                                      0.46 * len(loci) + 2.0))
+                                      0.46 * len(loci) + 2.6))
     CMAP = {'complete': '#08519c', 'partial': '#6baed6', 'fragment': '#c6dbef'}
     for i, lid in enumerate(loci):
         y = len(loci) - 1 - i
         for j, e in enumerate(order_e):
-            cv = cell.get((lid, e))
             axb.add_patch(Rectangle((j, y), 1, 1,
-                                    facecolor=CMAP.get(cv, '#f7f7f7'),
+                                    facecolor=CMAP.get(cell.get((lid, e)), '#f7f7f7'),
                                     edgecolor='white', lw=1.1))
+    # family band above the columns, plus a rule between families
+    for f in fam_members:
+        js = [j for j, e in enumerate(order_e) if fam_of[e] == f]
+        j0, j1 = min(js), max(js) + 1
+        axb.add_patch(Rectangle((j0 + 0.06, len(loci) + 0.12), j1 - j0 - 0.12,
+                                0.34, facecolor=family_colour(f),
+                                edgecolor='none', clip_on=False))
+        axb.text((j0 + j1) / 2, len(loci) + 0.62, f, fontsize=6.4, ha='center',
+                 va='bottom', rotation=0, color=family_colour(f),
+                 fontweight='bold', clip_on=False)
+        if j0:
+            axb.plot([j0, j0], [0, len(loci)], color='#bbbbbb', lw=0.8)
+
     axb.set_xlim(0, len(order_e)); axb.set_ylim(0, len(loci))
     axb.set_xticks([j + 0.5 for j in range(len(order_e))])
     axb.set_xticklabels(order_e, rotation=90, fontsize=7)
@@ -269,24 +401,24 @@ def main():
     axb.set_yticklabels([f"{l.split('__')[0]}  "
                          f"{ctx.get(l, {}).get('vehicle_class', '?')}"
                          for l in loci], fontsize=7)
-    axb.set_title('IS element presence by locus\n'
-                  f'ordered by number of loci carrying it (n={len(loci)})',
-                  fontsize=9.5)
-    for s in ('top', 'right', 'left', 'bottom'):
-        axb.spines[s].set_visible(False)
+    axb.set_title('IS element presence by locus, grouped by family\n'
+                  f'families ordered by how widely they occur (n={len(loci)} loci)',
+                  fontsize=9.5, pad=44)
+    for sp in ('top', 'right', 'left', 'bottom'):
+        axb.spines[sp].set_visible(False)
     axb.tick_params(length=0)
     axb.legend(handles=[Line2D([0], [0], marker='s', ls='', markersize=8,
                                markerfacecolor=v, markeredgecolor='white',
                                label=k) for k, v in CMAP.items()],
-               loc='upper center', bbox_to_anchor=(0.5, -0.32), ncol=3,
+               loc='upper center', bbox_to_anchor=(0.5, -0.30), ncol=3,
                fontsize=7, frameon=False)
-    figb.tight_layout()
     figb.savefig(os.path.join(a.outdir, 'is_matrix.png'), dpi=200,
                  bbox_inches='tight')
     plt.close(figb)
 
     with open(os.path.join(a.outdir, 'is_matrix.tsv'), 'w') as fh:
         fh.write('locus_id\tvehicle_class\t' + '\t'.join(order_e) + '\n')
+        fh.write('family\t-\t' + '\t'.join(fam_of[e] for e in order_e) + '\n')
         for lid in loci:
             fh.write(lid + '\t' + ctx.get(lid, {}).get('vehicle_class', '?'))
             for e in order_e:
@@ -294,11 +426,10 @@ def main():
             fh.write('\n')
 
     print(f'{len(loci)} loci, {len(is_rows)} IS calls, '
-          f'{len(order_e)} distinct elements')
-    print(f'  recurring (>=2 loci): '
-          f'{", ".join(e for e in order_e if n_loci_with[e] >= 2)}')
-    print(f'  single-locus        : '
-          f'{sum(1 for e in order_e if n_loci_with[e] == 1)} elements')
+          f'{len(order_e)} elements in {len(fam_members)} families')
+    for f in sorted(fam_members, key=lambda x: fam_rank[x]):
+        es = sorted(fam_members[f], key=lambda e: -n_loci_with[e])
+        print(f'  {f:<12} {", ".join(f"{e}({n_loci_with[e]})" for e in es)}')
     print(f'-> {a.outdir}/colour_blocks.png  .svg')
     print(f'-> {a.outdir}/is_matrix.png  is_matrix.tsv')
 

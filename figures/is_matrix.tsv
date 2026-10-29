@@ -1,8 +1,9 @@
-locus_id	vehicle_class	ISEsa1	ISEsa2	IS26	ISKpn28	ISKpn8	IS903B	IS4321R	IS5075	ISPlge3	ISEc41	ISKpn41	ISVsa3	IS150	ISVsa5	ISKpn26	ISKpn21	ISPeat2	ISSen3	ISSpu1	IS15DI	ISEcp1	IS1X2	IS1S	IS102
-CP018961__CP018961__1__minus	COMPLETE	complete	complete	0	complete	0	0	0	0	0	fragment	fragment	0	0	0	0	complete	0	0	0	0	complete	0	0	0
-CP028197__CP028197__1__plus	COMPLETE	complete	complete	complete	0	complete	0	fragment	0	0	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	0
-CP028537__CP028537__1__minus	COMPLETE	complete	complete	complete	0	0	0	0	fragment	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-MF344582__MF344582__1__minus	DECAYED	fragment	complete	0	0	0	complete	0	0	0	0	0	0	0	0	complete	0	0	0	0	0	0	0	0	0
-CP023893__CP023893__1__plus	HALF-CORE	complete	0	0	complete	fragment	0	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-LT991956__LT991956__1__plus	HALF-CORE	complete	0	0	complete	0	0	0	0	0	0	0	0	fragment	0	0	0	0	0	0	0	0	0	0	0
-CP006642__CP006642__1__minus	NO CORE	0	0	complete	0	0	complete	0	0	0	0	0	0	0	partial	0	0	fragment	complete	fragment	complete	0	fragment	fragment	complete
+locus_id	vehicle_class	ISEsa1	ISKpn21	ISEsa2	IS4321R	IS5075	IS26	IS15DI	ISKpn28	ISKpn8	IS150	ISPeat2	ISPlge3	ISSpu1	IS903B	IS102	ISKpn26	IS1S	IS1X2	ISEc41	ISKpn41	ISEcp1	ISSen3	ISVsa5	ISVsa3
+family	-	ISNCY	ISNCY	IS110	IS110	IS110	IS6	IS6	IS481	IS3	IS3	IS3	IS3	IS3	IS5	IS5	IS5	IS1	IS1	IS200/IS605	IS200/IS605	IS1380	IS21	IS4	IS91
+CP018961__CP018961__1__minus	COMPLETE	complete	complete	complete	0	0	0	0	complete	0	0	0	0	0	0	0	0	0	0	fragment	fragment	complete	0	0	0
+CP028197__CP028197__1__plus	COMPLETE	complete	0	complete	fragment	0	complete	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	0	0	0	complete
+CP028537__CP028537__1__minus	COMPLETE	complete	0	complete	0	fragment	complete	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+MF344582__MF344582__1__minus	DECAYED	fragment	0	complete	0	0	0	0	0	0	0	0	0	0	complete	0	complete	0	0	0	0	0	0	0	0
+CP023893__CP023893__1__plus	HALF-CORE	complete	0	0	0	0	0	0	complete	fragment	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	0
+LT991956__LT991956__1__plus	HALF-CORE	complete	0	0	0	0	0	0	complete	0	fragment	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CP006642__CP006642__1__minus	NO CORE	0	0	0	0	0	complete	complete	0	0	0	fragment	0	fragment	complete	complete	0	fragment	fragment	0	0	0	complete	partial	0

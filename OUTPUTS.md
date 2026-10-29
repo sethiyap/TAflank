@@ -238,8 +238,13 @@ One row per locus, one column per IS element, produced by
 | `vehicle_class` | COMPLETE / DECAYED / HALF-CORE / NO CORE, carried over from `context.tsv` |
 | one column per element | `complete`, `partial`, `fragment`, or `0` for absent |
 
-Elements are ordered by **how many loci carry them**, so the recurring ones
-collect on the left and single-locus elements trail off to the right. Where a
+**The second line is not data.** It is a `family` row naming the ISfinder
+family of each column, so the matrix can be collapsed to family level without
+re-deriving it. Skip it when loading: `awk 'NR!=2'`, or `skiprows=[1]` in
+pandas.
+
+Columns are grouped by **IS family**, families ordered by how widely they
+occur, and elements within a family by how many loci carry them. Where a
 locus carries more than one copy of an element, the cell reports the **best**
 one, so `fragment` in a cell means every copy in that locus is a fragment.
 

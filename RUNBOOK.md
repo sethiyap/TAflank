@@ -650,13 +650,30 @@ Three files land in `figures/`:
 | file | what it shows |
 |---|---|
 | `colour_blocks.png` / `.svg` | one row per locus, x = distance from the bait. IS track above each line, curated cargo below, CDS as grey context. |
-| `is_matrix.png` | loci x IS element presence, ordered by how many loci carry each element |
+| `is_matrix.png` | loci x IS element presence, columns grouped by IS family |
 | `is_matrix.tsv` | the same matrix as a table — this is the input to the Jaccard/PERMANOVA grouping |
 
 The `.svg` is there so panel labels and fonts can be edited in Illustrator or
 Inkscape without re-running anything.
 
 ## Reading it
+
+**IS colour is the family; shade is the element inside it.** Twenty-four
+elements given twenty-four unrelated colours is a lookup table, not a picture.
+ISfinder names already carry the family (`ISEsa1_ISNCY_IS1202` → ISNCY), so
+twelve hues now do the work of twenty-four, and related elements look related.
+
+Two things that per-element colour hid, and this does not:
+
+- **ISEsa1 is ISNCY; ISEsa2 is IS110.** The two ends of the candidate vehicle
+  are *different families*. The composite-transposon rule in CLAUDE.md Stage 3
+  looks for two IS of the **same** family flanking the cargo — it does not
+  describe this structure, and should not be expected to fire on it.
+- **ISEsa1 and ISKpn21 are the same family and group** (ISNCY/IS1202). They now
+  share a hue, which is exactly the pair that makes a naive same-family rule
+  fire on CP018961 — where ISKpn21 is nested *inside* ISEsa1 and flanks nothing.
+  This is the false positive recorded as finding 4 in the project plan, and the
+  figure now shows the reason for it rather than hiding it in a name.
 
 **The vertical dotted line at −3898** is the claim the figure exists to test.
 ISEsa2 begins at exactly that offset in CP028197, CP028537 and MF344582 —
