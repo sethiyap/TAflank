@@ -1,0 +1,62 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP006642__CP006642__1__minus	CDS	hypothetical protein		71	2026	+					hypothetical protein	annotation	bakta	-19930
+CP006642__CP006642__1__minus	CDS	mrkD		2017	3012	+					mrkD	annotation	bakta	-17984
+CP006642__CP006642__1__minus	CDS	mrkF		3026	3661	+					mrkF	annotation	bakta	-16975
+CP006642__CP006642__1__minus	IS	IS903B	IS5	3895	4951	+	complete	no	no		IS903B	isfinder	bakta	-16106
+CP006642__CP006642__1__minus	CDS	Transposase IS5		3927	4895	+					IS903B	isfinder	bakta	-16074
+CP006642__CP006642__1__minus	CDS	blaTEM		5177	5659	-					blaTEM	annotation	bakta	-14824
+CP006642__CP006642__1__minus	CDS	Transposon Tn1331 resolvase		6220	6777	-					Transposon Tn1331 resolvase	annotation	bakta	-13781
+CP006642__CP006642__1__minus	IS	IS15DI	IS6	7030	7848	+	complete	no	no		IS15DI	isfinder	bakta	-12971
+CP006642__CP006642__1__minus	CDS	tnp		7081	7797	+					IS15DI	isfinder	bakta	-12920
+CP006642__CP006642__1__minus	CDS	hypothetical protein		7688	8407	-					ISVsa5	isfinder	bakta	-12313
+CP006642__CP006642__1__minus	IS	ISVsa5	IS4	7849	8514	-	partial	no	no		ISVsa5	isfinder	bakta	-12152
+CP006642__CP006642__1__minus	CDS	hypothetical protein		8347	8499	-					ISVsa5	isfinder	bakta	-11654
+CP006642__CP006642__1__minus	CDS	aac(3)-IId		8967	9410	+					aac(3)-IId	annotation	bakta	-11034
+CP006642__CP006642__1__minus	CDS	Tunicamycin resistance protein		9423	9965	+					Tunicamycin resistance protein	annotation	bakta	-10578
+CP006642__CP006642__1__minus	CDS	hypothetical protein		10447	10638	-					hypothetical protein	annotation	bakta	-9554
+CP006642__CP006642__1__minus	CDS	hypothetical protein		10662	10889	+					hypothetical protein	annotation	bakta	-9339
+CP006642__CP006642__1__minus	CDS	hypothetical protein		11717	12067	+					hypothetical protein	annotation	bakta	-8284
+CP006642__CP006642__1__minus	IS	IS26	IS6	12041	12860	+	complete	no	no		IS26	isfinder	bakta	-7960
+CP006642__CP006642__1__minus	CDS	tnp		12086	12808	+					IS26	isfinder	bakta	-7915
+CP006642__CP006642__1__minus	CDS	hypothetical protein		12842	13216	-					hypothetical protein	annotation	bakta	-7159
+CP006642__CP006642__1__minus	CDS	hypothetical protein		13703	13819	+					hypothetical protein	annotation	bakta	-6298
+CP006642__CP006642__1__minus	CDS	intI1		14125	15138	+					intI1	annotation	bakta	-5876
+CP006642__CP006642__1__minus	cargo	intI		14127	15140	+			no		intI	cargo	bakta	-5874
+CP006642__CP006642__1__minus	CDS	ydiV		15341	15691	+					ydiV	annotation	bakta	-4660
+CP006642__CP006642__1__minus	CDS	Transposon Tn501 resolvase		15817	16377	+					Transposon Tn501 resolvase	annotation	bakta	-4184
+CP006642__CP006642__1__minus	CDS	Tn3-like element TnAs3 family transposas		16380	19346	+					Tn3-like element TnAs3 family transposas	annotation	bakta	-3621
+CP006642__CP006642__1__minus	CDS	hypothetical protein		19510	19650	-					hypothetical protein	annotation	bakta	-491
+CP006642__CP006642__1__minus	IS	ISPeat2	IS3	19668	19834	-	fragment	yes	no		ISPeat2	isfinder	bakta	-333
+CP006642__CP006642__1__minus	CDS	hypothetical protein		19983	20273	-					hypothetical protein	annotation	bakta	-18
+CP006642__CP006642__1__minus	cargo	relB		20003	20242	+			no		relB	cargo	bakta	2
+CP006642__CP006642__1__minus	cargo	relE		20242	20529	+			no		relE	cargo	bakta	241
+CP006642__CP006642__1__minus	IS	ISSen3	IS21	20763	22718	+	complete	no	no		ISSen3	isfinder	bakta	762
+CP006642__CP006642__1__minus	CDS	istB		20831	21610	-					ISSen3	isfinder	bakta	830
+CP006642__CP006642__1__minus	CDS	tnp		21610	22632	-					ISSen3	isfinder	bakta	1609
+CP006642__CP006642__1__minus	IS	ISSpu1	IS3	23099	23133	+	fragment	yes	no		ISSpu1	isfinder	bakta	3098
+CP006642__CP006642__1__minus	IS	IS15DI	IS6	23172	23991	-	complete	no	no		IS15DI	isfinder	bakta	3171
+CP006642__CP006642__1__minus	CDS	tnp		23224	23940	-					IS15DI	isfinder	bakta	3223
+CP006642__CP006642__1__minus	CDS	oqxA		24248	25423	+					oqxA	annotation	bakta	4247
+CP006642__CP006642__1__minus	CDS	oqxB		25447	28599	+					oqxB	annotation	bakta	5446
+CP006642__CP006642__1__minus	CDS	hypothetical protein		28669	29244	-					hypothetical protein	annotation	bakta	8668
+CP006642__CP006642__1__minus	IS	IS15DI	IS6	29198	30017	-	complete	no	no		IS15DI	isfinder	bakta	9197
+CP006642__CP006642__1__minus	CDS	tnp		29250	29966	-					IS15DI	isfinder	bakta	9249
+CP006642__CP006642__1__minus	CDS	hypothetical protein		30048	30170	-					hypothetical protein	annotation	bakta	10047
+CP006642__CP006642__1__minus	CDS	hypothetical protein		30324	30521	+					hypothetical protein	annotation	bakta	10323
+CP006642__CP006642__1__minus	CDS	type II site-specific deoxyribonuclease		30786	32000	+					type II site-specific deoxyribonuclease	annotation	bakta	10785
+CP006642__CP006642__1__minus	CDS	Type II methyltransferase M-EcoRII		32034	33467	-					Type II methyltransferase M-EcoRII	annotation	bakta	12033
+CP006642__CP006642__1__minus	IS	IS1X2	IS1	33547	33848	+	fragment	yes	no		IS1X2	isfinder	bakta	13546
+CP006642__CP006642__1__minus	CDS	IS1 transposase		33567	33833	+					IS1X2	isfinder	bakta	13566
+CP006642__CP006642__1__minus	IS	IS26	IS6	33852	34671	+	complete	no	no		IS26	isfinder	bakta	13851
+CP006642__CP006642__1__minus	CDS	tnp		33903	34619	+					IS26	isfinder	bakta	13902
+CP006642__CP006642__1__minus	CDS	IS1 family transposase		34625	34900	+					IS1S	isfinder	bakta	14624
+CP006642__CP006642__1__minus	IS	IS1S	IS1	34670	34915	+	fragment	yes	no		IS1S	isfinder	bakta	14669
+CP006642__CP006642__1__minus	cargo	ars		34916	35054	+			no		ars	cargo	bakta	14915
+CP006642__CP006642__1__minus	IS	IS102	IS5	35285	36340	-	complete	no	no		IS102	isfinder	bakta	15284
+CP006642__CP006642__1__minus	CDS	Transposase IS5		35340	36308	-					IS102	isfinder	bakta	15339
+CP006642__CP006642__1__minus	CDS	hypothetical protein		36371	36655	+					hypothetical protein	annotation	bakta	16370
+CP006642__CP006642__1__minus	CDS	Transmembrane protein		36652	36849	-					Transmembrane protein	annotation	bakta	16651
+CP006642__CP006642__1__minus	CDS	silP		36890	38878	-					silP	annotation	bakta	16889
+CP006642__CP006642__1__minus	cargo	sil		36892	39339	-			no		sil	cargo	bakta	16891
+CP006642__CP006642__1__minus	CDS	hypothetical protein		38882	39283	+					hypothetical protein	annotation	bakta	18881
+CP006642__CP006642__1__minus	CDS	cusA		39992	40516	-					cusA	annotation	bakta	19991

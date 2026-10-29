@@ -1,0 +1,68 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP018961__CP018961__1__minus	CDS	hypothetical protein		11	289	+					hypothetical protein	annotation	bakta	-19990
+CP018961__CP018961__1__minus	CDS	hypothetical protein		366	596	+					hypothetical protein	annotation	bakta	-19635
+CP018961__CP018961__1__minus	CDS	hypothetical protein		1112	1405	-					hypothetical protein	annotation	bakta	-18889
+CP018961__CP018961__1__minus	CDS	Putative transposase		1483	1692	-					ISEc41	isfinder	bakta	-18518
+CP018961__CP018961__1__minus	IS	ISEc41	IS200/IS605	1485	1699	+	fragment	yes	no		ISEc41	isfinder	bakta	-18516
+CP018961__CP018961__1__minus	IS	ISKpn41	IS200/IS605	1700	2370	+	fragment	yes	no		ISKpn41	isfinder	bakta	-18301
+CP018961__CP018961__1__minus	CDS	tnpB		1760	2269	+					ISKpn41	isfinder	bakta	-18241
+CP018961__CP018961__1__minus	CDS	hypothetical protein		2505	2663	-					hypothetical protein	annotation	bakta	-17496
+CP018961__CP018961__1__minus	CDS	hypothetical protein		2676	2909	-					hypothetical protein	annotation	bakta	-17325
+CP018961__CP018961__1__minus	CDS	Retron-type reverse transcriptase		2963	4447	+					Retron-type reverse transcriptase	annotation	bakta	-17038
+CP018961__CP018961__1__minus	CDS	Translesion error-prone DNA polymerase V		4533	4955	+					Translesion error-prone DNA polymerase V	annotation	bakta	-15468
+CP018961__CP018961__1__minus	CDS	umuC		4955	6226	+					umuC	annotation	bakta	-15046
+CP018961__CP018961__1__minus	CDS	DUF2384 domain-containing protein		6246	6770	+					DUF2384 domain-containing protein	annotation	bakta	-13755
+CP018961__CP018961__1__minus	CDS	hypothetical protein		6869	7237	+					hypothetical protein	annotation	bakta	-13132
+CP018961__CP018961__1__minus	CDS	hypothetical protein		7347	7751	-					hypothetical protein	annotation	bakta	-12654
+CP018961__CP018961__1__minus	CDS	hypothetical protein		8178	9299	-					ISKpn28	isfinder	bakta	-11823
+CP018961__CP018961__1__minus	IS	ISKpn28	IS481	8322	9417	-	complete	no	no		ISKpn28	isfinder	bakta	-11679
+CP018961__CP018961__1__minus	IS	ISEsa1	ISNCY	9447	10986	+	complete	no	no		ISEsa1	isfinder	bakta	-10554
+CP018961__CP018961__1__minus	CDS	ISNCY family transposase		9507	10847	+					ISEsa1	isfinder	bakta	-10494
+CP018961__CP018961__1__minus	IS	ISKpn21	ISNCY	10984	13261	-	complete	no	no	ISEsa1	ISKpn21	isfinder	bakta	-9017
+CP018961__CP018961__1__minus	CDS	hypothetical protein		11088	11732	+					ISKpn21	isfinder	bakta	-8913
+CP018961__CP018961__1__minus	CDS	Integrase catalytic domain-containing pr		11761	12969	-					ISKpn21	isfinder	bakta	-8240
+CP018961__CP018961__1__minus	IS	ISEsa1	ISNCY	13262	13325	+	fragment	yes	no		ISEsa1	isfinder	bakta	-6739
+CP018961__CP018961__1__minus	IS	ISEsa2	IS110	13326	14817	+	complete	no	no		ISEsa2	isfinder	bakta	-6675
+CP018961__CP018961__1__minus	CDS	tnp		13551	14789	+					ISEsa2	isfinder	bakta	-6450
+CP018961__CP018961__1__minus	CDS	hypothetical protein		14949	15146	-					hypothetical protein	annotation	bakta	-5052
+CP018961__CP018961__1__minus	CDS	Cytochrome b561 bacterial/Ni-hydrogenase		15226	15837	+					Cytochrome b561 bacterial/Ni-hydrogenase	annotation	bakta	-4775
+CP018961__CP018961__1__minus	cargo	cytb		15263	15835	+			no		cytb	cargo	bakta	-4738
+CP018961__CP018961__1__minus	IS	ISEcp1	IS1380	16041	17696	+	complete	no	no		ISEcp1	isfinder	bakta	-3960
+CP018961__CP018961__1__minus	CDS	tnp		16227	17489	+					ISEcp1	isfinder	bakta	-3774
+CP018961__CP018961__1__minus	CDS	hypothetical protein		17470	17592	+					ISEcp1	isfinder	bakta	-2531
+CP018961__CP018961__1__minus	CDS	qnrE		17656	18363	+					qnrE	annotation	bakta	-2345
+CP018961__CP018961__1__minus	cargo	qnr		17721	18365	+			no		qnr	cargo	bakta	-2280
+CP018961__CP018961__1__minus	CDS	hypothetical protein		18484	18822	+					hypothetical protein	annotation	bakta	-1517
+CP018961__CP018961__1__minus	CDS	Cation-efflux pump		18815	19738	+					Cation-efflux pump	annotation	bakta	-1186
+CP018961__CP018961__1__minus	cargo	czc		18817	19740	+			no		czc	cargo	bakta	-1184
+CP018961__CP018961__1__minus	CDS	hypothetical protein		19782	19949	-					hypothetical protein	annotation	bakta	-219
+CP018961__CP018961__1__minus	cargo	relB		19999	20238	+			no		relB	cargo	bakta	-2
+CP018961__CP018961__1__minus	CDS	relB		20001	20240	+					relB	annotation	bakta	0
+CP018961__CP018961__1__minus	CDS	relE		20240	20527	+					relE	annotation	bakta	239
+CP018961__CP018961__1__minus	cargo	relE		20242	20529	+			no		relE	cargo	bakta	241
+CP018961__CP018961__1__minus	cargo	hok_gef		20601	20759	+			no		hok_gef	cargo	bakta	600
+CP018961__CP018961__1__minus	CDS	Hok/Gef family protein		21360	22334	+					Hok/Gef family protein	annotation	bakta	1359
+CP018961__CP018961__1__minus	CDS	Phosphonate ABC transporter substrate-bi		22532	22909	-					Phosphonate ABC transporter substrate-bi	annotation	bakta	2531
+CP018961__CP018961__1__minus	CDS	hypothetical protein		23235	23531	+					hypothetical protein	annotation	bakta	3234
+CP018961__CP018961__1__minus	CDS	hypothetical protein		23827	24666	+					hypothetical protein	annotation	bakta	3826
+CP018961__CP018961__1__minus	CDS	hypothetical protein		24762	25169	+					hypothetical protein	annotation	bakta	4761
+CP018961__CP018961__1__minus	CDS	hypothetical protein		25248	25481	+					hypothetical protein	annotation	bakta	5247
+CP018961__CP018961__1__minus	IS	ISEcp1	IS1380	26029	27684	+	complete	no	no		ISEcp1	isfinder	bakta	6028
+CP018961__CP018961__1__minus	CDS	tnp		26215	27477	+					ISEcp1	isfinder	bakta	6214
+CP018961__CP018961__1__minus	CDS	hypothetical protein		27458	27580	+					ISEcp1	isfinder	bakta	7457
+CP018961__CP018961__1__minus	CDS	fprA1		27717	28358	+					fprA1	annotation	bakta	7716
+CP018961__CP018961__1__minus	CDS	hypothetical protein		28281	28574	-					hypothetical protein	annotation	bakta	8280
+CP018961__CP018961__1__minus	CDS	hypothetical protein		28583	28939	+					hypothetical protein	annotation	bakta	8582
+CP018961__CP018961__1__minus	CDS	NERD domain-containing protein		28993	29766	-					NERD domain-containing protein	annotation	bakta	8992
+CP018961__CP018961__1__minus	CDS	S49 family peptidase		29769	30905	-					S49 family peptidase	annotation	bakta	9768
+CP018961__CP018961__1__minus	CDS	DUF4400 domain-containing protein		30914	31588	-					DUF4400 domain-containing protein	annotation	bakta	10913
+CP018961__CP018961__1__minus	cargo	tra		30916	31590	-			no		tra	cargo	bakta	10915
+CP018961__CP018961__1__minus	CDS	hypothetical protein		31601	32698	-					hypothetical protein	annotation	bakta	11600
+CP018961__CP018961__1__minus	CDS	traD		32701	34827	-					traD	annotation	bakta	12700
+CP018961__CP018961__1__minus	cargo	tra		32703	34829	-			no		tra	cargo	bakta	12702
+CP018961__CP018961__1__minus	CDS	Uncharacterized domain-containing protei		34817	37765	-					Uncharacterized domain-containing protei	annotation	bakta	14816
+CP018961__CP018961__1__minus	cargo	tra		34819	37767	-			no		tra	cargo	bakta	14818
+CP018961__CP018961__1__minus	CDS	DUF1845 domain-containing protein		37779	38567	-					DUF1845 domain-containing protein	annotation	bakta	17778
+CP018961__CP018961__1__minus	CDS	Plasmid transfer protein		38567	39130	-					Plasmid transfer protein	annotation	bakta	18566
+CP018961__CP018961__1__minus	CDS	hypothetical protein		39109	39288	-					hypothetical protein	annotation	bakta	19108
+CP018961__CP018961__1__minus	CDS	hypothetical protein		39629	40384	+					hypothetical protein	annotation	bakta	19628

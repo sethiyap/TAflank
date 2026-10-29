@@ -1,0 +1,15 @@
+accession	accessionversion	title	organism	taxid	slen	genome	completeness	biomol	moltype	topology	strain	sourcedb	createdate	updatedate	assemblygi	biosample	replicon_type	replicon_name	genus	is_complete	replicon_type_evidence
+MF344582	MF344582	Citrobacter freundii strain NY2385 plasmid pNY2385-HI2, complete sequence	Citrobacter freundii		354045							blastdb					plasmid	pNY2385-HI2	Citrobacter	yes	title_plasmid_from_blast
+CP028537	CP028537	Enterobacter hormaechei strain SCEH020042 plasmid pQnrB4_020042, complete sequence	Enterobacter hormaechei		328828							blastdb					plasmid	pQnrB4_020042	Enterobacter	yes	title_plasmid_from_blast
+CP028197	CP028197	Salmonella enterica subsp. enterica serovar Concord strain CFSAN018747 plasmid pGMI14-002_1, complete sequence	Salmonella enterica		444417							blastdb					plasmid	pGMI14-002_1	Salmonella	yes	title_plasmid_from_blast
+CP026216	CP026216	Citrobacter sp. CFNIH10 chromosome, complete genome	Citrobacter sp.		5246201							blastdb					chromosome	chromosome	Citrobacter	yes	title_chromosome_from_blast
+CP021960	CP021960	Klebsiella pneumoniae strain AR_0139, complete genome	Klebsiella pneumoniae		5606368							blastdb					chromosome	chromosome	Klebsiella	yes	title_complete_genome_from_blast
+CP020841	CP020841	Klebsiella pneumoniae strain KPN1482 chromosome, complete genome	Klebsiella pneumoniae		5591645							blastdb					chromosome	chromosome	Klebsiella	yes	title_chromosome_from_blast
+CP018961	CP018961	Escherichia coli strain Ecol_422 plasmid pEC422_1, complete sequence	Escherichia coli		289903							blastdb					plasmid	pEC422_1	Escherichia	yes	title_plasmid_from_blast
+CP012599	CP012599	Salmonella enterica subsp. enterica serovar Newport strain 0307-213, complete genome	Salmonella enterica		4512838							blastdb					chromosome	chromosome	Salmonella	yes	title_complete_genome_from_blast
+CP010512	CP010512	Enterobacter cloacae strain colR/S, complete sequence	Enterobacter cloacae		4828976							blastdb					chromosome	chromosome	Enterobacter	yes	title_complete_sequence_from_blast
+LT991956	LT991956	Enterobacter hormaechei subsp. steigerwaltii isolate C309 genome assembly, plasmid: pC309-p2	Enterobacter hormaechei		183339							blastdb					plasmid	pC309-p2	Enterobacter	no	title_plasmid_from_blast
+CP026975	CP026975	Enterobacter cloacae complex sp. strain FDAARGOS_77 chromosome, complete genome	Enterobacter cloacae		4876999							blastdb					chromosome	chromosome	Enterobacter	yes	title_chromosome_from_blast
+CP023893	CP023893	Klebsiella ornithinolytica strain FDAARGOS_431 plasmid unnamed1, complete sequence	Klebsiella ornithinolytica		231294							blastdb					plasmid	unnamed1	Klebsiella	yes	title_plasmid_from_blast
+CP017220	CP017220	Escherichia coli strain FAM21845, complete sequence	Escherichia coli		4901993							blastdb					chromosome	chromosome	Escherichia	yes	title_complete_sequence_from_blast
+CP006642	CP006642	Escherichia coli PCN061 plasmid PCN061p6, complete sequence	Escherichia coli		145722							blastdb					plasmid	PCN061p6	Escherichia	yes	title_plasmid_from_blast

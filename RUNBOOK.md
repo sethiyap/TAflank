@@ -639,11 +639,20 @@ it needs no database, and matplotlib is already installed at
 
 ```bash
 python3 scripts/colour_blocks.py \
-  --blocks   results/blocks \
-  --context  results/context.tsv \
-  --metadata results/record_metadata.tsv \
+  --blocks   run_bakta/blocks \
+  --context  run_bakta/context.tsv \
+  --metadata run_bakta/record_metadata.tsv \
   --outdir   figures
 ```
+
+`run_bakta/` is the Bakta-annotated run pulled down from Gadi:
+
+```bash
+scp -r gadi:/scratch/rg42/$USER/run_bakta/results/{blocks,context.tsv,record_metadata.tsv} run_bakta/
+```
+
+Point `--blocks` at `results/blocks` instead to redraw from the GenBank
+annotation — the `annot_source` column in the blocks table says which you have.
 
 Three files land in `figures/`:
 
@@ -693,10 +702,37 @@ which most IS pipelines apply by default, would delete it silently.
 window and is not actually a fragment. Do not read those as decay; the
 `clip_cause` column in `results/is/*.tsv` says which is which.
 
+## What Bakta changed, measured
+
+Re-annotating with Bakta `light` and redrawing (gate passed: `context.tsv`
+byte-identical, so nothing leaked into the BLAST layers):
+
+| locus | GenBank CDS / hypo | Bakta CDS / hypo | |
+|---|---|---|---|
+| CP006642 | 32 / 7 (22%) | 30 / 13 (43%) | **worse** |
+| CP018961 | 39 / 19 (49%) | 38 / 19 (50%) | flat |
+| CP023893 | 60 / 27 (45%) | 48 / 11 (22%) | much better |
+| CP028197 | 51 / 33 (65%) | 47 / 22 (46%) | better |
+| CP028537 | 50 / 32 (64%) | 49 / 20 (40%) | better |
+| LT991956 | **0 / 0** | **57 / 22 (38%)** | from nothing |
+| MF344582 | 46 / 35 (76%) | 45 / 20 (44%) | much better |
+| **total** | 278 / 153 (**55%**) | 314 / 127 (**40%**) | |
+
+Two things worth keeping in view.
+
+**LT991956 went from contributing nothing to contributing 57 CDS.** It is the
+one record with no CDS features at all, so before this it was a blank line in
+the figure. That alone justified the run.
+
+**CP006642 got worse** — 7 unnamed became 13. GenBank's curated annotation of
+that record names more products than Bakta's `light` database can. This is the
+first concrete evidence that `full` would buy something, and it is confined to
+one locus; it does not change any coordinate, any IS call or any cargo hit.
+
 ## What the figure does NOT yet show
 
 CDS are drawn in **uncoloured grey**, which is a deliberate refusal rather than
-a styling choice. 153 of the 278 annotation-named CDS in this set are
+a styling choice. 127 of the 314 annotation-named CDS in this set are
 `hypothetical protein`, so they all share one `colour_key`. Colouring by it
 would paint one flat colour across large stretches of every locus and invite
 the reading that those stretches are homologous — the exact claim the figure
