@@ -724,6 +724,31 @@ python3 scripts/colour_blocks.py \
 
 Drop `--families` and the CDS track goes back to flat grey.
 
+### Palettes
+
+`--palette` picks the colour scheme. Both deck palettes were read out of the
+`.pptx` shape XML, not sampled from a screenshot, so the hex values are the
+decks' own.
+
+| `--palette` | source | relB | relE | ISEsa1 | ISEsa2 | core (cytb, czc) |
+|---|---|---|---|---|---|---|
+| **`deck`** (default) | `relBE_schematic.pptx` slide 11 | `#028090` teal | `#d1495b` red | `#5ba4a8` teal | `#b57f45` brown | `#d8e0e0` pale |
+| `lab2018` | Sept 2018 lab meeting, slide 2 | `#00b050` green | `#ff0000` red | `#00b0f0` blue | `#ffc000` amber | white |
+| `default` | this script's own | blue | cyan | red | orange | green shades |
+
+`deck` is the default because slide 11 is the nine-loci figure this pipeline
+reproduces, and CLAUDE.md names that deck as the source.
+
+IS families the decks never drew are given tints **constrained to the deck's
+warm hue range**, so the variable upstream still reads as one kind of thing at
+a glance — which is the decks' point — while staying separable close up.
+
+One thing carried over faithfully that you may not want: both decks paint
+`Cytb/b6` and `CO-Zn-Cad` the **same** colour, because they are presented as a
+single conserved core rather than as two genes. In this figure they are
+adjacent blocks and therefore hard to tell apart. Give them distinct values in
+`PALETTES` if you would rather read them separately.
+
 `run_bakta/` is the Bakta-annotated run pulled down from Gadi:
 
 ```bash

@@ -59,6 +59,44 @@ from matplotlib.lines import Line2D
 
 import colorsys
 
+# ---------------------------------------------------------------------------
+# Palettes lifted from the project's own decks, by reading the shape fills out
+# of the .pptx XML rather than sampling a screenshot.
+#
+#   deck     relBE_schematic.pptx slide 11 -- the nine-loci figure this
+#            pipeline reproduces, and the source CLAUDE.md names. Conserved
+#            core pale, ISEsa1-like its own teal, variable IS warm.
+#   lab2018  RelBE_from_Sept2018_lab_meeting.pptx slide 2. Highlights only the
+#            TA pair: relB green, relE red, everything else white.
+#
+# In both, the hues that carry meaning are pinned exactly; families the deck
+# never drew are given tints constrained to the deck's own warm range, so the
+# upstream still reads as "variable IS" at a glance while staying separable
+# on a closer look.
+# ---------------------------------------------------------------------------
+PALETTES = {
+    'deck': {
+        'cargo': {'relB': '#028090', 'relE': '#d1495b',
+                  'cytb': '#d8e0e0', 'czc': '#d8e0e0',
+                  'qnr': '#b57f45', 'hok_gef': '#7e8c8d', 'tra': '#4a5859',
+                  'ars': '#8a8a84', 'sil': '#b6c2c2', 'intI': '#e09f3e'},
+        'family': {'ISNCY': '#5ba4a8', 'IS110': '#b57f45'},
+        'warm': (0.055, 0.115),      # hue range for every other IS family
+        'cds_sat': 0.42,
+    },
+    'lab2018': {
+        'cargo': {'relB': '#00b050', 'relE': '#ff0000',
+                  'cytb': '#f2f2f2', 'czc': '#f2f2f2', 'qnr': '#f2f2f2',
+                  'hok_gef': '#a5a5a5', 'tra': '#7f7f7f', 'ars': '#bfbfbf',
+                  'sil': '#d9d9d9', 'intI': '#ed7d31'},
+        'family': {'ISNCY': '#00b0f0', 'IS110': '#ffc000'},
+        'warm': (0.055, 0.115),
+        'cds_sat': 0.42,
+    },
+    'default': None,                 # the hand-built palette below
+}
+ACTIVE = {}
+
 # Family hues. ISNCY and IS110 keep the red/orange of the elements that made
 # them matter, so the figure stays comparable with earlier versions.
 FAMILY = {
@@ -122,10 +160,24 @@ def cds_family_colour(fid):
     """
     hue = (int(fid[1:9], 16) % 3600) / 3600
     return '#%02x%02x%02x' % tuple(
-        int(round(c * 255)) for c in colorsys.hls_to_rgb(hue, 0.74, 0.55))
+        int(round(c * 255))
+        for c in colorsys.hls_to_rgb(hue, 0.78, ACTIVE.get('cds_sat', 0.55)))
 
 
 def family_colour(fam):
+    pin = ACTIVE.get('family')
+    if pin is not None:
+        if fam in pin:
+            return pin[fam]
+        # constrained to the deck's warm range so every IS the deck did not
+        # name still looks like the deck's "variable upstream", not confetti
+        lo, hi = ACTIVE['warm']
+        h = int(hashlib.sha1(fam.encode()).hexdigest(), 16)
+        hue = lo + (h % 1000) / 1000 * (hi - lo)
+        light = 0.38 + ((h >> 10) % 100) / 100 * 0.22
+        return '#%02x%02x%02x' % tuple(
+            int(round(c * 255))
+            for c in colorsys.hls_to_rgb(hue, light, 0.55))
     if fam in FAMILY:
         return FAMILY[fam]
     h = int(hashlib.sha1(fam.encode()).hexdigest(), 16)
@@ -151,6 +203,9 @@ SPARE = ['#aec7e8', '#ffbb78', '#c7c7c7', '#dbdb8d', '#f7b6d2',
 
 
 def colour(name):
+    cargo = ACTIVE.get('cargo')
+    if cargo and name in cargo:
+        return cargo[name]
     if name in PINNED:
         return PINNED[name]
     h = int(hashlib.sha1(name.encode()).hexdigest(), 16)
@@ -228,11 +283,19 @@ def main():
     p.add_argument('--flank', type=int, default=20000)
     p.add_argument('--families', default='',
                    help='results/gene_families.tsv -- colours the CDS track')
+    p.add_argument('--palette', choices=sorted(PALETTES), default='deck',
+                   help="'deck' = relBE_schematic.pptx slide 11 (default), "
+                        "'lab2018' = the Sept 2018 lab-meeting deck, "
+                        "'default' = this script's own palette")
     p.add_argument('--min-family-loci', type=int, default=2,
                    help='colour a gene family only if it spans this many loci '
                         '(1 would give every singleton its own colour and turn '
                         'the track into confetti)')
     a = p.parse_args()
+
+    ACTIVE.clear()
+    if PALETTES[a.palette]:
+        ACTIVE.update(PALETTES[a.palette])
 
     files = sorted(glob.glob(os.path.join(a.blocks, '*.blocks.tsv')))
     if not files:
@@ -401,7 +464,8 @@ def main():
                         for v in range(-a.flank, a.flank + 1, 5000)], fontsize=7.5)
     for sp in ('top', 'right', 'left'):
         ax.spines[sp].set_visible(False)
-    ax.set_title('relBE flanking architecture, aligned on the bait\n'
+    ax.set_title(f'relBE flanking architecture, aligned on the bait'
+                 f'   [palette: {a.palette}]\n'
                  'IS colour = family, shade = element within it; '
                  'cargo below each line. CDS colour = gene family; the same '
                  'colour in two rows is the same family, grey = this locus only\n'
