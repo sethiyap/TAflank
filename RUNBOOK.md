@@ -820,6 +820,30 @@ three records, three different genera. An offset that recurs to the base pair
 across independent loci is the signature of **one ancestral vehicle**, not of
 three separate insertions that happened to land nearby.
 
+**One element can appear twice without being two insertions.** In CP018961:
+
+```
+ISEsa1   ISNCY   -10554  1540 bp  complete
+ISKpn21  ISNCY    -9017  2278 bp  complete   nested_in=ISEsa1
+ISEsa1   ISNCY    -6739    64 bp  fragment
+ISEsa2   IS110    -6675  1492 bp  complete
+```
+
+That is **one** ISEsa1 copy — 1540 + 64 = 1604 bp, its full length — split in
+two by ISKpn21 landing inside it. The figure draws a bracket over the pieces
+labelled `one ISEsa1, 1604 bp in 2 pieces` so it cannot be misread as two
+independent insertions.
+
+The pale block between them is **ISKpn21**, not a second colour of ISEsa1.
+ISKpn21 is the same family as ISEsa1 (ISNCY/IS1202) and therefore the same
+hue, one shade lighter. It is labelled now: any element nested inside another
+gets a label, because that nesting *is* the structural event in its locus, and
+leaving it blank made the row read as "ISEsa1 drawn twice in two colours".
+
+This pair is also the composite-transposon false positive from the project
+plan — same family, same group, but one is inside the other and flanks
+nothing.
+
 **Hatched blocks are fragments** (<50% of the element present). The 64 bp
 ISEsa1 remnant in CP018961 is the smallest and the most important: it sits at
 −6739 and ends at −6675, which is precisely where that locus's ISEsa2 starts.

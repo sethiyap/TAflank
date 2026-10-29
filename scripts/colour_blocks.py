@@ -410,7 +410,12 @@ def main():
                 linestyle='-' if not clipped else (0, (1.4, 1.0)),
                 hatch='///' if frag else None, alpha=0.95, zorder=3))
             # name the vehicle and the small-but-decisive fragments
-            if nm.startswith('ISEsa') or (frag and ft == 'IS'):
+            # An element nested inside another IS is the structural event in
+            # that locus, and leaving it unnamed is what made CP018961 read as
+            # "ISEsa1 drawn twice in two colours": the unlabelled pale block
+            # is ISKpn21, lighter only because it shares ISEsa1's family.
+            if (nm.startswith('ISEsa') or (frag and ft == 'IS')
+                    or (ft == 'IS' and r.get('nested_in'))):
                 # Short elements sit shoulder to shoulder and their labels
                 # overprint into an unreadable smear. Push each one up a level
                 # until it clears every label already placed on this row.
@@ -421,11 +426,33 @@ def main():
                     lvl += 1
                 label_y.append((cx, half, lvl))
                 ax.annotate(f'{nm}\n{w} bp' if frag else nm,
-                            (cx, yy + h / 2 + 0.04 + 0.30 * lvl),
+                            (cx, yy + h / 2 + 0.22 + 0.30 * lvl),
                             ha='center', va='bottom', fontsize=5.6,
                             color='#222222', zorder=5, linespacing=0.95,
                             arrowprops=dict(arrowstyle='-', lw=0.4,
                                             color='#999999') if lvl else None)
+
+        # ---- one copy, interrupted: bracket its pieces ----
+        by_name = {}
+        for r in feats:
+            if r['feature_type'] == 'IS':
+                by_name.setdefault(r['name'], []).append(r)
+        interrupted = {r['nested_in'] for r in feats if r.get('nested_in')}
+        for nm, parts in by_name.items():
+            if nm not in interrupted or len(parts) < 2:
+                continue
+            parts.sort(key=lambda r: int(r['offset_from_bait']))
+            x0 = (int(parts[0]['offset_from_bait'])
+                  + int(parts[0]['end']) - int(parts[0]['start']) + 1)
+            x1 = int(parts[-1]['offset_from_bait'])
+            tot = sum(int(r['end']) - int(r['start']) + 1 for r in parts)
+            yb = y + 0.34 + H_IS / 2 + 0.07
+            ax.plot([x0, x0, x1, x1], [yb - 0.05, yb, yb, yb - 0.05],
+                    color='#444444', lw=0.7, zorder=2)
+            ax.annotate(f'one {nm}, {tot} bp in {len(parts)} pieces',
+                        ((x0 + x1) / 2, yb + 0.02), ha='center', va='bottom',
+                        fontsize=5.0, color='#444444', style='italic',
+                        zorder=5)
 
         if not any(r['feature_type'] == 'CDS' for r in feats):
             ax.text(-a.flank * 1.02, y - 0.62, 'no CDS in the GenBank record',
