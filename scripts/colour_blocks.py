@@ -54,7 +54,7 @@ import argparse, csv, glob, hashlib, os, sys
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle, FancyArrow
+from matplotlib.patches import Rectangle, Polygon
 from matplotlib.lines import Line2D
 
 import colorsys
@@ -89,6 +89,25 @@ def shade(base, i, n):
     sat = max(0.18, sat * (1 - 0.30 * i / n))
     return '#%02x%02x%02x' % tuple(
         int(round(c * 255)) for c in colorsys.hls_to_rgb(h, l, sat))
+
+
+def gene_arrow(x, w, y, h, strand, head):
+    """Block pointed in the direction of transcription.
+
+    Vertical position in this figure is the TRACK (IS above the line, CDS on
+    it, cargo below) and says nothing about strand -- which was read as strand
+    the first time someone looked at it. So strand is drawn explicitly, and
+    the only place it lives is the direction of the point.
+
+    `head` is capped at half the block so a short feature stays a block with a
+    point rather than collapsing into a bare triangle.
+    """
+    hd = min(head, w * 0.5)
+    if strand == '-':
+        return [(x, y), (x + hd, y + h / 2), (x + w, y + h / 2),
+                (x + w, y - h / 2), (x + hd, y - h / 2)]
+    return [(x, y - h / 2), (x + w - hd, y - h / 2), (x + w, y),
+            (x + w - hd, y + h / 2), (x, y + h / 2)]
 
 
 def cds_family_colour(fid):
@@ -165,6 +184,8 @@ def legend_blocks(fam_seen, is_colour, seen):
         ('fragment <50% cov', dict(facecolor='white', hatch='///')),
         ('runs off the window', dict(facecolor='white',
                                      linestyle=(0, (1.4, 1.0)))),
+        ('point = strand', dict(facecolor='#dddddd')),
+        ('row position = track', dict(facecolor='none', edgecolor='none')),
     ]))
     return blocks
 
@@ -290,6 +311,7 @@ def main():
     ax, lg = fig.add_subplot(gs[0]), fig.add_subplot(gs[1])
 
     H_CDS, H_IS, H_CARGO = 0.17, 0.40, 0.30
+    HEAD = a.flank / 90          # arrowhead length in bp
     for i, lid in enumerate(loci):
         y = (len(loci) - 1 - i) * PITCH
         label_y = []      # x-ranges already labelled on this row, for stacking
@@ -307,8 +329,8 @@ def main():
 
             if ft == 'CDS':
                 fid = cds_fam.get((lid, r['start'], r['end']))
-                ax.add_patch(Rectangle(
-                    (o, y - H_CDS / 2), w, H_CDS,
+                ax.add_patch(Polygon(
+                    gene_arrow(o, w, y, H_CDS, r['strand'], HEAD), closed=True,
                     facecolor=cds_family_colour(fid) if fid else '#f0f0f0',
                     edgecolor='#9e9e9e' if fid else '#bdbdbd',
                     lw=0.35, zorder=1))
@@ -318,8 +340,9 @@ def main():
             yy = y + 0.34 if ft == 'IS' else y - 0.36
             c = is_colour.get(nm) if ft == 'IS' else colour(nm)
             frag = r.get('cov_class') == 'fragment'
-            ax.add_patch(Rectangle(
-                (o, yy - h / 2), w, h, facecolor=c,
+            ax.add_patch(Polygon(
+                gene_arrow(o, w, yy, h, r['strand'], HEAD), closed=True,
+                facecolor=c,
                 edgecolor='black' if not clipped else '#555555', lw=0.9,
                 linestyle='-' if not clipped else (0, (1.4, 1.0)),
                 hatch='///' if frag else None, alpha=0.95, zorder=3))
@@ -356,6 +379,11 @@ def main():
                        'HALF-CORE': '#d2691e'}.get(cls, '#999999'),
                 fontweight='bold')
 
+    ytop = (len(loci) - 1) * PITCH
+    for dy, lab in ((0.34, 'IS'), (0.0, 'CDS'), (-0.36, 'cargo')):
+        ax.text(a.flank * 1.21, ytop + dy, lab, fontsize=6.4, va='center',
+                ha='right', color='#777777', style='italic')
+
     ax.axvline(0, color='#1f77b4', lw=1.3, ls='--', zorder=4)
     ax.text(0, (len(loci) - 1) * PITCH + 0.95, ' relB start (bait = 0)',
             fontsize=7.5, color='#1f77b4', ha='left', va='bottom')
@@ -376,7 +404,9 @@ def main():
     ax.set_title('relBE flanking architecture, aligned on the bait\n'
                  'IS colour = family, shade = element within it; '
                  'cargo below each line. CDS colour = gene family; the same '
-                 'colour in two rows is the same family, grey = this locus only',
+                 'colour in two rows is the same family, grey = this locus only\n'
+                 'Strand is the direction each block points -- NOT whether it '
+                 'sits above or below the line, which is only the track',
                  fontsize=10, pad=12)
 
     draw_legend(lg, blocks, NCOL)

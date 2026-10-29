@@ -746,6 +746,32 @@ Inkscape without re-running anything.
 
 ## Reading it
 
+**Vertical position is the track, not the strand.** IS above each line, CDS on
+it, cargo below. This was misread as strand the first time someone looked at
+the figure, so strand is now drawn explicitly and in only one place: **the
+direction each block points**.
+
+In CP018961, for example, `relB` and `relE` are drawn *below* the line because
+they are cargo, and they point *right* because they are on the plus strand:
+
+```
+cargo   relB   strand=+   offset=-2
+cargo   relE   strand=+   offset=241
+```
+
+The `minus` in the locus id `CP018961__CP018961__1__minus` refers to the
+orientation of relBE in the **original record**, before the window was flipped.
+Every window is reoriented so relB is on `+` (CLAUDE.md, "Reorient first"), so
+within the figure's coordinates relB is always on the plus strand — if it were
+not, every offset in every table would be meaningless. Check the FASTA header:
+
+```
+>CP018961__CP018961__1__minus orig=CP018961:237696-278222 strand=minus ...
+```
+
+`strand=minus` there is the original; the sequence that follows is the flipped
+one.
+
 **IS colour is the family; shade is the element inside it.** Twenty-four
 elements given twenty-four unrelated colours is a lookup table, not a picture.
 ISfinder names already carry the family (`ISEsa1_ISNCY_IS1202` → ISNCY), so
