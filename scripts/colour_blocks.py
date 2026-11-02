@@ -108,23 +108,19 @@ SIMPLE = {
     'is_rev':   '#f5dd5d',   # yellow
     'relB':     '#00b050',
     'relE':     '#e8112d',
-    'core':     '#9e9e9e',   # czc, cytb -- the conserved metal-resistance core
+    'czc':      '#2e75b6',   # cobalt-zinc-cadmium efflux
+    'cytb':     '#7030a0',   # cytochrome b561
+    'ars':      '#00b0a0',   # arsenic resistance
     'tra':      '#4a4a4a',
-    'cargo':    '#c9c9c9',   # ars, sil, intI, qnr, hok_gef: named but not
-                             # singled out by the brief
+    'cargo':    '#c9c9c9',   # sil, intI, qnr, hok_gef: labelled, not singled out
     'cds':      '#eeeeee',
 }
-SIMPLE_CORE = {'czc', 'cytb'}
 
 
 def simple_colour(ft, name, strand):
     if ft == 'IS':
         return SIMPLE['is_fwd'] if strand == '+' else SIMPLE['is_rev']
-    if name in ('relB', 'relE', 'tra'):
-        return SIMPLE[name]
-    if name in SIMPLE_CORE:
-        return SIMPLE['core']
-    return SIMPLE['cargo']
+    return SIMPLE.get(name, SIMPLE['cargo'])
 
 # Family hues. ISNCY and IS110 keep the red/orange of the elements that made
 # them matter, so the figure stays comparable with earlier versions.
@@ -158,7 +154,117 @@ def shade(base, i, n):
         int(round(c * 255)) for c in colorsys.hls_to_rgb(h, l, sat))
 
 
-def label_plan(feats, which, ends, min_span=1300):
+def consensus(rows, name, kind):
+    """Median offset and length of `name` across the loci that carry it.
+
+    Complete copies only -- a fragment's offset is where what survived starts,
+    not where the element was, so averaging the two would put the consensus
+    somewhere neither has ever been.
+    """
+    v = [(int(r['offset_from_bait']), int(r['end']) - int(r['start']) + 1,
+          r['locus_id'])
+         for r in rows if r['name'] == name and r['feature_type'] == kind
+         and r.get('cov_class') != 'fragment']
+    if not v:
+        return None
+    offs = sorted(o for o, _, _ in v)
+    lens = sorted(l for _, l, _ in v)
+    mid = len(v) // 2
+    # n is LOCI, not hits -- counting distinct offsets made an element that is
+    # at the same place in every locus report n=1 and lose its own emphasis
+    return {'name': name, 'kind': kind, 'n': len({lid for _, _, lid in v}),
+            'n_hits': len(v), 'offset': offs[mid], 'length': lens[mid],
+            'lo': offs[0], 'hi': offs[-1], 'fixed': offs[0] == offs[-1]}
+
+
+def draw_schematic(ax, rows, y, flank, head, h, ends):
+    """The idealised architecture, drawn from the data rather than asserted.
+
+    Every block sits at the MEDIAN offset of that element across the loci
+    carrying it, and an offset that is identical in every one of them is
+    marked. That is the difference between a schematic and a claim: czc is
+    drawn at -1184 because it is at -1184 in all four loci that have it, not
+    because the slide says so.
+    """
+    core = [c for c in (consensus(rows, n, k) for n, k in
+                        (('cytb', 'cargo'), ('czc', 'cargo'),
+                         ('relB', 'cargo'), ('relE', 'cargo'),
+                         ('hok_gef', 'cargo'))) if c]
+    veh = [c for c in (consensus(rows, n, 'IS') for n in sorted(ends)) if c]
+    tra = consensus(rows, 'tra', 'cargo')
+
+    ax.axhline(y + h * 2.6, color='#cccccc', lw=0.8, ls='-', zorder=0)
+    ax.text(-flank * 1.045, y, 'idealised\narchitecture', ha='right',
+            va='center', fontsize=7.2, fontweight='bold', linespacing=1.25)
+
+    # the variable region: everything upstream of the first vehicle end
+    left_edge = min([c['offset'] for c in veh] or [-flank])
+    ax.add_patch(Rectangle((-flank, y - h / 2), -flank * -1 + left_edge, h,
+                           facecolor='#f4f4f4', edgecolor='#d0d0d0',
+                           lw=0.5, ls=(0, (2, 2)), zorder=1))
+    ax.text((-flank + left_edge) / 2, y, 'variable — IS insertions,\n'
+            'a different history in every locus', ha='center', va='center',
+            fontsize=5.8, color='#777777', style='italic', linespacing=1.2)
+
+    # cytb, czc, relB, relE and hok_gef sit inside ~2.5 kb, so their labels
+    # overlap unless stacked -- downward here, away from the core bracket
+    placed = []
+    for c in veh + core:
+        col = (SIMPLE['is_fwd'] if c['kind'] == 'IS'
+               else SIMPLE.get(c['name'], SIMPLE['cargo']))
+        ax.add_patch(Polygon(
+            gene_arrow(c['offset'], c['length'], y, h, '+', head), closed=True,
+            facecolor=col, edgecolor='black', lw=0.8, zorder=3))
+        hard = c['fixed'] and c['n'] > 2
+        txt = (f"{c['name']}  {c['offset']:+d}"
+               + ('  (same in all ' + str(c['n']) + ')' if hard else ''))
+        # reserve width from the TEXT, not a fixed span -- "(same in all 4)"
+        # is three times as wide as a bare name and overran its neighbour
+        cx, half = c['offset'] + c['length'] / 2, len(txt) * 150 / 2
+        lvl = 0
+        while any(abs(cx - px) < half + ph and lv == lvl
+                  for px, ph, lv in placed):
+            lvl += 1
+        placed.append((cx, half, lvl))
+        ax.annotate(txt,
+                    (cx, y - h / 2 - 0.08 - 0.26 * lvl),
+                    ha='center', va='top', fontsize=5.4,
+                    color='#111111' if hard else '#555555',
+                    fontweight='bold' if hard else 'normal',
+                    arrowprops=dict(arrowstyle='-', lw=0.4,
+                                    color='#bbbbbb') if lvl else None)
+    depth = max([lv for _, _, lv in placed] or [0])
+
+    ax.text(-flank * 1.045, y - 0.30 - 0.26 * depth,
+            'median offset across the loci carrying each element',
+            ha='left', va='top', fontsize=5.2, color='#999999', style='italic')
+
+    if tra:
+        ax.add_patch(Rectangle((tra['lo'], y - h / 2),
+                               min(flank, tra['hi'] + tra['length']) - tra['lo'],
+                               h, facecolor=SIMPLE['tra'], alpha=0.30,
+                               edgecolor='#4a4a4a', lw=0.5, ls=(0, (2, 2)),
+                               zorder=1))
+        ax.text((tra['lo'] + min(flank, tra['hi'] + tra['length'])) / 2, y,
+                f"tra — conjugation machinery\n{tra['lo']:+d} to {tra['hi']:+d}",
+                ha='center', va='center', fontsize=5.8, color='#444444',
+                style='italic', linespacing=1.2)
+
+    # the conserved core bracket
+    if core:
+        x0 = min(c['offset'] for c in core)
+        x1 = max(c['offset'] + c['length'] for c in core)
+        yb = y + h / 2 + 0.14
+        ax.plot([x0, x0, x1, x1], [yb - 0.06, yb, yb, yb - 0.06],
+                color='#111111', lw=0.9, zorder=4)
+        ax.annotate('conserved core — the extended anchor '
+                    '(CLAUDE.md Stage 2)', ((x0 + x1) / 2, yb + 0.03),
+                    ha='center', va='bottom', fontsize=6.0,
+                    fontweight='bold', color='#111111')
+    return depth
+
+
+def label_plan(feats, which, ends, min_span=1300, kinds=('IS',)):
     """Which IS blocks get a label, and on which stacked level.
 
     One rule for every hit instead of three special cases. The old condition
@@ -184,7 +290,7 @@ def label_plan(feats, which, ends, min_span=1300):
     if which == 'none':
         return out
     for i, r in enumerate(feats):
-        if r['feature_type'] != 'IS':
+        if r['feature_type'] not in kinds:
             continue
         frag = r.get('cov_class') == 'fragment'
         if which == 'key' and not (r['name'] in ends or frag
@@ -365,6 +471,8 @@ def main():
     p.add_argument('--flank', type=int, default=20000)
     p.add_argument('--families', default='',
                    help='results/gene_families.tsv -- colours the CDS track')
+    p.add_argument('--no-schematic', action='store_true',
+                   help='omit the idealised-architecture panel at the bottom')
     p.add_argument('--style', choices=['simple', 'tracks'], default='simple',
                    help="'simple' = one row per locus, colour by role, IS "
                         "mustard forward / yellow reverse; 'tracks' = IS, CDS "
@@ -467,10 +575,14 @@ def main():
                 ('relB', dict(facecolor=SIMPLE['relB'])),
                 ('relE', dict(facecolor=SIMPLE['relE'])),
             ]),
-            ('context', '#333333', [
-                ('czc, cytb (core)', dict(facecolor=SIMPLE['core'])),
+            ('the conserved core', '#333333', [
+                ('cytb (cytochrome b561)', dict(facecolor=SIMPLE['cytb'])),
+                ('czc (Co-Zn-Cd efflux)', dict(facecolor=SIMPLE['czc'])),
+            ]),
+            ('other context', '#333333', [
+                ('ars (arsenic res.)', dict(facecolor=SIMPLE['ars'])),
                 ('tra (conjugation)', dict(facecolor=SIMPLE['tra'])),
-                ('other cargo', dict(facecolor=SIMPLE['cargo'])),
+                ('sil, intI, qnr, hok_gef', dict(facecolor=SIMPLE['cargo'])),
                 ('CDS', dict(facecolor=SIMPLE['cds'], edgecolor='#cccccc')),
             ]),
         ]
@@ -480,7 +592,9 @@ def main():
     if not a.label_is:
         a.label_is = 'distinct' if simple else 'all'
     ends = {e.strip() for e in a.vehicle_ends.split(',') if e.strip()}
-    plans = {l: label_plan(by_locus[l], a.label_is, ends) for l in loci}
+    kinds = ('IS', 'cargo') if simple else ('IS',)
+    plans = {l: label_plan(by_locus[l], a.label_is, ends, kinds=kinds)
+             for l in loci}
     deepest = max([lv for p in plans.values() for lv in p.values()] or [0])
     # rows must be tall enough for the deepest label stack, or labels from one
     # locus climb into the row above
@@ -491,7 +605,7 @@ def main():
     n_lrow = -(-len(blocks) // NCOL)
     leg_h = 0.20 * sum(max(len(b[2]) for b in blocks[i * NCOL:(i + 1) * NCOL]) + 1.45
                        for i in range(n_lrow))
-    main_h = 0.95 * PITCH * len(loci) + 2.0
+    main_h = 0.95 * PITCH * (len(loci) + (0 if a.no_schematic else 1.7)) + 2.0
 
     fig = plt.figure(figsize=(15, main_h + leg_h))
     gs = fig.add_gridspec(2, 1, height_ratios=[main_h, leg_h],
@@ -542,10 +656,11 @@ def main():
             # name the vehicle and the small-but-decisive fragments
             if fi in plan:
                 lvl = plan[fi]
-                emph = nm in ends
+                emph = nm in ends or nm in ('relB', 'relE')
                 ax.annotate(
                     f'{nm}\n{w} bp' if frag else nm,
-                    (o + w / 2, y + IS_DY + H_IS / 2 + 0.16 + 0.30 * lvl),
+                    (o + w / 2, y + (IS_DY if ft == 'IS' else CARGO_DY)
+                     + h / 2 + 0.16 + 0.30 * lvl),
                     ha='center', va='bottom',
                     fontsize=6.0 if emph else 5.4,
                     fontweight='bold' if emph else 'normal',
@@ -599,15 +714,23 @@ def main():
             ax.text(a.flank * 1.21, ytop + dy, lab, fontsize=6.4, va='center',
                     ha='right', color='#777777', style='italic')
 
+    y_sch = -1.55 * PITCH
+    sch_depth = 0
+    if not a.no_schematic:
+        sch_depth = draw_schematic(ax, rows, y_sch, a.flank, HEAD, 0.40, ends)
+
     ax.axvline(0, color='#1f77b4', lw=1.3, ls='--', zorder=4)
-    ax.text(0, (len(loci) - 1) * PITCH + 0.95, ' relB start (bait = 0)',
-            fontsize=7.5, color='#1f77b4', ha='left', va='bottom')
+    ax.text(0, (len(loci) - 1) * PITCH + 0.35 + 0.30 * (deepest + 1),
+            ' relB start (bait = 0)', fontsize=7.5, color='#1f77b4',
+            ha='left', va='bottom')
     # the recurring boundary, drawn so it can be checked rather than asserted
     ax.axvline(-3898, color='#ff7f0e', lw=0.9, ls=':', zorder=2)
-    ax.text(-3898, -1.35, '-3898', fontsize=6.5, color='#ff7f0e', ha='center')
+    ybot = (y_sch - 0.95 - 0.26 * sch_depth) if not a.no_schematic else -1.35
+    ax.text(-3898, ybot, '-3898', fontsize=6.5, color='#ff7f0e', ha='center')
 
     ax.set_xlim(-a.flank * 1.30, a.flank * 1.22)
-    ax.set_ylim(-1.55, (len(loci) - 1) * PITCH + 1.30)
+    ax.set_ylim(ybot - 0.45,
+                (len(loci) - 1) * PITCH + 0.75 + 0.30 * (deepest + 1))
     ax.set_yticks([])
     ax.set_xlabel('position relative to relB start (bp)', fontsize=9,
               labelpad=6)

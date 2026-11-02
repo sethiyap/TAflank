@@ -735,9 +735,11 @@ same line, colour encoding **role and orientation only**.
 | IS, reverse | yellow `#f5dd5d` |
 | relB | green `#00b050` |
 | relE | red `#e8112d` |
-| czc, cytb (conserved core) | grey `#9e9e9e` |
+| cytb (cytochrome b561) | purple `#7030a0` |
+| czc (Co-Zn-Cd efflux) | blue `#2e75b6` |
+| ars (arsenic resistance) | teal `#00b0a0` |
 | tra (conjugation) | dark grey `#4a4a4a` |
-| other cargo (ars, sil, intI, qnr, hok_gef) | light grey `#c9c9c9` |
+| sil, intI, qnr, hok_gef | light grey `#c9c9c9` — labelled, not singled out |
 | CDS | near-white, thin underlay |
 
 Which IS it is comes from the **label**, not the colour, so the two IS tones
@@ -753,7 +755,42 @@ lines, IS coloured by family with the element as a shade, CDS coloured by gene
 family. Use it when the question is *which* element or *which* family; use
 `simple` when the question is shape.
 
-One thing to watch: `other cargo` and `CDS` are both greys and are close at
+Cargo blocks are labelled on the figure under the same deduplicating rule as
+IS, so `czc`, `cytb` and `ars` can be read directly rather than matched back
+to a legend swatch.
+
+### The idealised-architecture panel
+
+Below the loci, separated by a rule, is a consensus schematic. **It is computed
+from the data, not asserted.** Each block sits at the **median offset** of that
+element across the loci carrying it, complete copies only — a fragment's offset
+is where what survived begins, not where the element was, so averaging the two
+would put the consensus somewhere neither has ever been.
+
+```
+  element   loci   offset   spread
+  ISEsa1       5    -10554   -12244 .. -5494
+  ISEsa2       4     -3898   -6675 .. -3898
+  cytb         4     -1960   -4738 .. -1960
+  czc          4     -1184   INVARIANT
+  relB         7        -2   -2 .. 2
+  relE         7      +241   241 .. 5290
+  hok_gef      6      +600   596 .. 1697
+```
+
+An element at an identical offset in every locus carrying it is marked
+`(same in all N)` and set in bold. Only **czc** earns that here — −1184 in all
+four loci that have it — and relB is within 4 bp of invariant. That is the
+difference between a schematic and a claim: czc is drawn at −1184 because the
+data put it there in every case, not because a slide says so.
+
+The panel also shows what is *not* fixed: a dashed band upstream for the
+variable IS region, and a `tra` band spanning its full observed range
+(+9246 to +19753) rather than a single position, because it has one.
+
+Turn it off with `--no-schematic`.
+
+One thing to watch: `sil, intI, qnr, hok_gef` and `CDS` are both greys and are close at
 small sizes. They are distinguishable by height (cargo full, CDS thin), but if
 that matters for a given panel, change `SIMPLE['cargo']` in the script.
 
