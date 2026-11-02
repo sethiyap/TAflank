@@ -1,0 +1,66 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP010512__CP010512__1__plus	CDS	histidine kinase		166	2448	-					histidine kinase	annotation	bakta	-19835
+CP010512__CP010512__1__plus	CDS	rbsA		2630	4150	+					rbsA	annotation	bakta	-17371
+CP010512__CP010512__1__plus	CDS	rbsC		4147	5142	+					rbsC	annotation	bakta	-15854
+CP010512__CP010512__1__plus	CDS	Periplasmic binding protein domain-conta		5175	6116	+					Periplasmic binding protein domain-conta	annotation	bakta	-14826
+CP010512__CP010512__1__plus	CDS	D-lyxose/D-mannose isomerase		6243	6929	+					D-lyxose/D-mannose isomerase	annotation	bakta	-13758
+CP010512__CP010512__1__plus	CDS	Putative aldolase		6940	7800	+					Putative aldolase	annotation	bakta	-13061
+CP010512__CP010512__1__plus	CDS	Kinase		7800	8804	+					Kinase	annotation	bakta	-12201
+CP010512__CP010512__1__plus	CDS	Dioxygenase for synthesis of lipid		8948	9856	+					Dioxygenase for synthesis of lipid	annotation	bakta	-11053
+CP010512__CP010512__1__plus	CDS	ompR		9860	10591	-					ompR	annotation	bakta	-10141
+CP010512__CP010512__1__plus	CDS	Formate dehydrogenase-H subunit alpha		10847	12994	+					Formate dehydrogenase-H subunit alpha	annotation	bakta	-9154
+CP010512__CP010512__1__plus	CDS	hypothetical protein		13161	13283	+					hypothetical protein	annotation	bakta	-6840
+CP010512__CP010512__1__plus	IS	ISKpn8	IS3	13245	14687	+	complete	no	no		ISKpn8	isfinder	bakta	-6756
+CP010512__CP010512__1__plus	CDS	tnp		13292	13813	+					ISKpn8	isfinder	bakta	-6709
+CP010512__CP010512__1__plus	CDS	Integrase catalytic domain-containing pr		14002	14661	+					ISKpn8	isfinder	bakta	-5999
+CP010512__CP010512__1__plus	IS	ISEsa1	ISNCY	14777	16368	+	complete	no	no		ISEsa1	isfinder	bakta	-5224
+CP010512__CP010512__1__plus	CDS	hypothetical protein		15155	15295	-					ISEsa1	isfinder	bakta	-4846
+CP010512__CP010512__1__plus	CDS	hypothetical protein		15371	15892	-					ISEsa1	isfinder	bakta	-4630
+CP010512__CP010512__1__plus	IS	ISCfr4	IS30	16353	17605	-	complete	no	no		ISCfr4	isfinder	bakta	-3648
+CP010512__CP010512__1__plus	CDS	tnp		16376	17536	-					ISCfr4	isfinder	bakta	-3625
+CP010512__CP010512__1__plus	CDS	hypothetical protein		17727	17939	-					hypothetical protein	annotation	bakta	-2274
+CP010512__CP010512__1__plus	CDS	Cytochrome b561 bacterial/Ni-hydrogenase		18004	18615	+					Cytochrome b561 bacterial/Ni-hydrogenase	annotation	bakta	-1997
+CP010512__CP010512__1__plus	cargo	cytb		18041	18613	+			no		cytb	cargo	bakta	-1960
+CP010512__CP010512__1__plus	CDS	Cation-efflux pump		18815	19738	+					Cation-efflux pump	annotation	bakta	-1186
+CP010512__CP010512__1__plus	cargo	czc		18817	19740	+			no		czc	cargo	bakta	-1184
+CP010512__CP010512__1__plus	CDS	hypothetical protein		19782	19976	-					hypothetical protein	annotation	bakta	-219
+CP010512__CP010512__1__plus	cargo	relB		19999	20238	+			no		relB	cargo	bakta	-2
+CP010512__CP010512__1__plus	cargo	relE		20242	20529	+			no		relE	cargo	bakta	241
+CP010512__CP010512__1__plus	cargo	hok_gef		20596	20754	+			no		hok_gef	cargo	bakta	595
+CP010512__CP010512__1__plus	CDS	Hok/Gef family protein		20598	20756	+					Hok/Gef family protein	annotation	bakta	597
+CP010512__CP010512__1__plus	CDS	hypothetical protein		20989	21195	-					hypothetical protein	annotation	bakta	988
+CP010512__CP010512__1__plus	CDS	Phage protein		21235	21597	-					Phage protein	annotation	bakta	1234
+CP010512__CP010512__1__plus	CDS	hypothetical protein		21609	22178	-					hypothetical protein	annotation	bakta	1608
+CP010512__CP010512__1__plus	CDS	hypothetical protein		22265	22651	+					hypothetical protein	annotation	bakta	2264
+CP010512__CP010512__1__plus	CDS	hypothetical protein		22680	22991	-					hypothetical protein	annotation	bakta	2679
+CP010512__CP010512__1__plus	CDS	hypothetical protein		23162	23500	+					hypothetical protein	annotation	bakta	3161
+CP010512__CP010512__1__plus	CDS	hypothetical protein		23728	24009	-					hypothetical protein	annotation	bakta	3727
+CP010512__CP010512__1__plus	CDS	hypothetical protein		23996	24127	-					hypothetical protein	annotation	bakta	3995
+CP010512__CP010512__1__plus	CDS	hypothetical protein		24127	24543	-					hypothetical protein	annotation	bakta	4126
+CP010512__CP010512__1__plus	CDS	hypothetical protein		24543	24797	-					hypothetical protein	annotation	bakta	4542
+CP010512__CP010512__1__plus	CDS	hypothetical protein		24808	25191	-					hypothetical protein	annotation	bakta	4807
+CP010512__CP010512__1__plus	CDS	hypothetical protein		25674	25868	+					hypothetical protein	annotation	bakta	5673
+CP010512__CP010512__1__plus	CDS	DNA-binding protein		26366	27571	+					DNA-binding protein	annotation	bakta	6365
+CP010512__CP010512__1__plus	CDS	hypothetical protein		27636	27917	+					hypothetical protein	annotation	bakta	7635
+CP010512__CP010512__1__plus	CDS	hypothetical protein		28296	28592	+					hypothetical protein	annotation	bakta	8295
+CP010512__CP010512__1__plus	CDS	Phage protein		28642	29079	+					Phage protein	annotation	bakta	8641
+CP010512__CP010512__1__plus	CDS	NUDIX hydrolase		29161	29706	+					NUDIX hydrolase	annotation	bakta	9160
+CP010512__CP010512__1__plus	IS	IS26	IS6	30762	31581	+	complete	no	no		IS26	isfinder	bakta	10761
+CP010512__CP010512__1__plus	CDS	tnp		30825	31529	+					IS26	isfinder	bakta	10824
+CP010512__CP010512__1__plus	IS	IS15	IS6	31750	32570	-	fragment	yes	no		IS15	isfinder	bakta	11749
+CP010512__CP010512__1__plus	CDS	tnp		31803	32507	-					IS15	isfinder	bakta	11802
+CP010512__CP010512__1__plus	CDS	hypothetical protein		32554	32991	-					hypothetical protein	annotation	bakta	12553
+CP010512__CP010512__1__plus	IS	ISArsp14	ISNCY	32913	32962	+	fragment	yes	no		ISArsp14	isfinder	bakta	12912
+CP010512__CP010512__1__plus	cargo	intI		33274	34287	-			no		intI	cargo	bakta	13273
+CP010512__CP010512__1__plus	CDS	intI1		33276	34289	-					intI1	annotation	bakta	13275
+CP010512__CP010512__1__plus	CDS	aac(6')-Ib		34372	35004	+					aac(6')-Ib	annotation	bakta	14371
+CP010512__CP010512__1__plus	CDS	hypothetical protein		35074	35556	-					hypothetical protein	annotation	bakta	15073
+CP010512__CP010512__1__plus	CDS	hypothetical protein		35837	36235	-					hypothetical protein	annotation	bakta	15836
+CP010512__CP010512__1__plus	CDS	Uncharacterized protein ORF		36627	37010	-					Uncharacterized protein ORF	annotation	bakta	16626
+CP010512__CP010512__1__plus	CDS	hypothetical protein		37101	37340	-					hypothetical protein	annotation	bakta	17100
+CP010512__CP010512__1__plus	CDS	hypothetical protein		37603	37779	-					hypothetical protein	annotation	bakta	17602
+CP010512__CP010512__1__plus	CDS	sul1		37884	38723	+					sul1	annotation	bakta	17883
+CP010512__CP010512__1__plus	CDS	hypothetical protein		39254	39370	-					hypothetical protein	annotation	bakta	19253
+CP010512__CP010512__1__plus	IS	ISVsa3	IS91	39662	40524	+	partial	no	no		ISVsa3	isfinder	bakta	19661
+CP010512__CP010512__1__plus	CDS	hypothetical protein		39677	39913	-					ISVsa3	isfinder	bakta	19676
+CP010512__CP010512__1__plus	CDS	hypothetical protein		40151	40483	-					ISVsa3	isfinder	bakta	20150

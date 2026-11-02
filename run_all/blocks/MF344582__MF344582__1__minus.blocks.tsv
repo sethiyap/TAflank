@@ -1,0 +1,63 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+MF344582__MF344582__1__minus	CDS	hypothetical protein		64	720	+					hypothetical protein	annotation	bakta	-19937
+MF344582__MF344582__1__minus	CDS	hypothetical protein		753	980	+					hypothetical protein	annotation	bakta	-19248
+MF344582__MF344582__1__minus	CDS	DUF4165 domain-containing protein		1746	4166	-					DUF4165 domain-containing protein	annotation	bakta	-18255
+MF344582__MF344582__1__minus	CDS	Morphogenetic protein		4631	5218	-					Morphogenetic protein	annotation	bakta	-15370
+MF344582__MF344582__1__minus	CDS	hypothetical protein		5262	5525	-					hypothetical protein	annotation	bakta	-14739
+MF344582__MF344582__1__minus	CDS	Methyltransferase small domain-containin		5619	6443	-					Methyltransferase small domain-containin	annotation	bakta	-14382
+MF344582__MF344582__1__minus	CDS	hypothetical protein		6461	7225	-					hypothetical protein	annotation	bakta	-13540
+MF344582__MF344582__1__minus	CDS	Phage protein		7548	8072	+					Phage protein	annotation	bakta	-12453
+MF344582__MF344582__1__minus	CDS	Phage protein		8176	8607	+					Phage protein	annotation	bakta	-11825
+MF344582__MF344582__1__minus	CDS	hicB		8600	8857	+					hicB	annotation	bakta	-11401
+MF344582__MF344582__1__minus	CDS	hypothetical protein		8844	9032	+					hypothetical protein	annotation	bakta	-11157
+MF344582__MF344582__1__minus	CDS	DUF2622 domain-containing protein		9065	9316	+					DUF2622 domain-containing protein	annotation	bakta	-10936
+MF344582__MF344582__1__minus	CDS	hypothetical protein		9516	9791	-					ISKpn26	isfinder	bakta	-10485
+MF344582__MF344582__1__minus	IS	ISKpn26	IS5	9520	10715	+	complete	no	no		ISKpn26	isfinder	bakta	-10481
+MF344582__MF344582__1__minus	CDS	hypothetical protein		9864	10232	-					ISKpn26	isfinder	bakta	-10137
+MF344582__MF344582__1__minus	CDS	hypothetical protein		10239	10493	-					ISKpn26	isfinder	bakta	-9762
+MF344582__MF344582__1__minus	CDS	DUF4165 domain-containing protein		10919	13309	+					DUF4165 domain-containing protein	annotation	bakta	-9082
+MF344582__MF344582__1__minus	CDS	hypothetical protein		13393	13545	-					hypothetical protein	annotation	bakta	-6608
+MF344582__MF344582__1__minus	CDS	hypothetical protein		13627	13887	-					hypothetical protein	annotation	bakta	-6374
+MF344582__MF344582__1__minus	CDS	Zinc-type alcohol dehydrogenase-like pro		13907	14782	+					Zinc-type alcohol dehydrogenase-like pro	annotation	bakta	-6094
+MF344582__MF344582__1__minus	IS	IS903B	IS5	14772	15828	-	complete	no	no		IS903B	isfinder	bakta	-5229
+MF344582__MF344582__1__minus	CDS	Transposase IS4-like domain-containing p		14828	15577	-					IS903B	isfinder	bakta	-5173
+MF344582__MF344582__1__minus	IS	ISEsa1	ISNCY	15828	16102	+	fragment	yes	no		ISEsa1	isfinder	bakta	-4173
+MF344582__MF344582__1__minus	IS	ISEsa2	IS110	16103	17595	+	complete	no	no		ISEsa2	isfinder	bakta	-3898
+MF344582__MF344582__1__minus	CDS	tnp		16329	17567	+					ISEsa2	isfinder	bakta	-3672
+MF344582__MF344582__1__minus	CDS	hypothetical protein		17727	17939	-					hypothetical protein	annotation	bakta	-2274
+MF344582__MF344582__1__minus	cargo	cytb		18041	18613	+			no		cytb	cargo	bakta	-1960
+MF344582__MF344582__1__minus	CDS	Cytochrome b561 bacterial/Ni-hydrogenase		18043	18615	+					Cytochrome b561 bacterial/Ni-hydrogenase	annotation	bakta	-1958
+MF344582__MF344582__1__minus	CDS	Cation-efflux pump		18815	19738	+					Cation-efflux pump	annotation	bakta	-1186
+MF344582__MF344582__1__minus	cargo	czc		18817	19740	+			no		czc	cargo	bakta	-1184
+MF344582__MF344582__1__minus	CDS	hypothetical protein		19782	19976	-					hypothetical protein	annotation	bakta	-219
+MF344582__MF344582__1__minus	cargo	relB		19999	20238	+			no		relB	cargo	bakta	-2
+MF344582__MF344582__1__minus	CDS	relB		20001	20240	+					relB	annotation	bakta	0
+MF344582__MF344582__1__minus	CDS	relE		20240	20527	+					relE	annotation	bakta	239
+MF344582__MF344582__1__minus	cargo	relE		20242	20529	+			no		relE	cargo	bakta	241
+MF344582__MF344582__1__minus	cargo	hok_gef		20597	20755	+			no		hok_gef	cargo	bakta	596
+MF344582__MF344582__1__minus	CDS	hypothetical protein		21348	21587	+					hypothetical protein	annotation	bakta	1347
+MF344582__MF344582__1__minus	CDS	hypothetical protein		21759	22082	+					hypothetical protein	annotation	bakta	1758
+MF344582__MF344582__1__minus	CDS	Phage protein		22218	22574	-					Phage protein	annotation	bakta	2217
+MF344582__MF344582__1__minus	CDS	DUF551 domain-containing protein		22628	23227	-					DUF551 domain-containing protein	annotation	bakta	2627
+MF344582__MF344582__1__minus	CDS	DUF5417 domain-containing protein		23326	24270	-					DUF5417 domain-containing protein	annotation	bakta	3325
+MF344582__MF344582__1__minus	CDS	hypothetical protein		24385	24630	-					hypothetical protein	annotation	bakta	4384
+MF344582__MF344582__1__minus	CDS	hypothetical protein		24781	24957	+					hypothetical protein	annotation	bakta	4780
+MF344582__MF344582__1__minus	CDS	DNA-binding protein		25374	26558	+					DNA-binding protein	annotation	bakta	5373
+MF344582__MF344582__1__minus	CDS	hypothetical protein		26624	26905	+					hypothetical protein	annotation	bakta	6623
+MF344582__MF344582__1__minus	CDS	Inner membrane protein		27220	27921	+					Inner membrane protein	annotation	bakta	7219
+MF344582__MF344582__1__minus	CDS	hypothetical protein		28056	28352	+					hypothetical protein	annotation	bakta	8055
+MF344582__MF344582__1__minus	CDS	hypothetical protein		28397	28834	+					hypothetical protein	annotation	bakta	8396
+MF344582__MF344582__1__minus	CDS	NUDIX hydrolase		28902	29438	+					NUDIX hydrolase	annotation	bakta	8901
+MF344582__MF344582__1__minus	CDS	hypothetical protein		29664	30032	+					hypothetical protein	annotation	bakta	9663
+MF344582__MF344582__1__minus	CDS	hypothetical protein		30465	30764	+					hypothetical protein	annotation	bakta	10464
+MF344582__MF344582__1__minus	CDS	hypothetical protein		31121	31405	+					hypothetical protein	annotation	bakta	11120
+MF344582__MF344582__1__minus	CDS	Baseplate protein		31471	31824	+					Baseplate protein	annotation	bakta	11470
+MF344582__MF344582__1__minus	CDS	NERD domain-containing protein		32111	32842	-					NERD domain-containing protein	annotation	bakta	12110
+MF344582__MF344582__1__minus	CDS	Protease 4		32844	34025	-					Protease 4	annotation	bakta	12843
+MF344582__MF344582__1__minus	cargo	tra		34034	34696	-			no		tra	cargo	bakta	14033
+MF344582__MF344582__1__minus	CDS	DUF4400 domain-containing protein		34036	34698	-					DUF4400 domain-containing protein	annotation	bakta	14035
+MF344582__MF344582__1__minus	CDS	DUF4942 domain-containing protein		34685	35794	-					DUF4942 domain-containing protein	annotation	bakta	14684
+MF344582__MF344582__1__minus	CDS	traD		35794	37878	-					traD	annotation	bakta	15793
+MF344582__MF344582__1__minus	cargo	tra		35796	37778	-			no		tra	cargo	bakta	15795
+MF344582__MF344582__1__minus	CDS	hypothetical protein		37878	40358	-					hypothetical protein	annotation	bakta	17877
+MF344582__MF344582__1__minus	cargo	tra		37880	40527	-			right		tra	cargo	bakta	17879

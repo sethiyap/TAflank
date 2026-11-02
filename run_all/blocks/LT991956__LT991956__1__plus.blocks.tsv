@@ -1,0 +1,72 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+LT991956__LT991956__1__plus	CDS	arsB		87	1418	+					arsB	annotation	bakta	-19914
+LT991956__LT991956__1__plus	cargo	ars		127	1416	+			no		ars	cargo	bakta	-19874
+LT991956__LT991956__1__plus	CDS	N-acetyltransferase domain-containing pr		1891	2427	-					N-acetyltransferase domain-containing pr	annotation	bakta	-18110
+LT991956__LT991956__1__plus	CDS	AAA+ ATPase domain-containing protein		2552	3517	-					AAA+ ATPase domain-containing protein	annotation	bakta	-17449
+LT991956__LT991956__1__plus	cargo	ars		2559	4311	-			no		ars	cargo	bakta	-17442
+LT991956__LT991956__1__plus	CDS	hypothetical protein		3752	3970	+					hypothetical protein	annotation	bakta	-16249
+LT991956__LT991956__1__plus	cargo	ars		4329	4690	-			no		ars	cargo	bakta	-15672
+LT991956__LT991956__1__plus	CDS	arsD		4330	4692	-					arsD	annotation	bakta	-15671
+LT991956__LT991956__1__plus	CDS	sigM		4768	5313	-					sigM	annotation	bakta	-15233
+LT991956__LT991956__1__plus	CDS	arsH		5322	6035	-					arsH	annotation	bakta	-14679
+LT991956__LT991956__1__plus	cargo	ars		5324	6027	-			no		ars	cargo	bakta	-14677
+LT991956__LT991956__1__plus	CDS	HTH arsR-type domain-containing protein		6037	6429	-					HTH arsR-type domain-containing protein	annotation	bakta	-13964
+LT991956__LT991956__1__plus	CDS	DUF1778 domain-containing protein		6660	6926	+					DUF1778 domain-containing protein	annotation	bakta	-13341
+LT991956__LT991956__1__plus	CDS	tRNA-acetylating toxin 1		6914	7399	+					tRNA-acetylating toxin 1	annotation	bakta	-13087
+LT991956__LT991956__1__plus	IS	IS150	IS3	7626	7665	+	fragment	yes	no		IS150	isfinder	bakta	-12375
+LT991956__LT991956__1__plus	IS	ISEsa1	ISNCY	7757	9362	+	complete	no	no		ISEsa1	isfinder	bakta	-12244
+LT991956__LT991956__1__plus	CDS	hypothetical protein		8267	8542	-					ISEsa1	isfinder	bakta	-11734
+LT991956__LT991956__1__plus	CDS	hypothetical protein		8721	9209	+					ISEsa1	isfinder	bakta	-11280
+LT991956__LT991956__1__plus	CDS	ncrY		9413	9835	-					ncrY	annotation	bakta	-10588
+LT991956__LT991956__1__plus	CDS	ncrC		9997	11127	-					ncrC	annotation	bakta	-10004
+LT991956__LT991956__1__plus	CDS	ncrB		11140	11409	-					ncrB	annotation	bakta	-8861
+LT991956__LT991956__1__plus	CDS	ncrA		11515	12813	-					ncrA	annotation	bakta	-8486
+LT991956__LT991956__1__plus	CDS	hypothetical protein		12885	13250	+					hypothetical protein	annotation	bakta	-7116
+LT991956__LT991956__1__plus	CDS	hypothetical protein		13407	13658	+					hypothetical protein	annotation	bakta	-6594
+LT991956__LT991956__1__plus	CDS	hypothetical protein		14015	14515	+					hypothetical protein	annotation	bakta	-5986
+LT991956__LT991956__1__plus	CDS	DUF2946 domain-containing protein		14842	15213	-					DUF2946 domain-containing protein	annotation	bakta	-5159
+LT991956__LT991956__1__plus	CDS	Chromate resistance protein		15560	16537	+					Chromate resistance protein	annotation	bakta	-4441
+LT991956__LT991956__1__plus	CDS	Chromate transporter		16491	17870	+					Chromate transporter	annotation	bakta	-3510
+LT991956__LT991956__1__plus	CDS	hypothetical protein		17901	18209	-					hypothetical protein	annotation	bakta	-2100
+LT991956__LT991956__1__plus	CDS	hypothetical protein		18213	18437	+					hypothetical protein	annotation	bakta	-1788
+LT991956__LT991956__1__plus	CDS	hypothetical protein		18460	18612	+					hypothetical protein	annotation	bakta	-1541
+LT991956__LT991956__1__plus	CDS	HupE/UreJ family protein		18604	19341	-					HupE/UreJ family protein	annotation	bakta	-1397
+LT991956__LT991956__1__plus	CDS	hypothetical protein		19490	19756	+					hypothetical protein	annotation	bakta	-511
+LT991956__LT991956__1__plus	cargo	relB		19999	20238	+			no		relB	cargo	bakta	-2
+LT991956__LT991956__1__plus	CDS	hypothetical protein		20016	20363	-					hypothetical protein	annotation	bakta	15
+LT991956__LT991956__1__plus	cargo	relE		20242	20529	+			no		relE	cargo	bakta	241
+LT991956__LT991956__1__plus	CDS	Integrase catalytic domain-containing pr		20411	21628	-					ISKpn28	isfinder	bakta	410
+LT991956__LT991956__1__plus	IS	ISKpn28	IS481	20591	21686	-	complete	no	no		ISKpn28	isfinder	bakta	590
+LT991956__LT991956__1__plus	cargo	hok_gef		21698	21856	+			no		hok_gef	cargo	bakta	1697
+LT991956__LT991956__1__plus	CDS	Hok/Gef family protein		21700	21858	+					Hok/Gef family protein	annotation	bakta	1699
+LT991956__LT991956__1__plus	CDS	hypothetical protein		22588	22791	+					hypothetical protein	annotation	bakta	2587
+LT991956__LT991956__1__plus	CDS	hypothetical protein		22734	23048	+					hypothetical protein	annotation	bakta	2733
+LT991956__LT991956__1__plus	CDS	DUF1419 domain-containing protein		23109	23570	+					DUF1419 domain-containing protein	annotation	bakta	3108
+LT991956__LT991956__1__plus	CDS	Succinate dehydrogenase flavoprotein sub		23658	23858	+					Succinate dehydrogenase flavoprotein sub	annotation	bakta	3657
+LT991956__LT991956__1__plus	CDS	DNA methylase adenine-specific domain-co		23899	24690	+					DNA methylase adenine-specific domain-co	annotation	bakta	3898
+LT991956__LT991956__1__plus	CDS	hypothetical protein		24732	25067	+					hypothetical protein	annotation	bakta	4731
+LT991956__LT991956__1__plus	CDS	hypothetical protein		25756	26049	+					hypothetical protein	annotation	bakta	5755
+LT991956__LT991956__1__plus	CDS	DUF945 domain-containing protein		26066	26887	+					DUF945 domain-containing protein	annotation	bakta	6065
+LT991956__LT991956__1__plus	CDS	Lytic transglycosylase		26916	27389	-					Lytic transglycosylase	annotation	bakta	6915
+LT991956__LT991956__1__plus	CDS	hypothetical protein		27412	27594	+					hypothetical protein	annotation	bakta	7411
+LT991956__LT991956__1__plus	CDS	hypothetical protein		27849	28424	+					hypothetical protein	annotation	bakta	7848
+LT991956__LT991956__1__plus	CDS	Arc-like DNA binding domain-containing p		28457	29143	-					Arc-like DNA binding domain-containing p	annotation	bakta	8456
+LT991956__LT991956__1__plus	CDS	Pilin		29295	29648	+					Pilin	annotation	bakta	9294
+LT991956__LT991956__1__plus	CDS	traL		29652	29954	+					traL	annotation	bakta	9651
+LT991956__LT991956__1__plus	CDS	traE		29960	30541	+					traE	annotation	bakta	9959
+LT991956__LT991956__1__plus	CDS	traK		30553	31293	+					traK	annotation	bakta	10552
+LT991956__LT991956__1__plus	CDS	traB		31290	32693	+					traB	annotation	bakta	11289
+LT991956__LT991956__1__plus	CDS	hypothetical protein		32802	32948	+					hypothetical protein	annotation	bakta	12801
+LT991956__LT991956__1__plus	CDS	Holin		32969	33364	+					Holin	annotation	bakta	12968
+LT991956__LT991956__1__plus	CDS	traV		33423	33962	+					traV	annotation	bakta	13422
+LT991956__LT991956__1__plus	CDS	hypothetical protein		33959	34213	+					hypothetical protein	annotation	bakta	13958
+LT991956__LT991956__1__plus	CDS	traC		34210	36819	+					traC	annotation	bakta	14209
+LT991956__LT991956__1__plus	CDS	trbI		36816	37229	+					trbI	annotation	bakta	16815
+LT991956__LT991956__1__plus	CDS	hypothetical protein		37226	37861	+					hypothetical protein	annotation	bakta	17225
+LT991956__LT991956__1__plus	CDS	hypothetical protein		37858	38250	+					hypothetical protein	annotation	bakta	17857
+LT991956__LT991956__1__plus	CDS	hypothetical protein		38241	38519	+					hypothetical protein	annotation	bakta	18240
+LT991956__LT991956__1__plus	CDS	Conjugal transfer protein		38510	39055	+					Conjugal transfer protein	annotation	bakta	18509
+LT991956__LT991956__1__plus	CDS	hypothetical protein		39159	39380	+					hypothetical protein	annotation	bakta	19158
+LT991956__LT991956__1__plus	CDS	Prophage protein		39436	39759	+					Prophage protein	annotation	bakta	19435
+LT991956__LT991956__1__plus	cargo	tra		39754	40527	+			right		tra	cargo	bakta	19753
+LT991956__LT991956__1__plus	CDS	hypothetical protein		39786	40226	-					hypothetical protein	annotation	bakta	19785

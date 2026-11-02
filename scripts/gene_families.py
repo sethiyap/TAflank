@@ -64,14 +64,24 @@ def rc(s):
 
 
 def translate(nt):
+    """Returns (protein, [(residue, codon) for each INTERNAL stop]).
+
+    Internal stops become 'X' rather than '*' so the result is a valid protein
+    for blastp, and are reported instead of silently kept -- a single in-frame
+    TGA is usually a recoded selenocysteine, several usually mean the frame is
+    wrong, and the two need telling apart.
+    """
     aa = [CODON.get(nt[i:i + 3].upper(), 'X') for i in range(0, len(nt) - 2, 3)]
     if aa and aa[-1] == '*':
         aa.pop()
+    stops = [(i + 1, nt[i * 3:i * 3 + 3].upper())
+             for i, c in enumerate(aa) if c == '*']
+    aa = ['X' if c == '*' else c for c in aa]
     # Prodigal/Pyrodigal CDS legitimately begin GTG or TTG; the initiator is
     # formyl-methionine regardless, and Bakta's own .faa writes M.
     if aa:
         aa[0] = 'M'
-    return ''.join(aa)
+    return ''.join(aa), stops
 
 
 def read_fasta_one(path):
@@ -198,18 +208,27 @@ def main():
             if c['strand'] == '-':
                 nt = rc(nt)
             nt = nt[c['phase']:]
-            aa = translate(nt)
+            aa, stops = translate(nt)
             key = f"{lid}|{c['gene_id']}"
             c['locus_id'], c['key'], c['aa'] = lid, key, aa
             c['aa_len'] = len(aa)
-            c['internal_stop'] = 'yes' if '*' in aa else 'no'
+            c['stops'] = stops
+            c['internal_stop'] = 'yes' if stops else 'no'
             genes.append(c)
             seqs[key] = aa
 
-    nstop = sum(1 for c in genes if c['internal_stop'] == 'yes')
-    if nstop:
-        print(f'WARNING: {nstop} CDS translate with an internal stop codon; '
-              'phase or window may be wrong', file=sys.stderr)
+    for c in (g for g in genes if g['stops']):
+        st = c['stops']
+        if len(st) == 1 and st[0][1] == 'TGA':
+            # a lone in-frame TGA is the textbook selenocysteine recoding --
+            # E. coli formate dehydrogenase-H carries Sec at residue 140
+            note = (f"one in-frame TGA at residue {st[0][0]} -- "
+                    'selenocysteine recoding, expected')
+        else:
+            note = (f"{len(st)} internal stops ({', '.join(cd for _, cd in st)})"
+                    ' -- frame or window may be wrong')
+        print(f"  note: {c['locus_id']} {c['gene_id']} "
+              f"({c['product'][:46]}): {note}", file=sys.stderr)
 
     if a.check:
         hits = {}

@@ -1,0 +1,67 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP028537__CP028537__1__minus	IS	IS5075	IS110	1	556	+	fragment	yes	left		IS5075	isfinder	bakta	-20000
+CP028537__CP028537__1__minus	CDS	hypothetical protein		483	659	-					hypothetical protein	annotation	bakta	-19518
+CP028537__CP028537__1__minus	CDS	Transcriptional regulator		781	1005	-					Transcriptional regulator	annotation	bakta	-19220
+CP028537__CP028537__1__minus	CDS	Resolvase/invertase-type recombinase cat		1002	1739	-					Resolvase/invertase-type recombinase cat	annotation	bakta	-18999
+CP028537__CP028537__1__minus	CDS	hypothetical protein		1806	2189	+					hypothetical protein	annotation	bakta	-18195
+CP028537__CP028537__1__minus	IS	IS26	IS6	2319	3138	-	complete	no	no		IS26	isfinder	bakta	-17682
+CP028537__CP028537__1__minus	CDS	tnp		2371	3075	-					IS26	isfinder	bakta	-17630
+CP028537__CP028537__1__minus	CDS	tetR(D)		3087	3743	-					tetR(D)	annotation	bakta	-16914
+CP028537__CP028537__1__minus	CDS	tet(D)		3839	5023	+					tet(D)	annotation	bakta	-16162
+CP028537__CP028537__1__minus	CDS	S-(hydroxymethyl)glutathione dehydrogena		5118	6227	+					S-(hydroxymethyl)glutathione dehydrogena	annotation	bakta	-14883
+CP028537__CP028537__1__minus	CDS	frmB		6249	6683	+					frmB	annotation	bakta	-13752
+CP028537__CP028537__1__minus	IS	IS26	IS6	6665	7484	-	complete	no	no		IS26	isfinder	bakta	-13336
+CP028537__CP028537__1__minus	CDS	tnp		6717	7421	-					IS26	isfinder	bakta	-13284
+CP028537__CP028537__1__minus	CDS	hypothetical protein		7541	7741	+					hypothetical protein	annotation	bakta	-12460
+CP028537__CP028537__1__minus	CDS	klaC		7731	8537	+					klaC	annotation	bakta	-12270
+CP028537__CP028537__1__minus	CDS	hypothetical protein		8798	9025	+					hypothetical protein	annotation	bakta	-11203
+CP028537__CP028537__1__minus	CDS	hypothetical protein		9204	9524	+					hypothetical protein	annotation	bakta	-10797
+CP028537__CP028537__1__minus	CDS	DUF3085 domain-containing protein		10357	10848	+					DUF3085 domain-containing protein	annotation	bakta	-9644
+CP028537__CP028537__1__minus	CDS	hypothetical protein		10928	11221	+					hypothetical protein	annotation	bakta	-9073
+CP028537__CP028537__1__minus	CDS	Inner membrane protein		11401	11604	+					Inner membrane protein	annotation	bakta	-8600
+CP028537__CP028537__1__minus	CDS	Phage protein		11659	11883	+					Phage protein	annotation	bakta	-8342
+CP028537__CP028537__1__minus	CDS	hypothetical protein		11923	12123	+					hypothetical protein	annotation	bakta	-8078
+CP028537__CP028537__1__minus	CDS	Cytoplasmic protein		12346	12657	+					Cytoplasmic protein	annotation	bakta	-7655
+CP028537__CP028537__1__minus	CDS	hypothetical protein		12711	12887	+					hypothetical protein	annotation	bakta	-7290
+CP028537__CP028537__1__minus	CDS	Integrase		13033	13314	+					Integrase	annotation	bakta	-6968
+CP028537__CP028537__1__minus	CDS	Inner membrane protein		13531	14136	+					Inner membrane protein	annotation	bakta	-6470
+CP028537__CP028537__1__minus	IS	ISEsa1	ISNCY	14507	16102	+	complete	no	no		ISEsa1	isfinder	bakta	-5494
+CP028537__CP028537__1__minus	CDS	ISNCY family transposase		14567	15907	+					ISEsa1	isfinder	bakta	-5434
+CP028537__CP028537__1__minus	IS	ISEsa2	IS110	16103	17595	+	complete	no	no		ISEsa2	isfinder	bakta	-3898
+CP028537__CP028537__1__minus	CDS	tnp		16329	17567	+					ISEsa2	isfinder	bakta	-3672
+CP028537__CP028537__1__minus	CDS	hypothetical protein		17727	17939	-					hypothetical protein	annotation	bakta	-2274
+CP028537__CP028537__1__minus	cargo	cytb		18041	18613	+			no		cytb	cargo	bakta	-1960
+CP028537__CP028537__1__minus	CDS	Cytochrome b561 bacterial/Ni-hydrogenase		18043	18615	+					Cytochrome b561 bacterial/Ni-hydrogenase	annotation	bakta	-1958
+CP028537__CP028537__1__minus	CDS	Cation-efflux pump		18815	19738	+					Cation-efflux pump	annotation	bakta	-1186
+CP028537__CP028537__1__minus	cargo	czc		18817	19740	+			no		czc	cargo	bakta	-1184
+CP028537__CP028537__1__minus	CDS	hypothetical protein		19782	19976	-					hypothetical protein	annotation	bakta	-219
+CP028537__CP028537__1__minus	cargo	relB		19999	20238	+			no		relB	cargo	bakta	-2
+CP028537__CP028537__1__minus	CDS	relB		20001	20240	+					relB	annotation	bakta	0
+CP028537__CP028537__1__minus	CDS	relE		20240	20527	+					relE	annotation	bakta	239
+CP028537__CP028537__1__minus	cargo	relE		20242	20529	+			no		relE	cargo	bakta	241
+CP028537__CP028537__1__minus	cargo	hok_gef		20597	20755	+			no		hok_gef	cargo	bakta	596
+CP028537__CP028537__1__minus	CDS	hypothetical protein		21245	21391	+					hypothetical protein	annotation	bakta	1244
+CP028537__CP028537__1__minus	CDS	hypothetical protein		21366	21686	-					hypothetical protein	annotation	bakta	1365
+CP028537__CP028537__1__minus	CDS	hypothetical protein		21759	22082	+					hypothetical protein	annotation	bakta	1758
+CP028537__CP028537__1__minus	CDS	Phage protein		22218	22568	-					Phage protein	annotation	bakta	2217
+CP028537__CP028537__1__minus	CDS	DUF551 domain-containing protein		22628	23227	-					DUF551 domain-containing protein	annotation	bakta	2627
+CP028537__CP028537__1__minus	CDS	DUF5417 domain-containing protein		23326	24270	-					DUF5417 domain-containing protein	annotation	bakta	3325
+CP028537__CP028537__1__minus	CDS	hypothetical protein		24781	24957	+					hypothetical protein	annotation	bakta	4780
+CP028537__CP028537__1__minus	CDS	DNA-binding protein		25374	26558	+					DNA-binding protein	annotation	bakta	5373
+CP028537__CP028537__1__minus	CDS	hypothetical protein		26624	26905	+					hypothetical protein	annotation	bakta	6623
+CP028537__CP028537__1__minus	CDS	Inner membrane protein		27220	27906	+					Inner membrane protein	annotation	bakta	7219
+CP028537__CP028537__1__minus	CDS	hypothetical protein		28396	28833	+					hypothetical protein	annotation	bakta	8395
+CP028537__CP028537__1__minus	CDS	NUDIX hydrolase		28901	29437	+					NUDIX hydrolase	annotation	bakta	8900
+CP028537__CP028537__1__minus	CDS	hypothetical protein		29663	30031	+					hypothetical protein	annotation	bakta	9662
+CP028537__CP028537__1__minus	CDS	hypothetical protein		30464	30763	+					hypothetical protein	annotation	bakta	10463
+CP028537__CP028537__1__minus	CDS	hypothetical protein		31120	31404	+					hypothetical protein	annotation	bakta	11119
+CP028537__CP028537__1__minus	CDS	Baseplate protein		31470	31823	+					Baseplate protein	annotation	bakta	11469
+CP028537__CP028537__1__minus	CDS	NERD domain-containing protein		32110	32841	-					NERD domain-containing protein	annotation	bakta	12109
+CP028537__CP028537__1__minus	CDS	Protease 4		32843	34024	-					Protease 4	annotation	bakta	12842
+CP028537__CP028537__1__minus	cargo	tra		34033	34695	-			no		tra	cargo	bakta	14032
+CP028537__CP028537__1__minus	CDS	DUF4400 domain-containing protein		34035	34697	-					DUF4400 domain-containing protein	annotation	bakta	14034
+CP028537__CP028537__1__minus	CDS	DUF4942 domain-containing protein		34684	35793	-					DUF4942 domain-containing protein	annotation	bakta	14683
+CP028537__CP028537__1__minus	CDS	traD		35793	37877	-					traD	annotation	bakta	15792
+CP028537__CP028537__1__minus	cargo	tra		35795	37777	-			no		tra	cargo	bakta	15794
+CP028537__CP028537__1__minus	CDS	hypothetical protein		37877	40357	-					hypothetical protein	annotation	bakta	17876
+CP028537__CP028537__1__minus	cargo	tra		37879	40527	-			right		tra	cargo	bakta	17878

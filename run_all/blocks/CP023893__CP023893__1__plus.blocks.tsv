@@ -1,0 +1,72 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP023893__CP023893__1__plus	CDS	Theronine dehydrogenase		234	560	+					Theronine dehydrogenase	annotation	bakta	-19767
+CP023893__CP023893__1__plus	CDS	mnhB		616	990	+					mnhB	annotation	bakta	-19385
+CP023893__CP023893__1__plus	IS	ISPlge3	IS3	1148	2539	+	complete	no	no		ISPlge3	isfinder	bakta	-18853
+CP023893__CP023893__1__plus	CDS	orfA		1191	1700	+					ISPlge3	isfinder	bakta	-18810
+CP023893__CP023893__1__plus	CDS	insB		1757	2566	+					ISPlge3	isfinder	bakta	-18244
+CP023893__CP023893__1__plus	CDS	AAA+ ATPase domain-containing protein		2736	3776	+					AAA+ ATPase domain-containing protein	annotation	bakta	-17265
+CP023893__CP023893__1__plus	CDS	Peptidase S8/S53 domain-containing prote		3754	6264	+					Peptidase S8/S53 domain-containing prote	annotation	bakta	-16247
+CP023893__CP023893__1__plus	IS	ISKpn8	IS3	6528	6565	+	fragment	yes	no		ISKpn8	isfinder	bakta	-13473
+CP023893__CP023893__1__plus	IS	ISKpn28	IS481	6632	7726	-	complete	no	no		ISKpn28	isfinder	bakta	-13369
+CP023893__CP023893__1__plus	CDS	hypothetical protein		6710	6904	+					ISKpn28	isfinder	bakta	-13291
+CP023893__CP023893__1__plus	CDS	hypothetical protein		6879	7049	+					ISKpn28	isfinder	bakta	-13122
+CP023893__CP023893__1__plus	CDS	Transposase		7321	7668	-					ISKpn28	isfinder	bakta	-12680
+CP023893__CP023893__1__plus	IS	ISEsa1	ISNCY	7757	9362	+	complete	no	no		ISEsa1	isfinder	bakta	-12244
+CP023893__CP023893__1__plus	CDS	tnp		7817	9157	+					ISEsa1	isfinder	bakta	-12184
+CP023893__CP023893__1__plus	CDS	ncrY		9413	9823	-					ncrY	annotation	bakta	-10588
+CP023893__CP023893__1__plus	CDS	ncrC		9997	11127	-					ncrC	annotation	bakta	-10004
+CP023893__CP023893__1__plus	CDS	ncrB		11140	11409	-					ncrB	annotation	bakta	-8861
+CP023893__CP023893__1__plus	CDS	ncrA		11515	12813	-					ncrA	annotation	bakta	-8486
+CP023893__CP023893__1__plus	CDS	Tat pathway signal sequence		13047	13805	-					Tat pathway signal sequence	annotation	bakta	-6954
+CP023893__CP023893__1__plus	CDS	Methyltransferase type 11 domain-contain		13859	14779	-					Methyltransferase type 11 domain-contain	annotation	bakta	-6142
+CP023893__CP023893__1__plus	CDS	DUF2946 domain-containing protein		14842	15213	-					DUF2946 domain-containing protein	annotation	bakta	-5159
+CP023893__CP023893__1__plus	CDS	Chromate resistance protein		15560	16537	+					Chromate resistance protein	annotation	bakta	-4441
+CP023893__CP023893__1__plus	CDS	Chromate transporter		16494	17381	+					Chromate transporter	annotation	bakta	-3507
+CP023893__CP023893__1__plus	CDS	Chromate transporter		17397	17870	+					Chromate transporter	annotation	bakta	-2604
+CP023893__CP023893__1__plus	CDS	Transmembrane anchor protein		17901	18590	-					Transmembrane anchor protein	annotation	bakta	-2100
+CP023893__CP023893__1__plus	CDS	HupE/UreJ family protein		18604	19341	-					HupE/UreJ family protein	annotation	bakta	-1397
+CP023893__CP023893__1__plus	CDS	hypothetical protein		19490	19756	+					hypothetical protein	annotation	bakta	-511
+CP023893__CP023893__1__plus	cargo	relB		19999	20238	+			no		relB	cargo	bakta	-2
+CP023893__CP023893__1__plus	CDS	relB		20001	20240	+					relB	annotation	bakta	0
+CP023893__CP023893__1__plus	CDS	relE		20240	20527	+					relE	annotation	bakta	239
+CP023893__CP023893__1__plus	cargo	relE		20242	20529	+			no		relE	cargo	bakta	241
+CP023893__CP023893__1__plus	CDS	Integrase catalytic domain-containing pr		20411	21628	-					ISKpn28	isfinder	bakta	410
+CP023893__CP023893__1__plus	IS	ISKpn28	IS481	20591	21686	-	complete	no	no		ISKpn28	isfinder	bakta	590
+CP023893__CP023893__1__plus	cargo	hok_gef		21698	21856	+			no		hok_gef	cargo	bakta	1697
+CP023893__CP023893__1__plus	CDS	Hok/Gef family protein		21700	21858	+					Hok/Gef family protein	annotation	bakta	1699
+CP023893__CP023893__1__plus	CDS	hypothetical protein		22556	22828	+					hypothetical protein	annotation	bakta	2555
+CP023893__CP023893__1__plus	CDS	hypothetical protein		22825	23175	+					hypothetical protein	annotation	bakta	2824
+CP023893__CP023893__1__plus	CDS	hypothetical protein		23118	23507	+					hypothetical protein	annotation	bakta	3117
+CP023893__CP023893__1__plus	CDS	Dopa decarboxylase protein remnant		24348	24704	+					Dopa decarboxylase protein remnant	annotation	bakta	4347
+CP023893__CP023893__1__plus	CDS	hypothetical protein		24765	24977	+					hypothetical protein	annotation	bakta	4764
+CP023893__CP023893__1__plus	CDS	hypothetical protein		24988	25212	+					hypothetical protein	annotation	bakta	4987
+CP023893__CP023893__1__plus	cargo	relE		25291	25611	+			no		relE	cargo	bakta	5290
+CP023893__CP023893__1__plus	CDS	RelE-like toxin protein		25293	25613	+					RelE-like toxin protein	annotation	bakta	5292
+CP023893__CP023893__1__plus	CDS	HTH cro/C1-type domain-containing protei		25603	25881	+					HTH cro/C1-type domain-containing protei	annotation	bakta	5602
+CP023893__CP023893__1__plus	CDS	DNA-binding protein		25882	26295	+					DNA-binding protein	annotation	bakta	5881
+CP023893__CP023893__1__plus	CDS	hypothetical protein		26701	26958	-					hypothetical protein	annotation	bakta	6700
+CP023893__CP023893__1__plus	CDS	DUF945 domain-containing protein		27124	27945	+					DUF945 domain-containing protein	annotation	bakta	7123
+CP023893__CP023893__1__plus	CDS	hypothetical protein		27993	28307	+					hypothetical protein	annotation	bakta	7992
+CP023893__CP023893__1__plus	CDS	Transglycosylase SLT domain-containing p		28340	28825	-					Transglycosylase SLT domain-containing p	annotation	bakta	8339
+CP023893__CP023893__1__plus	CDS	hypothetical protein		29127	29306	+					hypothetical protein	annotation	bakta	9126
+CP023893__CP023893__1__plus	cargo	tra		29247	29630	+			no		tra	cargo	bakta	9246
+CP023893__CP023893__1__plus	CDS	traM		29249	29632	+					traM	annotation	bakta	9248
+CP023893__CP023893__1__plus	CDS	trbJ		29832	30569	+					trbJ	annotation	bakta	9831
+CP023893__CP023893__1__plus	cargo	tra		29890	30567	+			no		tra	cargo	bakta	9889
+CP023893__CP023893__1__plus	CDS	traY		30672	30890	+					traY	annotation	bakta	10671
+CP023893__CP023893__1__plus	cargo	tra		30718	30888	+			no		tra	cargo	bakta	10717
+CP023893__CP023893__1__plus	CDS	hypothetical protein		30964	31479	-					hypothetical protein	annotation	bakta	10963
+CP023893__CP023893__1__plus	cargo	tra		31332	31637	+			no		tra	cargo	bakta	11331
+CP023893__CP023893__1__plus	CDS	traE		31659	32225	+					traE	annotation	bakta	11658
+CP023893__CP023893__1__plus	cargo	tra		32210	32950	+			no		tra	cargo	bakta	12209
+CP023893__CP023893__1__plus	CDS	traK		32212	32952	+					traK	annotation	bakta	12211
+CP023893__CP023893__1__plus	cargo	tra		32950	34374	+			no		tra	cargo	bakta	12949
+CP023893__CP023893__1__plus	CDS	Conjugative transfer: assembly		32952	34376	+					Conjugative transfer: assembly	annotation	bakta	12951
+CP023893__CP023893__1__plus	CDS	traV		34448	35032	+					traV	annotation	bakta	14447
+CP023893__CP023893__1__plus	CDS	yfiB		35355	35573	+					yfiB	annotation	bakta	15354
+CP023893__CP023893__1__plus	CDS	Inner membrane protein		35574	35885	+					Inner membrane protein	annotation	bakta	15573
+CP023893__CP023893__1__plus	CDS	TMhelix containing protein		35952	36356	+					TMhelix containing protein	annotation	bakta	15951
+CP023893__CP023893__1__plus	CDS	hypothetical protein		36742	37131	+					hypothetical protein	annotation	bakta	16741
+CP023893__CP023893__1__plus	cargo	tra		37201	39840	+			no		tra	cargo	bakta	17200
+CP023893__CP023893__1__plus	CDS	traC		37203	39842	+					traC	annotation	bakta	17202
+CP023893__CP023893__1__plus	CDS	Type-F conjugative transfer system prote		39842	40231	+					Type-F conjugative transfer system prote	annotation	bakta	19841

@@ -1,0 +1,75 @@
+TAflank run report
+============================================================
+  generated : 2026-11-02 14:22
+  results   : /scratch/rg42/ps1744/run_all/results
+  parameters: tier_a=FULL replicon_type=all min_flank=0 flank=20000
+
+DISCOVERY  (how the hits were narrowed)
+---------------------------------------
+  blastn HSPs, unfiltered                        15  
+  after Tier A (sequence)                        14  -1 removed
+  after Tier B (record)                          14  none removed
+    Tier A class: FULL                           14  
+    Tier A class: PARALOGUE                       1  
+    deselected: tier_a=PARALOGUE                  1  
+
+WINDOWS
+-------
+  windows extracted                              14  
+  total sequence                         567,378 bp  
+  full flanks both sides                      14/14  
+  truncated (kept, recorded)                      0  
+  wrapped the origin                              0  
+    replicon_type: chromosome                     7  
+    replicon_type: plasmid                        7  
+
+MGE LAYER  (ISfinder, no length cutoff)
+---------------------------------------
+  IS calls                                       74  
+    complete                                     56  
+    partial                                       2  
+    fragment                                     16  
+    of which cut by window edge                   2  
+    fragments usable as remnants                 14  
+  distinct elements                              32  
+  nesting events                                  1  
+  loci with ISEsa1                               12  
+  loci with ISEsa2                                7  
+
+CARGO
+-----
+  cargo hits                                     94  
+    loci with czc                              9/14  
+    loci with cytb                             9/14  
+    loci with hok_gef                         11/14  
+    loci with tra                              8/14  
+    loci with qnr                              1/14  
+    loci with intI                             3/14  
+
+CONTEXT  (vehicle class)
+------------------------
+  COMPLETE                                        6  
+  DECAYED                                         1  
+  HALF-CORE                                       5  
+  NO CORE                                         2  
+  with czc+cytb metal module                      9  
+
+REPLICON TYPING  (PlasmidFinder)
+--------------------------------
+  replicon hits                                  23  
+  records typed                                  10  
+    IncHI2                                        4  
+    IncHI2A                                       4  
+    IncFIB(K)                                     3  
+    IncN                                          2  
+    IncC                                          2  
+    IncX1                                         1  
+
+FEATURE TRACK  (figure input)
+-----------------------------
+  drawable features                             883  
+    coloured by annotation                      629  
+    coloured by cargo                            94  
+    coloured by isfinder                        160  
+    annotation source: bakta                    883  
+

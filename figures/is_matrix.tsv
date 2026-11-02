@@ -1,9 +1,16 @@
-locus_id	vehicle_class	ISEsa1	ISKpn21	ISEsa2	IS4321R	IS5075	IS26	IS15DI	ISKpn28	ISKpn8	IS150	ISPeat2	ISPlge3	ISSpu1	IS903B	IS102	ISKpn26	IS1S	IS1X2	ISEc41	ISKpn41	ISEcp1	ISSen3	ISVsa5	ISVsa3
-family	-	ISNCY	ISNCY	IS110	IS110	IS110	IS6	IS6	IS481	IS3	IS3	IS3	IS3	IS3	IS5	IS5	IS5	IS1	IS1	IS200/IS605	IS200/IS605	IS1380	IS21	IS4	IS91
-CP018961__CP018961__1__minus	COMPLETE	complete	complete	complete	0	0	0	0	complete	0	0	0	0	0	0	0	0	0	0	fragment	fragment	complete	0	0	0
-CP028197__CP028197__1__plus	COMPLETE	complete	0	complete	fragment	0	complete	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	0	0	0	complete
-CP028537__CP028537__1__minus	COMPLETE	complete	0	complete	0	fragment	complete	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-MF344582__MF344582__1__minus	DECAYED	fragment	0	complete	0	0	0	0	0	0	0	0	0	0	complete	0	complete	0	0	0	0	0	0	0	0
-CP023893__CP023893__1__plus	HALF-CORE	complete	0	0	0	0	0	0	complete	fragment	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	0
-LT991956__LT991956__1__plus	HALF-CORE	complete	0	0	0	0	0	0	complete	0	fragment	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-CP006642__CP006642__1__minus	NO CORE	0	0	0	0	0	complete	complete	0	0	0	fragment	0	fragment	complete	complete	0	fragment	fragment	0	0	0	complete	partial	0
+locus_id	vehicle_class	ISEsa1	ISArsp14	ISKpn21	ISEsa2	IS4321R	IS5075	ISKpn8	ISKpn38	IS150	IS629	ISPeat2	ISPlge3	ISSen4	ISSpu1	IS26	IS15	IS15DI	ISKpn28	ISEcp1	IS1247	IS903B	IS102	ISKpn26	ISVsa3	IS1R	IS1S	IS1X2	ISEc41	ISKpn41	ISSen3	ISCfr4	ISVsa5
+family	-	ISNCY	ISNCY	ISNCY	IS110	IS110	IS110	IS3	IS3	IS3	IS3	IS3	IS3	IS3	IS3	IS6	IS6	IS6	IS481	IS1380	IS1380	IS5	IS5	IS5	IS91	IS1	IS1	IS1	IS200/IS605	IS200/IS605	IS21	IS30	IS4
+CP018961__CP018961__1__minus	COMPLETE	complete	0	complete	complete	0	0	0	0	0	0	0	0	0	0	0	0	0	complete	complete	0	0	0	0	0	0	0	0	fragment	fragment	0	0	0
+CP012599__CP012599__1__plus	COMPLETE	complete	0	0	complete	0	0	complete	0	0	0	0	0	0	0	complete	0	0	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	0
+CP028197__CP028197__1__plus	COMPLETE	complete	0	0	complete	fragment	0	complete	0	0	0	0	0	0	0	complete	0	0	0	0	0	0	0	0	complete	0	0	0	0	0	0	0	0
+CP028537__CP028537__1__minus	COMPLETE	complete	0	0	complete	0	fragment	0	0	0	0	0	0	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CP020841__CP020841__1__minus	COMPLETE	complete	0	0	complete	0	0	0	fragment	0	0	0	0	0	0	0	0	0	complete	complete	0	0	0	0	0	0	0	0	0	0	0	0	0
+CP021960__CP021960__1__plus	COMPLETE	complete	0	0	complete	0	0	0	fragment	0	0	0	0	0	0	0	0	0	complete	complete	0	0	0	0	0	0	0	0	0	0	0	0	0
+MF344582__MF344582__1__minus	DECAYED	fragment	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	complete	0	complete	0	0	0	0	0	0	0	0	0
+CP023893__CP023893__1__plus	HALF-CORE	complete	0	0	0	0	0	fragment	0	0	0	0	complete	0	0	0	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CP026975__CP026975__1__plus	HALF-CORE	complete	0	0	0	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+LT991956__LT991956__1__plus	HALF-CORE	complete	0	0	0	0	0	0	0	fragment	0	0	0	0	0	0	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CP010512__CP010512__1__plus	HALF-CORE	complete	fragment	0	0	0	0	complete	0	0	0	0	0	0	0	complete	fragment	0	0	0	0	0	0	0	partial	0	0	0	0	0	0	complete	0
+CP026216__CP026216__1__plus	HALF-CORE	complete	0	0	0	0	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CP006642__CP006642__1__minus	NO CORE	0	0	0	0	0	0	0	0	0	0	fragment	0	0	fragment	complete	0	complete	0	0	0	complete	complete	0	0	0	fragment	fragment	0	0	complete	0	partial
+CP017220__CP017220__1__minus	NO CORE	0	0	0	0	0	0	0	0	0	complete	0	0	complete	0	0	0	0	0	0	0	0	0	0	0	complete	0	0	0	0	0	0	0

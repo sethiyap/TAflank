@@ -759,6 +759,54 @@ Cargo blocks are labelled on the figure under the same deduplicating rule as
 IS, so `czc`, `cytb` and `ars` can be read directly rather than matched back
 to a legend swatch.
 
+### Results at 14 loci (`REPLICON=all`)
+
+The full run adds the seven chromosomal loci. The seven plasmid rows in
+`context.tsv` are **byte-identical** to the plasmid-only run, so nothing about
+adding them perturbed the existing calls.
+
+| | COMPLETE | DECAYED | HALF-CORE | NO CORE |
+|---|---|---|---|---|
+| plasmid (7) | 3 | 1 | 2 | 1 |
+| chromosome (7) | 3 | 0 | 3 | 1 |
+
+Consensus offsets, now over 14:
+
+```
+element   loci   offset   spread
+ISEsa1      11     -5494   -12244 .. -3991
+ISEsa2       7     -3898    -6675 .. -3897
+cytb         9     -1960    -4738 .. -1960
+czc          9     -1184   INVARIANT
+relB        14        -2        -2 .. 2
+relE        14      +241       241 .. 5290
+hok_gef     11      +596       595 .. 1697
+```
+
+**czc is at exactly −1184 in all nine loci that carry it** — four plasmids and
+five chromosomes, across five genera. Doubling the dataset did not loosen it.
+That is the strongest candidate yet for the left edge of the conserved core
+that Stage 2 has to delimit.
+
+#### The one-sided asymmetry is scale-dependent
+
+Slide 11 states that every insertion is upstream of the core and only KPN1482
+shows anything downstream. Measured across all 14 at ±20 kb:
+
+| | loci |
+|---|---|
+| IS **within +3 kb** of the bait | **1** of 14 (CP006642, ISSen3 at +762) |
+| IS **beyond +3 kb** | 5 of 14 |
+| upstream only | 9 of 14 |
+
+So the claim holds at the scale the deck drew — its panels are ~7–8 kb wide —
+and breaks at ours. The honest statement is **the region immediately
+downstream of relE is near-inviolate; the region beyond +3 kb is not**.
+
+CP020841 and CP021960, two independent *K. pneumoniae* chromosomes, both carry
+ISEcp1 at **exactly +3436**. An identical downstream offset in two records is
+a shared event, not two insertions.
+
 ### The figure states its own scope
 
 The title carries the replicon filter — `[plasmids only — 7 loci]`. A figure
