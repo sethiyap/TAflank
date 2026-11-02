@@ -789,6 +789,31 @@ repeats -- the convention `colour_blocks.py` already uses for IS-family and
 gene-family colour. Singletons share one neutral grey rather than each
 getting a near-identical hue nobody could tell apart.
 
+### Plasmid vs chromosome, on the figure
+
+`colour_blocks.py` marks replicon type next to the vehicle-class label: a
+filled circle for `plasmid`, a short dash for `chromosome` (`context.tsv`'s
+`replicon_type` column). No flag needed -- it draws automatically whenever
+that column has a value, with a small legend in the top-right corner.
+
+This is what makes the structural-group mixing visible: all three
+multi-member groups from STEP 13 contain **both** replicon types --
+
+| group | plasmid | chromosome |
+|---|---|---|
+| 6 loci (full core) | 3 | 3 |
+| 3 loci (ISEsa1 only) | 2 | 1 |
+| 2 loci (bare TA pair) | 1 | 1 |
+
+A locus's architecture does not predict which kind of replicon it sits on.
+That is consistent with relBE being cargo on a mobile element that moves
+between plasmid and chromosome -- which is exactly the open question in
+CLAUDE.md Stage 3 ("ICE, chromosomal loci: how relBE entered a chromosome").
+**This grouping cannot say which direction the movement went, or whether it
+happened once per group or several times convergently** -- it only shows
+that replicon type is not the variable separating these loci. The ICE/oriT
+layer in Stage 3, not yet run, is what could speak to direction.
+
 ### Showing the groups on the figure
 
 ```bash

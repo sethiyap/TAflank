@@ -780,16 +780,30 @@ def main():
                             va='center', fontsize=7.2, linespacing=1.25,
                             style='italic' if org else 'normal')
         label_rows.append((lid, y, label_obj))
-        ax.text(X1 + XW * 0.02, y, cls, ha='left', va='center', fontsize=7,
-                color={'COMPLETE': '#1a7f1a', 'DECAYED': '#b8860b',
-                       'HALF-CORE': '#d2691e'}.get(cls, '#999999'),
-                fontweight='bold')
+        cls_obj = ax.text(X1 + XW * 0.02, y, cls, ha='left', va='center',
+                          fontsize=7,
+                          color={'COMPLETE': '#1a7f1a', 'DECAYED': '#b8860b',
+                                 'HALF-CORE': '#d2691e'}.get(cls, '#999999'),
+                          fontweight='bold')
+        rep = ctx.get(lid, {}).get('replicon_type', '')
+        label_rows.append(('__replicon__', y, cls_obj, rep))
 
     ytop = (len(loci) - 1) * PITCH
     if not simple:
         for dy, lab in ((0.34, 'IS'), (0.0, 'CDS'), (-0.36, 'cargo')):
             ax.text(X1 + XW * 0.21, ytop + dy, lab, fontsize=6.4, va='center',
                     ha='right', color='#777777', style='italic')
+    has_rep = any(ctx.get(l, {}).get('replicon_type') in ('plasmid', 'chromosome')
+                 for l in loci)
+    if has_rep:
+        ax.plot([], [], marker='o', markersize=5.5, markerfacecolor='#444444',
+                markeredgecolor='none', ls='', label='plasmid')
+        ax.plot([], [], marker='_', markersize=9, markeredgewidth=1.8,
+                markerfacecolor='none', markeredgecolor='#444444', ls='',
+                label='chromosome')
+        ax.legend(loc='lower left', bbox_to_anchor=(1.0, 1.0), fontsize=6.6,
+                  frameon=False, handletextpad=0.3, borderaxespad=0,
+                  title='replicon', title_fontsize=6.8)
 
     y_sch = -1.55 * PITCH
     sch_depth = 0
@@ -838,7 +852,29 @@ def main():
     # "Escherichia coli" rather than beside it.
     fig.canvas.draw()
     renderer = fig.canvas.get_renderer()
-    for lid, y, label_obj in label_rows:
+    for row in label_rows:
+        if row[0] == '__replicon__':
+            # Plasmid vs chromosome, drawn as a small shape rather than text,
+            # placed a MEASURED gap to the right of the vehicle_class label it
+            # follows -- same fix as the group swatch: a fixed XW-fraction gap
+            # here would also collapse under --xlim.
+            _, y, cls_obj, rep = row
+            if rep not in ('plasmid', 'chromosome'):
+                continue
+            bbox = cls_obj.get_window_extent(renderer=renderer)
+            y_px = ax.transData.transform((0, y))[1]
+            inv = ax.transData.inverted()
+            (x_mk, _) = inv.transform((bbox.x1 + 10, y_px))
+            if rep == 'plasmid':
+                ax.plot([x_mk], [y], marker='o', markersize=5.5,
+                       markerfacecolor='#444444', markeredgecolor='none',
+                       clip_on=False)
+            else:
+                ax.plot([x_mk], [y], marker='_', markersize=9,
+                       markeredgewidth=1.8, markerfacecolor='none',
+                       markeredgecolor='#444444', clip_on=False)
+            continue
+        lid, y, label_obj = row
         grp = groups.get(lid)
         if not grp or grp['group_colour'] == '#cccccc':
             continue
