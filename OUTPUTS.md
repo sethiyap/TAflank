@@ -256,6 +256,28 @@ grey CDS in the figure.
 Note `uniref50` is an independent, coarser grouping (UniRef50 is 50% identity;
 these families are 90%). It is useful as a cross-check, not as a substitute.
 
+### `results/junctions.tsv` — target-site duplications
+
+One row per IS call, from `scripts/relbe_junctions.py`.
+
+| column | meaning |
+|---|---|
+| `locus_id`, `element`, `family` | the IS call |
+| `win_start`, `win_end`, `strand` | its window coordinates |
+| `tsd_expected` | `no` for IS110/IS481/IS200-605 -- these are site-specific, not staggered-cut, and are not expected to leave a classic TSD |
+| `dr_seq`, `dr_len`, `dr_id` | the candidate TSD, its length, and %identity between the two flanks at that length |
+| `same_dr_group`, `same_dr_group_size`, `same_dr_colour` | set only when this exact TSD recurs in >=2 loci |
+| `left_flank`, `right_flank` | the raw sequence searched, for checking a call by eye |
+| `excluded_reason` | why no search was attempted: `window_edge:<side>`, `touches:<element>:<side>`, or `fragment_internal:<side>` |
+
+A lone, unrepeated TSD (`same_dr_group` empty) is not strong evidence by
+itself -- most candidate TSDs are 2-5 bp, and a short match recurring once is
+closer to chance than confirmation. The figure marks only the grouped ones.
+
+`results/junctions_profile.tsv` (`--out-profile`) has the %identity at every
+tested length for every searched boundary, for checking how close a call that
+didn't quite clear the threshold actually came.
+
 ### `results/structural_groups.tsv` — same-history grouping
 
 One row per locus, from `scripts/structural_groups.py`.

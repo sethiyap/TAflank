@@ -724,6 +724,92 @@ python3 scripts/colour_blocks.py \
 
 Drop `--families` and the CDS track goes back to flat grey.
 
+### STEP 12b — Direct repeats (target-site duplications)
+
+```bash
+python3 scripts/relbe_junctions.py \
+  --is run_all/is --loci run_all/loci \
+  --out results/junctions.tsv --out-profile results/junctions_profile.tsv
+```
+
+CLAUDE.md Stage 3: extract the flank at each IS boundary and look for the
+short duplicated sequence (TSD) a staggered-cut transposase leaves behind.
+Identical TSDs across loci are the strongest single piece of evidence for one
+insertion event; different TSDs on the same element are independent events.
+
+**A boundary is only searched if both flanks are genuinely neutral
+sequence**, checked rather than assumed:
+
+- the window cuts it off (`clipped_at_window_edge`) -- no sequence there to compare;
+- it touches another IS call within `--flank` bp -- what's "outside" the
+  element is a different element, not host DNA. This is why ISEsa1 and
+  ISEsa2 can essentially never both be searched: they sit directly adjacent
+  in every locus that carries both, with no host spacer between them;
+- it's a fragment whose window boundary isn't the reference's own true end
+  (`sub_start`/`sub_end` vs `slen`) -- that boundary is just where the BLAST
+  alignment stopped covering a decayed copy, not the original terminus.
+
+**v1 of this script got the comparison itself wrong** and the error is worth
+recording because it would have been easy to miss: it looped over "left
+side" and "right side" as if they were two independent tests, but a TSD is
+ONE two-sided comparison (pre-element flank vs post-element flank). Both
+loop iterations ended up comparing the identical pair of flanks and printing
+the same result twice under different labels -- which reads as two boundaries
+independently confirming a finding, when it is one finding counted twice.
+Rewritten to one row per IS hit.
+
+### What it actually found
+
+**For the vehicle (ISEsa1, ISEsa2): no usable signal, and mostly for a
+structural reason, not a data-quality one.** Of 20 vehicle-element hits
+across 14 loci, 15 are excluded because ISEsa1 and ISEsa2 sit directly
+adjacent wherever both are present -- **that adjacency is itself a real
+finding**: the vehicle behaves as one tight compound unit, not two
+independently-landed elements with a gap of host DNA between them. Of the 5
+hits with two clean flanks (loci where ISEsa1 is present without a
+neighbouring ISEsa2), the best achievable identity topped out at 35-44% --
+no candidate TSD at any reasonable threshold. This is a genuine negative
+result, not a bug: see below for the proof the method itself works.
+
+**The method is not broken** -- run over every IS call (`--elements ''`),
+it recovers short (2-5 bp), plausible TSDs for several other elements, in
+the length range IS literature actually reports:
+
+```
+ISKpn8   ACC   2 loci: CP012599, CP028197   ** shared, 100% identical **
+```
+
+Not just shared -- **at the identical window coordinates** in both loci
+(12976-14418), the strongest possible reading: this is the same copy,
+inherited together, not two independent ISKpn8 landings that happened to
+pick the same 3 bp. Both loci are already in the same structural group from
+STEP 13, so this corroborates it from an independent signal.
+
+**Why the vehicle itself stayed silent is likely coordinate precision, not
+absence of a TSD.** `is_search.py` calls IS boundaries from where a BLAST
+%identity cutoff happens to fall, which wobbles a few bp from the true
+IR/TSD boundary a dedicated caller would find. CLAUDE.md already names the
+right tool for this -- `ISEScan | unbiased IS calls + IR/TSD coordinates` --
+not yet run. Until it is, the honest statement is: **this method cannot
+currently confirm or rule out a shared ancestral TSD for ISEsa1/ISEsa2**,
+and the figure should not be read as if it had tried and found nothing to
+report, when what happened is narrower than that.
+
+### Showing it on the figure
+
+```bash
+python3 scripts/colour_blocks.py ... --junctions results/junctions.tsv
+```
+
+A `†` after an IS element's label means its TSD is an **exact match, shared
+with at least one other locus** -- never a lone, unrepeated short match,
+which at 2-5 bp is not evidence on its own. The marker is deliberately
+inline rather than a second line of text: a second line changed the
+label's rendered width in a way the label-stacking pass (STEP 12's
+`label_plan`) has no way to know about, and the real `ISKpn8 DR:ACC (2
+loci)` text collided directly into `ISEsa1`'s label beside it. A short
+same-line suffix can't widen a label enough to matter.
+
 ### STEP 13 — Group isolates by shared history
 
 ```bash

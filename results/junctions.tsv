@@ -1,0 +1,21 @@
+locus_id	element	family	win_start	win_end	strand	cov_class	tsd_expected	dr_seq	dr_len	dr_id	same_dr_group	same_dr_group_size	same_dr_colour	left_flank	right_flank	excluded_reason
+CP010512__CP010512__1__plus	ISEsa1	ISNCY	14777	16368	+	complete	yes		0					AAGAAGCCATGTGTTAACACCAAGC	TGTGAGTTCAACTGATGGACGCAAC	
+CP012599__CP012599__1__plus	ISEsa1	ISNCY	14507	16102	+	complete	yes		0							touches:ISEsa2:right
+CP012599__CP012599__1__plus	ISEsa2	IS110	16103	17595	+	complete	no		0							touches:ISEsa1:left
+CP018961__CP018961__1__minus	ISEsa1	ISNCY	9447	10986	+	complete	yes		0					AAAAAGGCTATTGTTAACACCAAGC	CAAGGCTCAATTGAAATGTCCGTTA	
+CP018961__CP018961__1__minus	ISEsa1	ISNCY	13262	13325	+	fragment	yes		0							touches:ISKpn21:left;touches:ISEsa2:right;fragment_internal:left;fragment_internal:right
+CP018961__CP018961__1__minus	ISEsa2	IS110	13326	14817	+	complete	no		0							touches:ISEsa1:left
+CP020841__CP020841__1__minus	ISEsa1	ISNCY	14518	16103	+	complete	yes		0							touches:ISKpn38:left;touches:ISEsa2:right
+CP020841__CP020841__1__minus	ISEsa2	IS110	16104	17595	+	complete	no		0							touches:ISEsa1:left
+CP021960__CP021960__1__plus	ISEsa1	ISNCY	14518	16103	+	complete	yes		0							touches:ISKpn38:left;touches:ISEsa2:right
+CP021960__CP021960__1__plus	ISEsa2	IS110	16104	17595	+	complete	no		0							touches:ISEsa1:left
+CP023893__CP023893__1__plus	ISEsa1	ISNCY	7757	9362	+	complete	yes		0					TGTATGGGTCCTGTTAACACCAAGC	TGGTTGACGAACTATATATATAAAA	
+CP026216__CP026216__1__plus	ISEsa1	ISNCY	16010	17608	+	complete	yes		0							touches:ISKpn38:left
+CP026975__CP026975__1__plus	ISEsa1	ISNCY	7757	9362	+	complete	yes		0					AAGAAGGCCATTGTTAACACCAAGC	TGGTTGACGAACTATATATATAAAA	
+CP028197__CP028197__1__plus	ISEsa1	ISNCY	14507	16102	+	complete	yes		0							touches:ISEsa2:right
+CP028197__CP028197__1__plus	ISEsa2	IS110	16103	17595	+	complete	no		0							touches:ISEsa1:left
+CP028537__CP028537__1__minus	ISEsa1	ISNCY	14507	16102	+	complete	yes		0							touches:ISEsa2:right
+CP028537__CP028537__1__minus	ISEsa2	IS110	16103	17595	+	complete	no		0							touches:ISEsa1:left
+LT991956__LT991956__1__plus	ISEsa1	ISNCY	7757	9362	+	complete	yes		0					ATGTATGGGTCTGTTAACACCAAGC	TGGTTGACGAACTATATATATAAAA	
+MF344582__MF344582__1__minus	ISEsa1	ISNCY	15828	16102	+	fragment	yes		0							touches:IS903B:left;touches:ISEsa2:right;fragment_internal:left;fragment_internal:right
+MF344582__MF344582__1__minus	ISEsa2	IS110	16103	17595	+	complete	no		0							touches:ISEsa1:left

@@ -513,6 +513,12 @@ def main():
                         '-- paints a swatch beside each locus label; loci '
                         'with matching swatches share >=90%% core '
                         'architecture and plausibly share one history')
+    p.add_argument('--junctions', default='',
+                   help='results/junctions.tsv (relbe_junctions.py) -- tags '
+                        'an IS label with its target-site duplication ONLY '
+                        'when the same exact DR is found in >=2 loci (a '
+                        'lone, unrepeated short match is not shown: with '
+                        'TSDs this short, one observation is not evidence)')
     a = p.parse_args()
 
     simple = a.style == 'simple'
@@ -536,6 +542,12 @@ def main():
     if a.groups and os.path.exists(a.groups):
         for r in read_tsv(a.groups):
             groups[r['locus_id']] = r
+    junctions = {}
+    if a.junctions and os.path.exists(a.junctions):
+        for r in read_tsv(a.junctions):
+            if r.get('same_dr_group_size') and int(r['same_dr_group_size']) >= 2:
+                junctions[(r['locus_id'], r['element'],
+                          r['win_start'], r['win_end'])] = r
 
     # element -> family, and a colour per element: family hue, element shade
     fam_of = {r['name']: (r['family'] or 'unclassified')
@@ -680,6 +692,7 @@ def main():
     else:
         X0, X1 = -a.flank, a.flank
     XW = X1 - X0
+    any_dr_drawn = False   # tracks whether the dagger footnote is needed
     label_rows = []   # (lid, y, text object) -- swatches are placed after
                        # axis limits are final, see the note below the loop
     for i, lid in enumerate(loci):
@@ -732,8 +745,17 @@ def main():
             if fi in plan:
                 lvl = plan[fi]
                 emph = nm in ends or nm in ('relB', 'relE')
+                dr = junctions.get((lid, nm, r['start'], r['end']))
+                # An inline suffix, not a second line: a second line changed
+                # the label's rendered width, which the stacking pass above
+                # had no way to know about, and ISKpn8's real "DR:ACC (2
+                # loci)" collided straight into ISEsa1's label beside it.
+                # A short, same-line marker can't widen the label enough to
+                # matter.
+                dr_txt = ' †' if dr else ''
+                any_dr_drawn = any_dr_drawn or bool(dr)
                 ax.annotate(
-                    f'{nm}\n{w} bp' if frag else nm,
+                    (f'{nm}\n{w} bp' if frag else nm) + dr_txt,
                     (o + w / 2, y + (IS_DY if ft == 'IS' else CARGO_DY)
                      + h / 2 + 0.12 + 0.26 * lvl),
                     ha='center', va='bottom',
@@ -904,10 +926,14 @@ def main():
     scope = (f'   [{kinds.pop()}s only — {len(loci)} loci]'
              if len(kinds) == 1 and next(iter(kinds), '') else
              f'   [{len(loci)} loci]')
+    dr_note = ('\n† = exact target-site duplication shared with another '
+              'locus (relbe_junctions.py, results/junctions*.tsv) -- a lone, '
+              'unrepeated match is not marked here' if any_dr_drawn else '')
     ax.set_title(('relBE flanking architecture, aligned on the bait'
                   + scope + zoom_note + '\n'
                   'IS mustard = forward, yellow = reverse (type is in the '
                   'label, not the colour); strand is the way each block points'
+                  + dr_note
                   if simple else
                   f'relBE flanking architecture, aligned on the bait'
                   f'   [palette: {a.palette}]\n'
