@@ -32,6 +32,6 @@ blastdb/
 data/efetch_cache/
 results/_families_tmp/
 figures_lab2018/
-figures_tracks/
 run_all/loci/
 run_all/bakta/
+figures_tracks/

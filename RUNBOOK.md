@@ -807,6 +807,44 @@ CP020841 and CP021960, two independent *K. pneumoniae* chromosomes, both carry
 ISEcp1 at **exactly +3436**. An identical downstream offset in two records is
 a shared event, not two insertions.
 
+### Window size: keep ±20 kb, zoom the figure
+
+A ±5 kb window is tempting — the conserved core spans only −1960 to +596 — but
+it would destroy the vehicle call. Measured against the 14 loci:
+
+| ISEsa1 at ±5 kb | loci |
+|---|---|
+| lost entirely | **4** (CP023893, CP026975, LT991956, and CP018961, *both* pieces) |
+| clipped at the window edge | 6 |
+| intact | **2** of 11 |
+
+CP018961 would lose ISEsa1 *and* ISEsa2 and report NO CORE — inverting the
+Stage 1 reference result. ISEsa1's own median offset is −5494, already outside
+a ±5 kb window.
+
+The extraction window and the figure's x-range are different things, so keep
+the window at ±20 kb and zoom the **figure**:
+
+```bash
+python3 scripts/colour_blocks.py ... --xlim=-8000,3000 --outdir figures_zoom
+```
+
+`--xlim` changes nothing but the view: no re-extraction, no re-analysis, no
+call changes. Use the `=` form — argparse reads a bare `-8000,3000` as a flag.
+
+Two things it does so the zoom cannot mislead:
+
+- **features outside the range are clipped, not parked at the edge.** Without
+  that, an element at −12 kb is drawn hard against the axis in a figure zoomed
+  to −8 kb, on top of the locus labels, looking like data that is off-screen.
+- **the title counts what is hidden** — `74 IS/cargo outside`. A figure that
+  silently drops a third of its calls looks like a finding.
+
+Labels anchor to the display range rather than the extraction flank. They used
+to anchor to the flank, which put the locus names 20 kb off-screen in a zoomed
+figure and made `bbox_inches='tight'` grow the canvas to include them: a
+6161 px image of an 11 kb window.
+
 ### The figure states its own scope
 
 The title carries the replicon filter — `[plasmids only — 7 loci]`. A figure

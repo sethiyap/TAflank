@@ -177,7 +177,7 @@ def consensus(rows, name, kind):
             'lo': offs[0], 'hi': offs[-1], 'fixed': offs[0] == offs[-1]}
 
 
-def draw_schematic(ax, rows, y, flank, head, h, ends):
+def draw_schematic(ax, rows, y, x0, x1, head, h, ends):
     """The idealised architecture, drawn from the data rather than asserted.
 
     Every block sits at the MEDIAN offset of that element across the loci
@@ -194,15 +194,16 @@ def draw_schematic(ax, rows, y, flank, head, h, ends):
     tra = consensus(rows, 'tra', 'cargo')
 
     ax.axhline(y + h * 2.6, color='#cccccc', lw=0.8, ls='-', zorder=0)
-    ax.text(-flank * 1.045, y, 'idealised\narchitecture', ha='right',
+    xw = x1 - x0
+    ax.text(x0 - xw * 0.045, y, 'idealised\narchitecture', ha='right',
             va='center', fontsize=7.2, fontweight='bold', linespacing=1.25)
 
     # the variable region: everything upstream of the first vehicle end
-    left_edge = min([c['offset'] for c in veh] or [-flank])
-    ax.add_patch(Rectangle((-flank, y - h / 2), -flank * -1 + left_edge, h,
+    left_edge = max(x0, min([c['offset'] for c in veh] or [x0]))
+    ax.add_patch(Rectangle((x0, y - h / 2), left_edge - x0, h,
                            facecolor='#f4f4f4', edgecolor='#d0d0d0',
                            lw=0.5, ls=(0, (2, 2)), zorder=1))
-    ax.text((-flank + left_edge) / 2, y, 'variable — IS insertions,\n'
+    ax.text((x0 + left_edge) / 2, y, 'variable — IS insertions,\n'
             'a different history in every locus', ha='center', va='center',
             fontsize=5.8, color='#777777', style='italic', linespacing=1.2)
 
@@ -235,17 +236,17 @@ def draw_schematic(ax, rows, y, flank, head, h, ends):
                                     color='#bbbbbb') if lvl else None)
     depth = max([lv for _, _, lv in placed] or [0])
 
-    ax.text(-flank * 1.045, y - 0.30 - 0.26 * depth,
+    ax.text(x0 - xw * 0.045, y - 0.30 - 0.26 * depth,
             'median offset across the loci carrying each element',
             ha='left', va='top', fontsize=5.2, color='#999999', style='italic')
 
-    if tra:
+    if tra and tra['lo'] < x1:
         ax.add_patch(Rectangle((tra['lo'], y - h / 2),
-                               min(flank, tra['hi'] + tra['length']) - tra['lo'],
+                               min(x1, tra['hi'] + tra['length']) - tra['lo'],
                                h, facecolor=SIMPLE['tra'], alpha=0.30,
                                edgecolor='#4a4a4a', lw=0.5, ls=(0, (2, 2)),
                                zorder=1))
-        ax.text((tra['lo'] + min(flank, tra['hi'] + tra['length'])) / 2, y,
+        ax.text((tra['lo'] + min(x1, tra['hi'] + tra['length'])) / 2, y,
                 f"tra — conjugation machinery\n{tra['lo']:+d} to {tra['hi']:+d}",
                 ha='center', va='center', fontsize=5.8, color='#444444',
                 style='italic', linespacing=1.2)
@@ -471,6 +472,12 @@ def main():
     p.add_argument('--flank', type=int, default=20000)
     p.add_argument('--families', default='',
                    help='results/gene_families.tsv -- colours the CDS track')
+    p.add_argument('--xlim', default='',
+                   help='display range as LOW,HIGH in bp, e.g. -8000,3000. '
+                        'Zooms the FIGURE only -- the windows stay whatever '
+                        'they were extracted at, so nothing is re-analysed '
+                        'and no call changes. Features outside are counted '
+                        'in the title, never silently hidden.')
     p.add_argument('--no-schematic', action='store_true',
                    help='omit the idealised-architecture panel at the bottom')
     p.add_argument('--style', choices=['simple', 'tracks'], default='simple',
@@ -616,18 +623,36 @@ def main():
     H_CDS, H_IS, H_CARGO = (0.12, 0.40, 0.40) if simple else (0.17, 0.40, 0.30)
     IS_DY, CARGO_DY = (0.0, 0.0) if simple else (0.34, -0.36)
     HEAD = a.flank / 90          # arrowhead length in bp
+    # Every label anchors to the DISPLAY range, not the extraction flank.
+    # Anchoring to the flank put the locus names 20 kb off-screen in a zoomed
+    # figure, and bbox_inches='tight' then grew the canvas to include them --
+    # a 6161 px image of an 11 kb window.
+    if a.xlim:
+        X0, X1 = (int(v) for v in a.xlim.split(','))
+    else:
+        X0, X1 = -a.flank, a.flank
+    XW = X1 - X0
     for i, lid in enumerate(loci):
         y = (len(loci) - 1 - i) * PITCH
         feats = by_locus[lid]
         plan = plans[lid]
         offs = [int(r['offset_from_bait']) for r in feats]
-        lo, hi = min(offs + [-a.flank]), max(offs + [a.flank])
+        lo, hi = max(X0, min(offs + [X0])), min(X1, max(offs + [X1]))
         ax.plot([lo, hi], [y, y], color='#d9d9d9', lw=1.0, zorder=0,
                 solid_capstyle='butt')
 
         for fi, r in enumerate(feats):
             o = int(r['offset_from_bait'])
             w = int(r['end']) - int(r['start']) + 1
+            # Clip to the display range. Without this a feature at -12 kb is
+            # still drawn in a figure zoomed to -8 kb, and matplotlib parks it
+            # against the axes edge -- on top of the locus labels, looking
+            # like data that is actually off-screen.
+            vo, ve = max(o, X0), min(o + w, X1)
+            if ve <= vo:
+                plan.pop(fi, None)
+                continue
+            o, w = vo, ve - vo
             ft, nm = r['feature_type'], r['name']
             clipped = r.get('clipped_at_window_edge', 'no') not in ('no', '-', '')
 
@@ -694,16 +719,16 @@ def main():
                         zorder=5)
 
         if not any(r['feature_type'] == 'CDS' for r in feats):
-            ax.text(-a.flank * 1.02, y - 0.62, 'no CDS in the GenBank record',
+            ax.text(X0 - XW * 0.02, y - 0.62, 'no CDS in the GenBank record',
                     fontsize=5.8, style='italic', color='#aa0000',
                     ha='left', va='center')
         cls = ctx.get(lid, {}).get('vehicle_class', '?')
         acc = lid.split('__')[0]
         org = meta.get(acc, {}).get('organism', '')
         org = ' '.join(org.split()[:2]) if org else ''
-        ax.text(-a.flank * 1.045, y, f'{acc}\n{org}', ha='right', va='center',
+        ax.text(X0 - XW * 0.045, y, f'{acc}\n{org}', ha='right', va='center',
                 fontsize=7.2, linespacing=1.25, style='italic' if org else 'normal')
-        ax.text(a.flank * 1.02, y, cls, ha='left', va='center', fontsize=7,
+        ax.text(X1 + XW * 0.02, y, cls, ha='left', va='center', fontsize=7,
                 color={'COMPLETE': '#1a7f1a', 'DECAYED': '#b8860b',
                        'HALF-CORE': '#d2691e'}.get(cls, '#999999'),
                 fontweight='bold')
@@ -711,13 +736,13 @@ def main():
     ytop = (len(loci) - 1) * PITCH
     if not simple:
         for dy, lab in ((0.34, 'IS'), (0.0, 'CDS'), (-0.36, 'cargo')):
-            ax.text(a.flank * 1.21, ytop + dy, lab, fontsize=6.4, va='center',
+            ax.text(X1 + XW * 0.21, ytop + dy, lab, fontsize=6.4, va='center',
                     ha='right', color='#777777', style='italic')
 
     y_sch = -1.55 * PITCH
     sch_depth = 0
     if not a.no_schematic:
-        sch_depth = draw_schematic(ax, rows, y_sch, a.flank, HEAD, 0.40, ends)
+        sch_depth = draw_schematic(ax, rows, y_sch, X0, X1, HEAD, 0.40, ends)
 
     ax.axvline(0, color='#1f77b4', lw=1.3, ls='--', zorder=4)
     ax.text(0, (len(loci) - 1) * PITCH + 0.35 + 0.30 * (deepest + 1),
@@ -728,26 +753,49 @@ def main():
     ybot = (y_sch - 0.95 - 0.26 * sch_depth) if not a.no_schematic else -1.35
     ax.text(-3898, ybot, '-3898', fontsize=6.5, color='#ff7f0e', ha='center')
 
-    ax.set_xlim(-a.flank * 1.30, a.flank * 1.22)
+    zoom_note = ''
+    if a.xlim:
+        lo_x, hi_x = (int(v) for v in a.xlim.split(','))
+        span = hi_x - lo_x
+        # Count what the zoom puts off-screen and say so. A figure that
+        # silently drops a third of its IS calls looks like a finding.
+        n_out = sum(1 for r in rows
+                    if r['feature_type'] in ('IS', 'cargo')
+                    and (int(r['offset_from_bait'])
+                         + int(r['end']) - int(r['start']) + 1 < lo_x
+                         or int(r['offset_from_bait']) > hi_x))
+        ax.set_xlim(lo_x - span * 0.32, hi_x + span * 0.14)
+        step = 1000 if span <= 12000 else 5000
+        ticks = list(range(-(-lo_x // step) * step, hi_x + 1, step))
+        ax.set_xticks(ticks)
+        ax.set_xticklabels([f'{v/1000:+.0f} kb' if v else '0' for v in ticks],
+                           fontsize=7.5)
+        zoom_note = (f'   zoom {lo_x:+d}..{hi_x:+d} of ±{a.flank // 1000} kb'
+                     f' — {n_out} IS/cargo outside')
+    else:
+        ax.set_xlim(-a.flank * 1.30, a.flank * 1.22)
     ax.set_ylim(ybot - 0.45,
                 (len(loci) - 1) * PITCH + 0.75 + 0.30 * (deepest + 1))
     ax.set_yticks([])
     ax.set_xlabel('position relative to relB start (bp)', fontsize=9,
               labelpad=6)
-    ax.set_xticks(range(-a.flank, a.flank + 1, 5000))
-    ax.set_xticklabels([f'{v//1000:+d} kb' if v else '0'
-                        for v in range(-a.flank, a.flank + 1, 5000)], fontsize=7.5)
+    if not a.xlim:
+        ax.set_xticks(range(-a.flank, a.flank + 1, 5000))
+        ax.set_xticklabels([f'{v//1000:+d} kb' if v else '0'
+                            for v in range(-a.flank, a.flank + 1, 5000)],
+                           fontsize=7.5)
     for sp in ('top', 'right', 'left'):
         ax.spines[sp].set_visible(False)
     # A figure showing 7 of 14 loci without saying so overstates its scope.
     # If every locus drawn shares one replicon type, that is a filter, not a
     # finding, and the title has to say which.
     kinds = {ctx.get(l, {}).get('replicon_type', '') for l in loci}
+    # (scope is built here and may be extended by --xlim below)
     scope = (f'   [{kinds.pop()}s only — {len(loci)} loci]'
              if len(kinds) == 1 and next(iter(kinds), '') else
              f'   [{len(loci)} loci]')
-    ax.set_title(('relBE flanking architecture, aligned on the bait' + scope
-                  + '\n'
+    ax.set_title(('relBE flanking architecture, aligned on the bait'
+                  + scope + zoom_note + '\n'
                   'IS mustard = forward, yellow = reverse (type is in the '
                   'label, not the colour); strand is the way each block points'
                   if simple else
