@@ -918,6 +918,16 @@ failure `--vehicle_ends` was added to `classify_context.py` to prevent.
 | `--label-is key` | only the vehicle ends, fragments, and nested elements |
 | `--label-is none` | no labels |
 | `--vehicle-ends ISEsa1,ISEsa2` | which elements are **bold**. Must match the `ENDS` the run used, or the figure emphasises the wrong ones. |
+| `--no-label-names relB,relE` | never labelled, because their colour is already unique. Pass `''` to label everything. |
+
+`relB` and `relE` are green and red and sit at the same place in every row, so
+a label adds nothing — and it cost something. Labelling them bold forced two
+extra stack levels at x=0 on all 14 rows, and row pitch is derived from the
+deepest stack, so two redundant labels were setting the height of the whole
+figure. Dropping them took it from 4508 px to 3055 px.
+
+They keep their labels in the idealised-architecture panel, where the text
+carries the **offset** (`relB -2`, `relE +241`) rather than the identity.
 
 Labels that would overprint are stacked upward, each with a leader line, and
 **the row height is computed from the deepest stack** rather than fixed — so a

@@ -265,7 +265,8 @@ def draw_schematic(ax, rows, y, x0, x1, head, h, ends):
     return depth
 
 
-def label_plan(feats, which, ends, min_span=1300, kinds=('IS',)):
+def label_plan(feats, which, ends, min_span=1300, kinds=('IS',),
+               skip=()):
     """Which IS blocks get a label, and on which stacked level.
 
     One rule for every hit instead of three special cases. The old condition
@@ -283,6 +284,11 @@ def label_plan(feats, which, ends, min_span=1300, kinds=('IS',)):
       key     the vehicle ends, fragments, and anything nested in another IS
       none    no labels
 
+    `skip` drops names whose colour already identifies them uniquely. relB and
+    relE are green and red and sit at the same place in every row; labelling
+    them bold forced two extra stack levels at x=0 on all 14 rows, which set
+    the row pitch for the whole figure.
+
     Returns {index in feats: level}. Level is the greedy stack height needed
     to clear every label already placed on that row, so the caller can size
     the row before drawing into it.
@@ -291,7 +297,7 @@ def label_plan(feats, which, ends, min_span=1300, kinds=('IS',)):
     if which == 'none':
         return out
     for i, r in enumerate(feats):
-        if r['feature_type'] not in kinds:
+        if r['feature_type'] not in kinds or r['name'] in skip:
             continue
         frag = r.get('cov_class') == 'fragment'
         if which == 'key' and not (r['name'] in ends or frag
@@ -472,6 +478,9 @@ def main():
     p.add_argument('--flank', type=int, default=20000)
     p.add_argument('--families', default='',
                    help='results/gene_families.tsv -- colours the CDS track')
+    p.add_argument('--no-label-names', default='relB,relE',
+                   help='features never labelled on the figure because their '
+                        'colour is already unique. Empty string labels all.')
     p.add_argument('--xlim', default='',
                    help='display range as LOW,HIGH in bp, e.g. -8000,3000. '
                         'Zooms the FIGURE only -- the windows stay whatever '
@@ -600,19 +609,25 @@ def main():
         a.label_is = 'distinct' if simple else 'all'
     ends = {e.strip() for e in a.vehicle_ends.split(',') if e.strip()}
     kinds = ('IS', 'cargo') if simple else ('IS',)
-    plans = {l: label_plan(by_locus[l], a.label_is, ends, kinds=kinds)
+    skip = {n.strip() for n in a.no_label_names.split(',') if n.strip()}
+    plans = {l: label_plan(by_locus[l], a.label_is, ends, kinds=kinds,
+                           skip=skip)
              for l in loci}
     deepest = max([lv for p in plans.values() for lv in p.values()] or [0])
     # rows must be tall enough for the deepest label stack, or labels from one
     # locus climb into the row above
-    # one track needs far less vertical room than three; +1 leaves space
-    # for the split-copy bracket above the deepest label
-    PITCH = (0.80 if simple else 1.45) + 0.30 * (deepest + 1)
+    # Rows sit as close as the deepest label stack allows. The +1 is the
+    # split-copy bracket, which is drawn above the labels; without a bracket
+    # anywhere that headroom is wasted, so only pay for it when one exists.
+    has_bracket = any(
+        r.get('nested_in') for rs in by_locus.values() for r in rs)
+    PITCH = ((0.52 if simple else 1.20)
+             + 0.26 * (deepest + (1 if has_bracket else 0)))
     NCOL = 6
     n_lrow = -(-len(blocks) // NCOL)
     leg_h = 0.20 * sum(max(len(b[2]) for b in blocks[i * NCOL:(i + 1) * NCOL]) + 1.45
                        for i in range(n_lrow))
-    main_h = 0.95 * PITCH * (len(loci) + (0 if a.no_schematic else 1.7)) + 2.0
+    main_h = 0.78 * PITCH * (len(loci) + (0 if a.no_schematic else 1.7)) + 2.0
 
     fig = plt.figure(figsize=(15, main_h + leg_h))
     gs = fig.add_gridspec(2, 1, height_ratios=[main_h, leg_h],
@@ -685,7 +700,7 @@ def main():
                 ax.annotate(
                     f'{nm}\n{w} bp' if frag else nm,
                     (o + w / 2, y + (IS_DY if ft == 'IS' else CARGO_DY)
-                     + h / 2 + 0.16 + 0.30 * lvl),
+                     + h / 2 + 0.12 + 0.26 * lvl),
                     ha='center', va='bottom',
                     fontsize=6.0 if emph else 5.4,
                     fontweight='bold' if emph else 'normal',
@@ -709,8 +724,8 @@ def main():
             x1 = int(parts[-1]['offset_from_bait'])
             tot = sum(int(r['end']) - int(r['start']) + 1 for r in parts)
             # above the deepest label on this row, or it lands on top of them
-            yb = (y + IS_DY + H_IS / 2 + 0.16
-                  + 0.30 * (max(plan.values(), default=0) + 1))
+            yb = (y + IS_DY + H_IS / 2 + 0.12
+                  + 0.26 * (max(plan.values(), default=0) + 1))
             ax.plot([x0, x0, x1, x1], [yb - 0.07, yb, yb, yb - 0.07],
                     color='#444444', lw=0.7, zorder=2)
             ax.annotate(f'one {nm}, {tot} bp in {len(parts)} pieces',
@@ -745,7 +760,7 @@ def main():
         sch_depth = draw_schematic(ax, rows, y_sch, X0, X1, HEAD, 0.40, ends)
 
     ax.axvline(0, color='#1f77b4', lw=1.3, ls='--', zorder=4)
-    ax.text(0, (len(loci) - 1) * PITCH + 0.35 + 0.30 * (deepest + 1),
+    ax.text(0, (len(loci) - 1) * PITCH + 0.30 + 0.26 * (deepest + 1),
             ' relB start (bait = 0)', fontsize=7.5, color='#1f77b4',
             ha='left', va='bottom')
     # the recurring boundary, drawn so it can be checked rather than asserted
@@ -775,7 +790,7 @@ def main():
     else:
         ax.set_xlim(-a.flank * 1.30, a.flank * 1.22)
     ax.set_ylim(ybot - 0.45,
-                (len(loci) - 1) * PITCH + 0.75 + 0.30 * (deepest + 1))
+                (len(loci) - 1) * PITCH + 0.62 + 0.26 * (deepest + 1))
     ax.set_yticks([])
     ax.set_xlabel('position relative to relB start (bp)', fontsize=9,
               labelpad=6)
