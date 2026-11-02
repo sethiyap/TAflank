@@ -739,7 +739,15 @@ def main():
                         for v in range(-a.flank, a.flank + 1, 5000)], fontsize=7.5)
     for sp in ('top', 'right', 'left'):
         ax.spines[sp].set_visible(False)
-    ax.set_title(('relBE flanking architecture, aligned on the bait\n'
+    # A figure showing 7 of 14 loci without saying so overstates its scope.
+    # If every locus drawn shares one replicon type, that is a filter, not a
+    # finding, and the title has to say which.
+    kinds = {ctx.get(l, {}).get('replicon_type', '') for l in loci}
+    scope = (f'   [{kinds.pop()}s only — {len(loci)} loci]'
+             if len(kinds) == 1 and next(iter(kinds), '') else
+             f'   [{len(loci)} loci]')
+    ax.set_title(('relBE flanking architecture, aligned on the bait' + scope
+                  + '\n'
                   'IS mustard = forward, yellow = reverse (type is in the '
                   'label, not the colour); strand is the way each block points'
                   if simple else

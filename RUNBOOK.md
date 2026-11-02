@@ -759,6 +759,29 @@ Cargo blocks are labelled on the figure under the same deduplicating rule as
 IS, so `czc`, `cytb` and `ars` can be read directly rather than matched back
 to a legend swatch.
 
+### The figure states its own scope
+
+The title carries the replicon filter — `[plasmids only — 7 loci]`. A figure
+showing 7 of the 14 records that had a bait hit, without saying which 7, would
+overstate what it covers. If every locus drawn shares one `replicon_type`,
+that is a **filter, not a finding**, and the title says so.
+
+The chromosomal loci on slides 2 and 4 of the 2018 deck are not missing from
+the data. They were found and then dropped by `REPLICON=plasmid`, which is
+`env/gadi_run.sh`'s default:
+
+```
+replicon_type    chromosome    7   dropped
+replicon_type    plasmid       8   kept
+```
+
+To include them:
+
+```bash
+qsub -v BAKTA=true,BAKTA_DB=/g/data/rg42/bakta_db/db-light,\
+REPLICON=all,OUT=/scratch/rg42/$USER/run_all env/gadi_run.sh
+```
+
 ### The idealised-architecture panel
 
 Below the loci, separated by a rule, is a consensus schematic. **It is computed
