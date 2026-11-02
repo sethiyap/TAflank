@@ -97,6 +97,35 @@ PALETTES = {
 }
 ACTIVE = {}
 
+# ---------------------------------------------------------------------------
+# SIMPLE style. Colour stops encoding identity and encodes only ROLE, so the
+# figure answers one question -- what kind of thing sits where, pointing which
+# way -- instead of twenty-four. Which IS it is comes from the label, not the
+# colour, so the two mustard/yellow tones carry orientation alone.
+# ---------------------------------------------------------------------------
+SIMPLE = {
+    'is_fwd':   '#d4a017',   # mustard
+    'is_rev':   '#f5dd5d',   # yellow
+    'relB':     '#00b050',
+    'relE':     '#e8112d',
+    'core':     '#9e9e9e',   # czc, cytb -- the conserved metal-resistance core
+    'tra':      '#4a4a4a',
+    'cargo':    '#c9c9c9',   # ars, sil, intI, qnr, hok_gef: named but not
+                             # singled out by the brief
+    'cds':      '#eeeeee',
+}
+SIMPLE_CORE = {'czc', 'cytb'}
+
+
+def simple_colour(ft, name, strand):
+    if ft == 'IS':
+        return SIMPLE['is_fwd'] if strand == '+' else SIMPLE['is_rev']
+    if name in ('relB', 'relE', 'tra'):
+        return SIMPLE[name]
+    if name in SIMPLE_CORE:
+        return SIMPLE['core']
+    return SIMPLE['cargo']
+
 # Family hues. ISNCY and IS110 keep the red/orange of the elements that made
 # them matter, so the figure stays comparable with earlier versions.
 FAMILY = {
@@ -139,8 +168,11 @@ def label_plan(feats, which, ends, min_span=1300):
     `--vehicle_ends` was added to classify_context.py to prevent.
 
     `which`:
-      all     every IS -- the default, because an unlabelled block is what
-              made ISKpn21 read as a second colour of ISEsa1
+      all      every IS -- an unlabelled block is what made ISKpn21 read as
+               a second colour of ISEsa1
+      distinct one label per distinct element (complete and fragment counted
+               apart). The default in the simple style, where colour no
+               longer tells elements apart so repeats add nothing
       key     the vehicle ends, fragments, and anything nested in another IS
       none    no labels
 
@@ -148,7 +180,7 @@ def label_plan(feats, which, ends, min_span=1300):
     to clear every label already placed on that row, so the caller can size
     the row before drawing into it.
     """
-    out, placed = {}, []
+    out, placed, seen_name = {}, [], set()
     if which == 'none':
         return out
     for i, r in enumerate(feats):
@@ -158,6 +190,15 @@ def label_plan(feats, which, ends, min_span=1300):
         if which == 'key' and not (r['name'] in ends or frag
                                    or r.get('nested_in')):
             continue
+        if which == 'distinct':
+            # one label per distinct element, but a fragment is kept separate
+            # from a complete copy of the same element -- in CP018961 that is
+            # the difference between the 1540 bp ISEsa1 and the 64 bp remnant,
+            # which is the evidence, not a repeat
+            key = (r['name'], frag)
+            if key in seen_name:
+                continue
+            seen_name.add(key)
         o = int(r['offset_from_bait'])
         w = int(r['end']) - int(r['start']) + 1
         cx, half = o + w / 2, max(w, min_span) / 2
@@ -324,7 +365,12 @@ def main():
     p.add_argument('--flank', type=int, default=20000)
     p.add_argument('--families', default='',
                    help='results/gene_families.tsv -- colours the CDS track')
-    p.add_argument('--label-is', choices=['all', 'key', 'none'], default='all',
+    p.add_argument('--style', choices=['simple', 'tracks'], default='simple',
+                   help="'simple' = one row per locus, colour by role, IS "
+                        "mustard forward / yellow reverse; 'tracks' = IS, CDS "
+                        "and cargo on separate lines, colour by family")
+    p.add_argument('--label-is',
+                   choices=['all', 'distinct', 'key', 'none'], default='',
                    help="which IS blocks get a name drawn on the figure")
     p.add_argument('--vehicle-ends', default='ISEsa1,ISEsa2',
                    help='the elements bracketing the core -- emphasised in '
@@ -340,6 +386,7 @@ def main():
                         'the track into confetti)')
     a = p.parse_args()
 
+    simple = a.style == 'simple'
     ACTIVE.clear()
     if PALETTES[a.palette]:
         ACTIVE.update(PALETTES[a.palette])
@@ -406,14 +453,40 @@ def main():
     fam_seen = {}
     for e, f in fam_of.items():
         fam_seen.setdefault(f, set()).add(e)
-    blocks = legend_blocks(fam_seen, is_colour, seen)
+    if simple:
+        blocks = [
+            ('insertion sequences', '#333333', [
+                ('IS, forward', dict(facecolor=SIMPLE['is_fwd'])),
+                ('IS, reverse', dict(facecolor=SIMPLE['is_rev'])),
+                ('fragment <50% cov', dict(facecolor=SIMPLE['is_fwd'],
+                                           hatch='///')),
+                ('runs off the window', dict(facecolor=SIMPLE['is_fwd'],
+                                             linestyle=(0, (1.4, 1.0)))),
+            ]),
+            ('the TA pair', '#333333', [
+                ('relB', dict(facecolor=SIMPLE['relB'])),
+                ('relE', dict(facecolor=SIMPLE['relE'])),
+            ]),
+            ('context', '#333333', [
+                ('czc, cytb (core)', dict(facecolor=SIMPLE['core'])),
+                ('tra (conjugation)', dict(facecolor=SIMPLE['tra'])),
+                ('other cargo', dict(facecolor=SIMPLE['cargo'])),
+                ('CDS', dict(facecolor=SIMPLE['cds'], edgecolor='#cccccc')),
+            ]),
+        ]
+    else:
+        blocks = legend_blocks(fam_seen, is_colour, seen)
 
+    if not a.label_is:
+        a.label_is = 'distinct' if simple else 'all'
     ends = {e.strip() for e in a.vehicle_ends.split(',') if e.strip()}
     plans = {l: label_plan(by_locus[l], a.label_is, ends) for l in loci}
     deepest = max([lv for p in plans.values() for lv in p.values()] or [0])
     # rows must be tall enough for the deepest label stack, or labels from one
     # locus climb into the row above
-    PITCH = 1.45 + 0.30 * (deepest + 1)   # +1 leaves room for the bracket
+    # one track needs far less vertical room than three; +1 leaves space
+    # for the split-copy bracket above the deepest label
+    PITCH = (0.80 if simple else 1.45) + 0.30 * (deepest + 1)
     NCOL = 6
     n_lrow = -(-len(blocks) // NCOL)
     leg_h = 0.20 * sum(max(len(b[2]) for b in blocks[i * NCOL:(i + 1) * NCOL]) + 1.45
@@ -425,7 +498,9 @@ def main():
                       hspace=0.10 + 0.9 / main_h)
     ax, lg = fig.add_subplot(gs[0]), fig.add_subplot(gs[1])
 
-    H_CDS, H_IS, H_CARGO = 0.17, 0.40, 0.30
+    # simple: one row -- CDS a thin underlay, IS and cargo full height on it
+    H_CDS, H_IS, H_CARGO = (0.12, 0.40, 0.40) if simple else (0.17, 0.40, 0.30)
+    IS_DY, CARGO_DY = (0.0, 0.0) if simple else (0.34, -0.36)
     HEAD = a.flank / 90          # arrowhead length in bp
     for i, lid in enumerate(loci):
         y = (len(loci) - 1 - i) * PITCH
@@ -446,14 +521,17 @@ def main():
                 fid = cds_fam.get((lid, r['start'], r['end']))
                 ax.add_patch(Polygon(
                     gene_arrow(o, w, y, H_CDS, r['strand'], HEAD), closed=True,
-                    facecolor=cds_family_colour(fid) if fid else '#f0f0f0',
-                    edgecolor='#9e9e9e' if fid else '#bdbdbd',
-                    lw=0.35, zorder=1))
+                    facecolor=(SIMPLE['cds'] if simple else
+                               cds_family_colour(fid) if fid else '#f0f0f0'),
+                    edgecolor='#cccccc' if simple else
+                              ('#9e9e9e' if fid else '#bdbdbd'),
+                    lw=0.3 if simple else 0.35, zorder=1))
                 continue
 
             h = H_IS if ft == 'IS' else H_CARGO
-            yy = y + 0.34 if ft == 'IS' else y - 0.36
-            c = is_colour.get(nm) if ft == 'IS' else colour(nm)
+            yy = y + (IS_DY if ft == 'IS' else CARGO_DY)
+            c = (simple_colour(ft, nm, r['strand']) if simple else
+                 is_colour.get(nm) if ft == 'IS' else colour(nm))
             frag = r.get('cov_class') == 'fragment'
             ax.add_patch(Polygon(
                 gene_arrow(o, w, yy, h, r['strand'], HEAD), closed=True,
@@ -467,7 +545,7 @@ def main():
                 emph = nm in ends
                 ax.annotate(
                     f'{nm}\n{w} bp' if frag else nm,
-                    (o + w / 2, yy + h / 2 + 0.16 + 0.30 * lvl),
+                    (o + w / 2, y + IS_DY + H_IS / 2 + 0.16 + 0.30 * lvl),
                     ha='center', va='bottom',
                     fontsize=6.0 if emph else 5.4,
                     fontweight='bold' if emph else 'normal',
@@ -491,7 +569,7 @@ def main():
             x1 = int(parts[-1]['offset_from_bait'])
             tot = sum(int(r['end']) - int(r['start']) + 1 for r in parts)
             # above the deepest label on this row, or it lands on top of them
-            yb = (y + 0.34 + H_IS / 2 + 0.16
+            yb = (y + IS_DY + H_IS / 2 + 0.16
                   + 0.30 * (max(plan.values(), default=0) + 1))
             ax.plot([x0, x0, x1, x1], [yb - 0.07, yb, yb, yb - 0.07],
                     color='#444444', lw=0.7, zorder=2)
@@ -516,9 +594,10 @@ def main():
                 fontweight='bold')
 
     ytop = (len(loci) - 1) * PITCH
-    for dy, lab in ((0.34, 'IS'), (0.0, 'CDS'), (-0.36, 'cargo')):
-        ax.text(a.flank * 1.21, ytop + dy, lab, fontsize=6.4, va='center',
-                ha='right', color='#777777', style='italic')
+    if not simple:
+        for dy, lab in ((0.34, 'IS'), (0.0, 'CDS'), (-0.36, 'cargo')):
+            ax.text(a.flank * 1.21, ytop + dy, lab, fontsize=6.4, va='center',
+                    ha='right', color='#777777', style='italic')
 
     ax.axvline(0, color='#1f77b4', lw=1.3, ls='--', zorder=4)
     ax.text(0, (len(loci) - 1) * PITCH + 0.95, ' relB start (bait = 0)',
@@ -537,13 +616,17 @@ def main():
                         for v in range(-a.flank, a.flank + 1, 5000)], fontsize=7.5)
     for sp in ('top', 'right', 'left'):
         ax.spines[sp].set_visible(False)
-    ax.set_title(f'relBE flanking architecture, aligned on the bait'
-                 f'   [palette: {a.palette}]\n'
+    ax.set_title(('relBE flanking architecture, aligned on the bait\n'
+                  'IS mustard = forward, yellow = reverse (type is in the '
+                  'label, not the colour); strand is the way each block points'
+                  if simple else
+                  f'relBE flanking architecture, aligned on the bait'
+                  f'   [palette: {a.palette}]\n'
                  'IS colour = family, shade = element within it; '
                  'cargo below each line. CDS colour = gene family; the same '
                  'colour in two rows is the same family, grey = this locus only\n'
                  'Strand is the direction each block points -- NOT whether it '
-                 'sits above or below the line, which is only the track',
+                 'sits above or below the line, which is only the track'),
                  fontsize=10, pad=12)
 
     draw_legend(lg, blocks, NCOL)

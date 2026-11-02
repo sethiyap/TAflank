@@ -724,6 +724,39 @@ python3 scripts/colour_blocks.py \
 
 Drop `--families` and the CDS track goes back to flat grey.
 
+### Styles
+
+`--style simple` is the default: **one row per locus**, IS and cargo on the
+same line, colour encoding **role and orientation only**.
+
+| | colour |
+|---|---|
+| IS, forward | mustard `#d4a017` |
+| IS, reverse | yellow `#f5dd5d` |
+| relB | green `#00b050` |
+| relE | red `#e8112d` |
+| czc, cytb (conserved core) | grey `#9e9e9e` |
+| tra (conjugation) | dark grey `#4a4a4a` |
+| other cargo (ars, sil, intI, qnr, hok_gef) | light grey `#c9c9c9` |
+| CDS | near-white, thin underlay |
+
+Which IS it is comes from the **label**, not the colour, so the two IS tones
+are free to carry orientation instead. That is the whole trade: you lose
+family at a glance and gain strand at a glance, and the figure answers one
+question rather than twenty-four.
+
+CDS stay as a thin pale underlay rather than disappearing, so the backbone is
+still visible and an IS can be seen to contain CDS rather than replace them.
+
+`--style tracks` keeps the detailed version — IS, CDS and cargo on separate
+lines, IS coloured by family with the element as a shade, CDS coloured by gene
+family. Use it when the question is *which* element or *which* family; use
+`simple` when the question is shape.
+
+One thing to watch: `other cargo` and `CDS` are both greys and are close at
+small sizes. They are distinguishable by height (cargo full, CDS thin), but if
+that matters for a given panel, change `SIMPLE['cargo']` in the script.
+
 ### Labelling — one rule, not three special cases
 
 Every IS call gets a name on the figure. The rule used to be
@@ -734,7 +767,8 @@ failure `--vehicle_ends` was added to `classify_context.py` to prevent.
 
 | flag | effect |
 |---|---|
-| `--label-is all` | **default.** Every IS named. 45 of 45 in this set. |
+| `--label-is distinct` | **default in `simple`.** One label per distinct element; a fragment counts separately from a complete copy, so CP018961's 1540 bp ISEsa1 and its 64 bp remnant are both named. |
+| `--label-is all` | default in `tracks`. Every IS named, 45 of 45 in this set. |
 | `--label-is key` | only the vehicle ends, fragments, and nested elements |
 | `--label-is none` | no labels |
 | `--vehicle-ends ISEsa1,ISEsa2` | which elements are **bold**. Must match the `ENDS` the run used, or the figure emphasises the wrong ones. |
