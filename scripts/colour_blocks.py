@@ -508,6 +508,11 @@ def main():
                    help='colour a gene family only if it spans this many loci '
                         '(1 would give every singleton its own colour and turn '
                         'the track into confetti)')
+    p.add_argument('--groups', default='',
+                   help='results/structural_groups.tsv (structural_groups.py) '
+                        '-- paints a swatch beside each locus label; loci '
+                        'with matching swatches share >=90%% core '
+                        'architecture and plausibly share one history')
     a = p.parse_args()
 
     simple = a.style == 'simple'
@@ -527,6 +532,10 @@ def main():
     if a.metadata and os.path.exists(a.metadata):
         for r in read_tsv(a.metadata):
             meta[r['accession']] = r
+    groups = {}
+    if a.groups and os.path.exists(a.groups):
+        for r in read_tsv(a.groups):
+            groups[r['locus_id']] = r
 
     # element -> family, and a colour per element: family hue, element shade
     fam_of = {r['name']: (r['family'] or 'unclassified')
@@ -605,6 +614,22 @@ def main():
     else:
         blocks = legend_blocks(fam_seen, is_colour, seen)
 
+    # Structural groups get their OWN full-width row rather than a slot in the
+    # multi-column swatch grid: a group's member list ("6 loci: CP012599,
+    # CP018961, ...") is long text that the narrow per-column layout above
+    # was built for short element names, not for.
+    group_rows = []
+    if groups:
+        seen_gid = set()
+        for lid in loci:
+            g = groups.get(lid)
+            if not g or g['group_colour'] == '#cccccc' or g['group_id'] in seen_gid:
+                continue
+            seen_gid.add(g['group_id'])
+            members = [m.split('__')[0] for m in g['group_members'].split(',')]
+            group_rows.append((g['group_colour'], len(members),
+                               ', '.join(members), g['shared_core']))
+
     if not a.label_is:
         a.label_is = 'distinct' if simple else 'all'
     ends = {e.strip() for e in a.vehicle_ends.split(',') if e.strip()}
@@ -628,11 +653,19 @@ def main():
     leg_h = 0.20 * sum(max(len(b[2]) for b in blocks[i * NCOL:(i + 1) * NCOL]) + 1.45
                        for i in range(n_lrow))
     main_h = 0.78 * PITCH * (len(loci) + (0 if a.no_schematic else 1.7)) + 2.0
+    grp_h = 0.34 * (len(group_rows) + 1.3) if group_rows else 0
 
-    fig = plt.figure(figsize=(15, main_h + leg_h))
-    gs = fig.add_gridspec(2, 1, height_ratios=[main_h, leg_h],
-                      hspace=0.10 + 0.9 / main_h)
-    ax, lg = fig.add_subplot(gs[0]), fig.add_subplot(gs[1])
+    fig = plt.figure(figsize=(15, main_h + leg_h + grp_h))
+    if group_rows:
+        gs = fig.add_gridspec(3, 1, height_ratios=[main_h, grp_h, leg_h],
+                              hspace=0.08 + 0.7 / main_h)
+        ax, gp, lg = (fig.add_subplot(gs[0]), fig.add_subplot(gs[1]),
+                     fig.add_subplot(gs[2]))
+    else:
+        gs = fig.add_gridspec(2, 1, height_ratios=[main_h, leg_h],
+                          hspace=0.10 + 0.9 / main_h)
+        ax, lg = fig.add_subplot(gs[0]), fig.add_subplot(gs[1])
+        gp = None
 
     # simple: one row -- CDS a thin underlay, IS and cargo full height on it
     H_CDS, H_IS, H_CARGO = (0.12, 0.40, 0.40) if simple else (0.17, 0.40, 0.30)
@@ -647,6 +680,8 @@ def main():
     else:
         X0, X1 = -a.flank, a.flank
     XW = X1 - X0
+    label_rows = []   # (lid, y, text object) -- swatches are placed after
+                       # axis limits are final, see the note below the loop
     for i, lid in enumerate(loci):
         y = (len(loci) - 1 - i) * PITCH
         feats = by_locus[lid]
@@ -741,8 +776,10 @@ def main():
         acc = lid.split('__')[0]
         org = meta.get(acc, {}).get('organism', '')
         org = ' '.join(org.split()[:2]) if org else ''
-        ax.text(X0 - XW * 0.045, y, f'{acc}\n{org}', ha='right', va='center',
-                fontsize=7.2, linespacing=1.25, style='italic' if org else 'normal')
+        label_obj = ax.text(X0 - XW * 0.045, y, f'{acc}\n{org}', ha='right',
+                            va='center', fontsize=7.2, linespacing=1.25,
+                            style='italic' if org else 'normal')
+        label_rows.append((lid, y, label_obj))
         ax.text(X1 + XW * 0.02, y, cls, ha='left', va='center', fontsize=7,
                 color={'COMPLETE': '#1a7f1a', 'DECAYED': '#b8860b',
                        'HALF-CORE': '#d2691e'}.get(cls, '#999999'),
@@ -791,6 +828,28 @@ def main():
         ax.set_xlim(-a.flank * 1.30, a.flank * 1.22)
     ax.set_ylim(ybot - 0.45,
                 (len(loci) - 1) * PITCH + 0.62 + 0.26 * (deepest + 1))
+
+    # Group swatches are placed AFTER xlim/ylim are final and by MEASURING the
+    # label text's own rendered width, not by guessing a gap as a fraction of
+    # the x-range. A fraction of XW is a fixed physical gap only at the flank
+    # this was tuned against; --xlim shrinks XW but the font size (and so the
+    # text's rendered width) does not shrink with it, so that gap collapsed
+    # to less than the text width and the swatch was drawn ON TOP of
+    # "Escherichia coli" rather than beside it.
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    for lid, y, label_obj in label_rows:
+        grp = groups.get(lid)
+        if not grp or grp['group_colour'] == '#cccccc':
+            continue
+        bbox = label_obj.get_window_extent(renderer=renderer)
+        y_px = ax.transData.transform((0, y))[1]
+        inv = ax.transData.inverted()
+        (x_right, _) = inv.transform((bbox.x0 - 5, y_px))   # 5 px gap
+        (x_left, _) = inv.transform((bbox.x0 - 15, y_px))   # 10 px wide
+        ax.add_patch(Rectangle((x_left, y - 0.17), x_right - x_left, 0.34,
+                               facecolor=grp['group_colour'], edgecolor='none',
+                               clip_on=False))
     ax.set_yticks([])
     ax.set_xlabel('position relative to relB start (bp)', fontsize=9,
               labelpad=6)
@@ -822,6 +881,20 @@ def main():
                  'Strand is the direction each block points -- NOT whether it '
                  'sits above or below the line, which is only the track'),
                  fontsize=10, pad=12)
+
+    if gp is not None:
+        gp.set_xlim(0, 1); gp.set_ylim(len(group_rows) + 1, 0); gp.axis('off')
+        gp.text(0, 0.3, '≥ 90% core architecture (same vehicle + '
+                'context genes) — plausibly one history per colour',
+                fontsize=7.6, fontweight='bold', va='center')
+        for i, (col, n, members, shared) in enumerate(group_rows):
+            yy = i + 1.15
+            gp.add_patch(Rectangle((0.0, yy - 0.28), 0.014, 0.52,
+                                   facecolor=col, edgecolor='none'))
+            gp.text(0.022, yy, f'{n} loci:  {members}', fontsize=7,
+                    va='center')
+            gp.text(0.70, yy, f'shared: {shared}', fontsize=6.2,
+                    va='center', color='#666666')
 
     draw_legend(lg, blocks, NCOL)
 

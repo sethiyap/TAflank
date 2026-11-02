@@ -256,6 +256,24 @@ grey CDS in the figure.
 Note `uniref50` is an independent, coarser grouping (UniRef50 is 50% identity;
 these families are 90%). It is useful as a cross-check, not as a substitute.
 
+### `results/structural_groups.tsv` — same-history grouping
+
+One row per locus, from `scripts/structural_groups.py`.
+
+| column | meaning |
+|---|---|
+| `locus_id` | the locus |
+| `group_id` | `G` + 6 hex of a hash of the shared element set, or `SINGLETON` |
+| `group_colour` | hex colour, shared by every locus in the group |
+| `group_size` | how many loci are in this group |
+| `group_members` | all of them, comma-separated |
+| `shared_core` | which vehicle/core elements every member has in common |
+| `weakest_internal_pair` | the lowest pairwise Jaccard inside the group |
+| `chained` | `yes` if that weakest pair is below the threshold -- the group formed by chaining through a third locus, not because every pair in it is actually similar |
+
+`results/structural_pairs.tsv` (written with `--out-pairs`) has every
+pairwise score, for checking a specific pair without re-running anything.
+
 ### `figures/is_matrix.tsv` — IS presence matrix
 
 One row per locus, one column per IS element, produced by

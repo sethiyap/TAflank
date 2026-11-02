@@ -724,6 +724,82 @@ python3 scripts/colour_blocks.py \
 
 Drop `--families` and the CDS track goes back to flat grey.
 
+### STEP 13 — Group isolates by shared history
+
+```bash
+python3 scripts/structural_groups.py \
+  --blocks run_all/blocks \
+  --out    results/structural_groups.tsv \
+  --out-pairs results/structural_pairs.tsv
+```
+
+Jaccard similarity on which **vehicle + core context genes** each locus
+carries -- `ISEsa1, ISEsa2, cytb, czc, relB, relE, hok_gef` by default (the
+same five names `draw_schematic()` in `colour_blocks.py` already calls "the
+conserved core"), **not** every IS and cargo call in the ±20 kb window.
+
+The first version of this script scored the whole window and found almost
+nothing: even the six COMPLETE loci, known to share one vehicle at one
+offset, scored 0.43-0.57 against each other. The variable upstream and the
+`tra` tail are -- by this project's own finding -- "a different history in
+every locus", so including them in a score meant to find SHARED history works
+against it: one locus-private IS anywhere in 40 kb costs real Jaccard when
+the feature set is this small. Restricting to the vehicle and core genes that
+are actually meant to be shared fixed it.
+
+A fragment does not count as present. A 64 bp or 275 bp stub is evidence an
+event happened, not evidence the locus currently carries a working copy, and
+counting it as "present" would blur exactly the COMPLETE/DECAYED distinction
+this grouping exists to sharpen.
+
+**Result at the default 0.90 threshold, 14 loci:**
+
+| group | loci | shared |
+|---|---|---|
+| 6 | CP012599, CP018961, CP020841, CP021960, CP028197, CP028537 | ISEsa1, ISEsa2, cytb, czc, hok_gef, relB, relE |
+| 3 | CP023893, CP026975, LT991956 | ISEsa1, hok_gef, relB, relE |
+| 2 | CP006642, CP017220 | relB, relE |
+| singleton | CP010512 | ISEsa1, cytb, czc, hok_gef, relB, relE |
+| singleton | CP026216 | ISEsa1, cytb, czc, relB, relE |
+| singleton | MF344582 | ISEsa2, cytb, czc, hok_gef, relB, relE |
+
+Every multi-member group is **pairwise 1.00 internally** -- not merely above
+threshold, identical. The three singletons each carry a genuinely different
+subset (CP010512 has no ISEsa2; CP026216 has no hok_gef; MF344582's only
+complete vehicle copy is ISEsa2, since its ISEsa1 is the 275 bp fragment) and
+correctly fall outside every group rather than being forced into the nearest
+one.
+
+Grouping is **union-find at the threshold**: two loci are linked iff their
+core Jaccard clears `--min-similarity`, and groups are connected components.
+This can chain (A-B and B-C both clear it without A-C clearing it) -- the
+output's `chained` column flags any group where that happened. It did not
+happen here; every multi-member group's `weakest_internal_pair` is 1.00.
+
+**What this is not.** It is the fast triage CLAUDE.md Stage 6 calls for
+before the sequence-level pass, not a replacement for the decisive test in
+Stage 5 (all-vs-all `blastn -task dc-megablast`, threshold-stepped). Two loci
+could share an element catalogue by convergence rather than by one insertion
+event -- this script cannot tell those apart, because it never looks at the
+DNA between the elements, only at which named elements are present.
+
+Colour is **content-addressed on the shared element set**, not on membership,
+so a group keeps its colour across runs as its architecture signature
+repeats -- the convention `colour_blocks.py` already uses for IS-family and
+gene-family colour. Singletons share one neutral grey rather than each
+getting a near-identical hue nobody could tell apart.
+
+### Showing the groups on the figure
+
+```bash
+python3 scripts/colour_blocks.py ... \
+  --groups results/structural_groups.tsv --outdir figures
+```
+
+Adds a coloured swatch beside each locus label and a dedicated row under the
+figure listing each group's members and shared elements. Loci with no
+multi-member group (the three singletons above) get no swatch.
+
 ### Styles
 
 `--style simple` is the default: **one row per locus**, IS and cargo on the
