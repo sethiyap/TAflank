@@ -576,7 +576,8 @@ def main():
     # Order loci by vehicle class, then by the ISEsa1 offset -- so loci that
     # share an architecture sit next to each other and a shared offset reads as
     # a vertical line rather than needing to be hunted for.
-    CLASS_ORDER = {'COMPLETE': 0, 'DECAYED': 1, 'HALF-CORE': 2, 'NO CORE': 3}
+    CLASS_ORDER = {'VEHICLE-INTACT': 0, 'VEHICLE-DECAYED': 1,
+                  'VEHICLE-HALF': 2, 'VEHICLE-ABSENT': 3}
 
     def esa1_offset(lid):
         offs = [int(r['offset_from_bait']) for r in by_locus[lid]
@@ -804,8 +805,9 @@ def main():
         label_rows.append((lid, y, label_obj))
         cls_obj = ax.text(X1 + XW * 0.02, y, cls, ha='left', va='center',
                           fontsize=7,
-                          color={'COMPLETE': '#1a7f1a', 'DECAYED': '#b8860b',
-                                 'HALF-CORE': '#d2691e'}.get(cls, '#999999'),
+                          color={'VEHICLE-INTACT': '#1a7f1a',
+                                 'VEHICLE-DECAYED': '#b8860b',
+                                 'VEHICLE-HALF': '#d2691e'}.get(cls, '#999999'),
                           fontweight='bold')
         rep = ctx.get(lid, {}).get('replicon_type', '')
         label_rows.append(('__replicon__', y, cls_obj, rep))

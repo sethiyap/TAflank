@@ -71,7 +71,7 @@ which matters because on arm64 the JVM's architecture leaks to child processes.
 | `results/loci.tsv` | extracted window |
 | `results/mge_hits.tsv` | IS call, including fragments and nesting |
 | `results/replicons.tsv` | PlasmidFinder replicon hit |
-| `results/context.tsv` | locus, with the COMPLETE/DECAYED/HALF-CORE/NO CORE verdict |
+| `results/context.tsv` | locus, with the VEHICLE-INTACT/VEHICLE-DECAYED/VEHICLE-HALF/VEHICLE-ABSENT verdict |
 | `results/blocks/*.blocks.tsv` | drawable feature — the figure's input |
 | **`results/summary.tsv`** | **locus — read this one first** |
 

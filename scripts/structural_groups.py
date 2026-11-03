@@ -9,7 +9,7 @@ WHY THE VOCABULARY IS RESTRICTED TO THE VEHICLE + CORE CONTEXT GENES
 ----------------------------------------------------------------------
 The first version of this script scored Jaccard similarity over every IS and
 cargo call in the +/-20 kb window. It found almost nothing: even loci known to
-share the same vehicle at the same offset (the six COMPLETE loci) scored
+share the same vehicle at the same offset (the six VEHICLE-INTACT loci) scored
 0.43-0.57, because the variable upstream region and the downstream tra tail
 are -- by this project's own finding, drawn explicitly in the schematic panel
 of colour_blocks.py -- "a different history in every locus". Including them
@@ -23,7 +23,7 @@ the same five names draw_schematic() in colour_blocks.py already singles out
 as "the conserved core". A fragment does not count as present: a 64 bp or
 275 bp stub is evidence an event happened, not evidence the locus currently
 carries a functional copy, and conflating the two would blur exactly the
-COMPLETE/DECAYED distinction this grouping exists to sharpen.
+VEHICLE-INTACT/VEHICLE-DECAYED distinction this grouping exists to sharpen.
 
 GROUPING: UNION-FIND AT A SIMILARITY THRESHOLD
 ------------------------------------------------

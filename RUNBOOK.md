@@ -357,7 +357,7 @@ python3 /g/data/rg42/TAflank/scripts/classify_context.py \
   --out /scratch/rg42/ps1744/myrun/context.tsv
 ```
 
-**You should see:** `COMPLETE 3 · DECAYED 1 · HALF-CORE 2 · NO CORE 1`
+**You should see:** `VEHICLE-INTACT 3 · VEHICLE-DECAYED 1 · VEHICLE-HALF 2 · VEHICLE-ABSENT 1`
 
 **Look at it:**
 
@@ -370,10 +370,10 @@ python3 /g/data/rg42/TAflank/scripts/tsvcols.py \
 
 | class | meaning |
 |---|---|
-| COMPLETE | both ends of the vehicle are there |
-| DECAYED | both ends there but one is broken |
-| HALF-CORE | only one end left |
-| NO CORE | the vehicle is gone — relBE arrived some other way |
+| VEHICLE-INTACT | both ends of the vehicle are there |
+| VEHICLE-DECAYED | both ends there but one is broken |
+| VEHICLE-HALF | only one end left |
+| VEHICLE-ABSENT | the vehicle is gone — relBE arrived some other way |
 
 ---
 
@@ -825,7 +825,7 @@ same five names `draw_schematic()` in `colour_blocks.py` already calls "the
 conserved core"), **not** every IS and cargo call in the ±20 kb window.
 
 The first version of this script scored the whole window and found almost
-nothing: even the six COMPLETE loci, known to share one vehicle at one
+nothing: even the six VEHICLE-INTACT loci, known to share one vehicle at one
 offset, scored 0.43-0.57 against each other. The variable upstream and the
 `tra` tail are -- by this project's own finding -- "a different history in
 every locus", so including them in a score meant to find SHARED history works
@@ -835,7 +835,7 @@ are actually meant to be shared fixed it.
 
 A fragment does not count as present. A 64 bp or 275 bp stub is evidence an
 event happened, not evidence the locus currently carries a working copy, and
-counting it as "present" would blur exactly the COMPLETE/DECAYED distinction
+counting it as "present" would blur exactly the VEHICLE-INTACT/VEHICLE-DECAYED distinction
 this grouping exists to sharpen.
 
 **Result at the default 0.90 threshold, 14 loci:**
@@ -952,7 +952,7 @@ The full run adds the seven chromosomal loci. The seven plasmid rows in
 `context.tsv` are **byte-identical** to the plasmid-only run, so nothing about
 adding them perturbed the existing calls.
 
-| | COMPLETE | DECAYED | HALF-CORE | NO CORE |
+| | VEHICLE-INTACT | VEHICLE-DECAYED | VEHICLE-HALF | VEHICLE-ABSENT |
 |---|---|---|---|---|
 | plasmid (7) | 3 | 1 | 2 | 1 |
 | chromosome (7) | 3 | 0 | 3 | 1 |
@@ -1005,7 +1005,7 @@ it would destroy the vehicle call. Measured against the 14 loci:
 | clipped at the window edge | 6 |
 | intact | **2** of 11 |
 
-CP018961 would lose ISEsa1 *and* ISEsa2 and report NO CORE — inverting the
+CP018961 would lose ISEsa1 *and* ISEsa2 and report VEHICLE-ABSENT — inverting the
 Stage 1 reference result. ISEsa1's own median offset is −5494, already outside
 a ±5 kb window.
 
@@ -1391,14 +1391,14 @@ qsub -v BAIT=/g/data/rg42/TAflank/anchors/relBE_seed.fa,DB=/scratch/rg42/ps1744/
 ### If you change the bait, change `ENDS` with it
 
 `ENDS` names the IS elements that bracket the core, and that is what
-COMPLETE / DECAYED / HALF-CORE / NO CORE is measured against. `ISEsa1,ISEsa2`
+VEHICLE-INTACT / VEHICLE-DECAYED / VEHICLE-HALF / VEHICLE-ABSENT is measured against. `ISEsa1,ISEsa2`
 belong to the **relBE metal-resistance lineage**. Leave them in place for a
-different bait and every locus comes back NO CORE — not because the vehicle is
+different bait and every locus comes back VEHICLE-ABSENT — not because the vehicle is
 absent, but because you asked about the wrong vehicle, and nothing warns you.
 
 It is load-bearing, not cosmetic. On the current seven loci the default gives
-3 COMPLETE / 1 DECAYED / 2 HALF-CORE / 1 NO CORE; `ENDS=IS26,IS903B` on the
-very same data gives 1 COMPLETE / 3 HALF-CORE / 3 NO CORE.
+3 VEHICLE-INTACT / 1 VEHICLE-DECAYED / 2 VEHICLE-HALF / 1 VEHICLE-ABSENT; `ENDS=IS26,IS903B` on the
+very same data gives 1 VEHICLE-INTACT / 3 VEHICLE-HALF / 3 VEHICLE-ABSENT.
 
 ```bash
 qsub -v BAIT=/g/data/rg42/TAflank/anchors/parDE.fa,ENDS=IS26 env/gadi_run.sh

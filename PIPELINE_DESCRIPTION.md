@@ -213,7 +213,7 @@ and the new columns say whether that number can be read as decay.
 Downstream, `n_is_fragment_real` (context, summary) and
 `n_is_fragment_clipped` (summary) separate the counts, and
 `vehicle_edge_clipped` names any ISEsa1/ISEsa2 end whose true coverage is
-**unknown** rather than low — such an end must never drive a `DECAYED` call.
+**unknown** rather than low — such an end must never drive a `VEHICLE-DECAYED` call.
 
 `cargo_search.py` carries the same three columns for the same reason: a gene
 lying across the boundary reports low `cov` because we stopped looking, not
@@ -268,11 +268,11 @@ Same 30 bp tiling tolerance as the IS layer.
 ### CLASSIFY_CONTEXT — `scripts/classify_context.py`  *(Tier C)*
 
 Combines the IS and cargo layers into `results/context.tsv`: a vehicle class
-(COMPLETE / DECAYED / HALF-CORE / NO CORE) plus a cargo profile and the offsets
+(VEHICLE-INTACT / VEHICLE-DECAYED / VEHICLE-HALF / VEHICLE-ABSENT) plus a cargo profile and the offsets
 of `czc` and `hok_gef`.
 
 `vehicle_interrupted` is reported separately from the class, because
-"all sequence present" and "intact" are different things — CP018961 is COMPLETE
+"all sequence present" and "intact" are different things — CP018961 is VEHICLE-INTACT
 at 96% ISEsa1 coverage yet split in two by a 2,278 bp ISKpn21 insertion.
 
 > Coverage is judged on the **best HSP per element**, not per HSP. An element
@@ -420,7 +420,7 @@ TIER B  record metadata — batched esummary
                                                               7 selected
 TIER C  context — needs the window (not yet implemented)
            does the ISEsa1/ISEsa2 vehicle co-occur?
-           → COMPLETE / DECAYED / HALF-CORE / NO CORE
+           → VEHICLE-INTACT / VEHICLE-DECAYED / VEHICLE-HALF / VEHICLE-ABSENT
 ```
 
 **Why Tier A carries the weight.** NCBI keyword searches for relB/relE return
@@ -494,7 +494,7 @@ the 16 curated records, that would be wrong in both directions that matter:
 | **>=95% identity** (the lineage) | 12 | **2** |
 | **<85% identity** (superfamily) | 0 | 33 |
 
-Those 2 are `CP017220` (99.4%, class `NO CORE`, "IS1, adjacent deletions") and
+Those 2 are `CP017220` (99.4%, class `VEHICLE-ABSENT`, "IS1, adjacent deletions") and
 `CP006642` (99.4%, carried by IS26 + Tn21 instead). Both are unambiguously the
 lineage by sequence. Classifying them as paralogues would discard precisely the
 evidence for **repeated independent acquisition** — the branch of the §6
@@ -504,10 +504,10 @@ The vehicle is also far less reliable than a curated set suggests. Even among
 nine loci *chosen* for showing the pattern:
 
 ```
-COMPLETE   5/9    both ends intact
-HALF-CORE  2/9    ISEsa2 absent entirely
-DECAYED    1/9    ISEsa1 reduced to a 275 bp stub (17% coverage)
-NO CORE    1/9    neither end
+VEHICLE-INTACT   5/9    both ends intact
+VEHICLE-HALF  2/9    ISEsa2 absent entirely
+VEHICLE-DECAYED    1/9    ISEsa1 reduced to a 275 bp stub (17% coverage)
+VEHICLE-ABSENT    1/9    neither end
 ```
 
 Only five of nine have an intact vehicle, and that is in a biased sample. In
@@ -524,8 +524,8 @@ not be used for **discovery**:
 | the 527 bp seed | find every copy | sensitive |
 | the extended core | say which copies look ancestral | specific |
 
-Searching with the core would miss both HALF-CORE loci, barely catch the
-DECAYED one, and lose `CP017220` and `CP006642` entirely. It classifies what the
+Searching with the core would miss both VEHICLE-HALF loci, barely catch the
+VEHICLE-DECAYED one, and lose `CP017220` and `CP006642` entirely. It classifies what the
 seed finds; it never decides what enters the pipeline.
 
 **Enforced in code:** `select_loci.py` filters on `tier_a` (sequence) and
@@ -533,14 +533,14 @@ seed finds; it never decides what enters the pipeline.
 and a locus with zero IS hits still gets a row in every table.
 
 **Demonstrated.** Running with `--tier_a all --replicon_type all` keeps every
-hit. Three loci come back `NO CORE`, and only the sequence axis tells them
+hit. Three loci come back `VEHICLE-ABSENT`, and only the sequence axis tells them
 apart:
 
 | locus | Tier A | identity | context |
 |---|---|---|---|
-| `CP006642__…__1` | FULL | 99.43% | NO CORE — carried by IS26 + Tn21 |
-| `CP017220__…__1` | FULL | 99.43% | NO CORE — IS629, IS1R, ISSen4 present, no vehicle |
-| `CP006642__…__2` | **PARALOGUE** | **67.68%** | NO CORE — a genuinely different gene |
+| `CP006642__…__1` | FULL | 99.43% | VEHICLE-ABSENT — carried by IS26 + Tn21 |
+| `CP017220__…__1` | FULL | 99.43% | VEHICLE-ABSENT — IS629, IS1R, ISSen4 present, no vehicle |
+| `CP006642__…__2` | **PARALOGUE** | **67.68%** | VEHICLE-ABSENT — a genuinely different gene |
 
 Collapsing the axes would lump all three. Note also that `CP017220` is not
 short of IS elements — it has three — they are simply not ISEsa1/ISEsa2. So
@@ -759,11 +759,11 @@ qsub -v BAIT=/path/parDE.fa,SUBREGIONS=parD:1-250,ENDS=IS26 env/gadi_run.sh
 ```
 
 `ENDS` must follow the bait. It names the IS elements that bracket the core and
-so decides COMPLETE / DECAYED / HALF-CORE / NO CORE; `ISEsa1,ISEsa2` is specific
+so decides VEHICLE-INTACT / VEHICLE-DECAYED / VEHICLE-HALF / VEHICLE-ABSENT; `ISEsa1,ISEsa2` is specific
 to the relBE metal-resistance lineage, and leaving it in place for a different
-bait returns NO CORE everywhere, silently. It is load-bearing: on the seven
+bait returns VEHICLE-ABSENT everywhere, silently. It is load-bearing: on the seven
 plasmid loci the default gives 3/1/2/1 while `ENDS=IS26,IS903B` gives
-1 COMPLETE / 3 HALF-CORE / 3 NO CORE from identical input.
+1 VEHICLE-INTACT / 3 VEHICLE-HALF / 3 VEHICLE-ABSENT from identical input.
 
 **`SUBREGIONS` is optional and cannot change what is filtered**, for three
 independent reasons: `FULL` and `PARALOGUE` are decided before subregions are

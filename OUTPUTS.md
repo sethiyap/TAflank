@@ -84,10 +84,10 @@ would destroy the evidence. `is_min_length` is asserted to stay 0.
 
 | column | meaning |
 |---|---|
-| `vehicle_class` | **COMPLETE** both ends present and intact · **DECAYED** both present, one broken — *the informative class* · **HALF-CORE** one end left · **NO CORE** neither; relBE arrived some other way |
+| `vehicle_class` | **VEHICLE-INTACT** both ends present and intact · **VEHICLE-DECAYED** both present, one broken — *the informative class* · **VEHICLE-HALF** one end left · **VEHICLE-ABSENT** neither; relBE arrived some other way |
 | `vehicle_ends` | which of the ends were found |
 | `vehicle_interrupted` | an end broken by a later insertion |
-| `vehicle_edge_clipped` | an end whose true coverage is **unknown** because the window cut it. Such an end does not drive a DECAYED call; it means widen the window. |
+| `vehicle_edge_clipped` | an end whose true coverage is **unknown** because the window cut it. Such an end does not drive a VEHICLE-DECAYED call; it means widen the window. |
 | `n_is`, `n_is_fragment`, `n_is_fragment_real` | as in `summary.tsv` |
 | `cargo_families` | which cargo families are present |
 | `has_czc` / `has_cytb` / `has_hok_gef` | the genes the core is defined by, plus the second TA system |
@@ -304,7 +304,7 @@ One row per locus, one column per IS element, produced by
 | column | meaning |
 |---|---|
 | `locus_id` | the locus |
-| `vehicle_class` | COMPLETE / DECAYED / HALF-CORE / NO CORE, carried over from `context.tsv` |
+| `vehicle_class` | VEHICLE-INTACT / VEHICLE-DECAYED / VEHICLE-HALF / VEHICLE-ABSENT, carried over from `context.tsv` |
 | one column per element | `complete`, `partial`, `fragment`, or `0` for absent |
 
 **The second line is not data.** It is a `family` row naming the ISfinder

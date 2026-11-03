@@ -29,10 +29,10 @@ loci with hok_gef	6/7
 loci with tra	6/7	
 loci with qnr	1/7	
 loci with intI	1/7	
-COMPLETE	3	
-DECAYED	1	
-HALF-CORE	2	
-NO CORE	1	
+VEHICLE-ABSENT	1	
+VEHICLE-DECAYED	1	
+VEHICLE-HALF	2	
+VEHICLE-INTACT	3	
 with czc+cytb metal module	4	
 replicon hits	17	
 records typed	7	

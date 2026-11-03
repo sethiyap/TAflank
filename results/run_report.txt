@@ -1,6 +1,6 @@
 TAflank run report
 ============================================================
-  generated : 2026-10-29 11:54
+  generated : 2026-11-03 12:16
   results   : /Users/pooja/Documents/mobile_genetic_elements/results
   parameters: tier_a=FULL replicon_type=plasmid min_flank=0 flank=20000
 
@@ -48,10 +48,10 @@ CARGO
 
 CONTEXT  (vehicle class)
 ------------------------
-  COMPLETE                                        3  
-  DECAYED                                         1  
-  HALF-CORE                                       2  
-  NO CORE                                         1  
+  VEHICLE-ABSENT                                  1  
+  VEHICLE-DECAYED                                 1  
+  VEHICLE-HALF                                    2  
+  VEHICLE-INTACT                                  3  
   with czc+cytb metal module                      4  
 
 REPLICON TYPING  (PlasmidFinder)

@@ -48,10 +48,10 @@ CARGO
 
 CONTEXT  (vehicle class)
 ------------------------
-  COMPLETE                                        6  
-  DECAYED                                         1  
-  HALF-CORE                                       5  
-  NO CORE                                         2  
+  VEHICLE-INTACT                                        6  
+  VEHICLE-DECAYED                                         1  
+  VEHICLE-HALF                                       5  
+  VEHICLE-ABSENT                                         2  
   with czc+cytb metal module                      9  
 
 REPLICON TYPING  (PlasmidFinder)

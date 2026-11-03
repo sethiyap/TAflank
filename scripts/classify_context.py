@@ -10,8 +10,20 @@ TWO INDEPENDENT AXES, deliberately never merged (PIPELINE_DESCRIPTION.md 4b):
   lineage  -- from SEQUENCE identity alone, decided upstream in Tier A.
               A paralogue is a DIFFERENT GENE, not a copy without a vehicle.
 
-  context  -- from what is found in the window. COMPLETE / DECAYED /
-              HALF-CORE / NO CORE for the vehicle, plus a cargo profile.
+  context  -- from what is found in the window. VEHICLE-INTACT /
+              VEHICLE-DECAYED / VEHICLE-HALF / VEHICLE-ABSENT for the
+              vehicle (ISEsa1/ISEsa2 coverage ONLY), plus a cargo profile.
+
+VEHICLE_CLASS NAMES SAY "VEHICLE", NOT "CORE" -- ON PURPOSE
+----------------------------------------------------------------
+These four names used to be COMPLETE / DECAYED / HALF-CORE / NO CORE.
+colour_blocks.py's schematic panel separately calls cytb/czc/relB/relE/
+hok_gef "the conserved core" -- a DIFFERENT thing this function never looks
+at. With the old names, "HALF-CORE" read as "half the core genes are
+missing", when CP023893 and CP026975 are HALF-CORE for carrying only ONE
+vehicle end (ISEsa1, itself 99.8% intact); whether cytb/czc happen to be in
+the window is a separate fact this function doesn't check. Renamed so "core"
+means only one thing anywhere in this project's output.
 
 Collapsing them -- "no vehicle, therefore a paralogue" -- would misclassify
 CP017220 and CP006642, both 99.4% identical to the seed and both genuinely the
@@ -31,7 +43,7 @@ def read_tsv(p):
 
 
 def vehicle_class(is_rows, ends=('ISEsa1', 'ISEsa2')):
-    """COMPLETE / DECAYED / HALF-CORE / NO CORE, following PIPELINE.md F3.
+    """VEHICLE-INTACT / VEHICLE-DECAYED / VEHICLE-HALF / VEHICLE-ABSENT, following PIPELINE.md F3.
 
     Returns (class, ends_present, interrupted, edge_clipped).
     """
@@ -54,7 +66,7 @@ def vehicle_class(is_rows, ends=('ISEsa1', 'ISEsa2')):
 
     # An end whose best HSP was cut by the window edge has an UNKNOWN true
     # coverage -- the rest of the element lies outside what we extracted. Low
-    # coverage there is not decay, so it must not drive the DECAYED call. The
+    # coverage there is not decay, so it must not drive the VEHICLE-DECAYED call. The
     # element is reported as edge_clipped instead: a prompt to widen the window,
     # not a conclusion about the vehicle.
     edge_clipped = {e for e, (_, c) in clipped.items() if c}
@@ -64,11 +76,11 @@ def vehicle_class(is_rows, ends=('ISEsa1', 'ISEsa2')):
     ec = ','.join(sorted(edge_clipped))
     n = len(present)
     if n == 0:
-        return 'NO CORE', '', '', ec
+        return 'VEHICLE-ABSENT', '', '', ec
     if n == 1:
-        return ('HALF-CORE', next(iter(present)),
+        return ('VEHICLE-HALF', next(iter(present)),
                 ';'.join(sorted(interrupted)), ec)
-    cls = 'DECAYED' if degraded else 'COMPLETE'
+    cls = 'VEHICLE-DECAYED' if degraded else 'VEHICLE-INTACT'
     return cls, ','.join(sorted(present)), ';'.join(sorted(interrupted)), ec
 
 
@@ -83,7 +95,7 @@ def main():
                         'These are lineage-specific: ISEsa1/ISEsa2 belong to '
                         'the relBE metal-resistance lineage, so a DIFFERENT '
                         'bait almost certainly needs different ends, or every '
-                        'locus comes back NO CORE.')
+                        'locus comes back VEHICLE-ABSENT.')
     a = p.parse_args()
 
     loci = read_tsv(a.loci)

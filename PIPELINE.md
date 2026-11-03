@@ -427,17 +427,17 @@ Minimum definition: **ISEsa1b + ISEsa2 upstream of an intact relBE.** `czc` and
 
 | class | definition | what it means | observed in `data/public_16/` |
 |---|---|---|---|
-| **COMPLETE** | ISEsa1 **+** ISEsa2, both ≥90% coverage, intact relBE | vehicle intact; the reference architecture | CP012599, CP020841, CP021960, CP028197, CP028537 |
-| **DECAYED** | both ends present but one truncated or interrupted | vehicle can no longer move; cargo stuck in place — *this is the informative class* | CP018961 (ISKpn21 inserted into ISEsa1), MF344582 (ISEsa1 only 275 bp left) |
-| **HALF-CORE** | exactly one vehicle end present | either a different architecture, or the other end fully lost | CP010512, CP026216, CP023893, CP026975, LT991956 |
-| **NO CORE** | relBE present, **no** vehicle end at all | bare TA pair — relBE arrived some other way, or the vehicle is gone | CP006642, CP017220 |
+| **VEHICLE-INTACT** | ISEsa1 **+** ISEsa2, both ≥90% coverage, intact relBE | vehicle intact; the reference architecture | CP012599, CP020841, CP021960, CP028197, CP028537 |
+| **VEHICLE-DECAYED** | both ends present but one truncated or interrupted | vehicle can no longer move; cargo stuck in place — *this is the informative class* | CP018961 (ISKpn21 inserted into ISEsa1), MF344582 (ISEsa1 only 275 bp left) |
+| **VEHICLE-HALF** | exactly one vehicle end present | either a different architecture, or the other end fully lost | CP010512, CP026216, CP023893, CP026975, LT991956 |
+| **VEHICLE-ABSENT** | relBE present, **no** vehicle end at all | bare TA pair — relBE arrived some other way, or the vehicle is gone | CP006642, CP017220 |
 | **PARALOGUE** | relE-family homologue, <85% id, not our lineage | superfamily background — logged, not carried | 56/57 TADB3 loci |
 
 ```
-   COMPLETE    [DR] ISEsa1 ─ ISEsa2 ─── czc ─── relBE        vehicle intact
-   DECAYED     [DR] ISEsa1╪IS╪ ─ ISEsa2 ─ czc ─ relBE        ends broken, cargo stays
-   HALF-CORE   [DR] ISEsa1 ──────────────────── relBE        one end only
-   NO CORE                                      relBE        bare TA pair
+   VEHICLE-INTACT    [DR] ISEsa1 ─ ISEsa2 ─── czc ─── relBE        vehicle intact
+   VEHICLE-DECAYED     [DR] ISEsa1╪IS╪ ─ ISEsa2 ─ czc ─ relBE        ends broken, cargo stays
+   VEHICLE-HALF   [DR] ISEsa1 ──────────────────── relBE        one end only
+   VEHICLE-ABSENT                                      relBE        bare TA pair
    PARALOGUE                                    relE'        different lineage entirely
 ```
 
@@ -451,7 +451,7 @@ insertion events, not noise):
   Class III other           CP010512 -5224..-3633 ; CP026216 -3991..-2393
 ```
 
-The COMPLETE/DECAYED/HALF/NO-CORE split **is itself a result** — it says whether the
+The VEHICLE-INTACT/VEHICLE-DECAYED/HALF/NO-CORE split **is itself a result** — it says whether the
 vehicle generalises or is specific to this metal-resistance lineage. Across TADB3 the
 answer was emphatic: 56/57 are PARALOGUE, 1 is our lineage.
 

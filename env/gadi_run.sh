@@ -55,9 +55,9 @@
 #   qsub -v BAIT=/path/parDE.fa,ENDS=IS26 env/gadi_run.sh
 #
 #   ENDS names the IS elements that bracket the core, so it decides
-#   COMPLETE / DECAYED / HALF-CORE / NO CORE. ISEsa1/ISEsa2 are specific to the
+#   VEHICLE-INTACT / VEHICLE-DECAYED / VEHICLE-HALF / VEHICLE-ABSENT. ISEsa1/ISEsa2 are specific to the
 #   relBE metal-resistance lineage; left in place for another bait, every locus
-#   reports NO CORE and nothing warns you.
+#   reports VEHICLE-ABSENT and nothing warns you.
 #
 #   SUBREGIONS is OPTIONAL and cannot change what is filtered: FULL and
 #   PARALOGUE are decided before it is consulted, qcov>=95 already excludes

@@ -3,6 +3,19 @@
 Companion to `results/nine_loci_classification.tsv`.
 Run date: 2026-10-26 · BLAST+ 2.17.0 (aarch64) · every command below is reproducible as written.
 
+**Terminology note (added later, content below left as originally written):**
+`COMPLETE` / `DECAYED` / `HALF-CORE` / `NO CORE` here are this frozen,
+hand-verified baseline's own words, from before the pipeline existed —
+preserved as written rather than edited, since this file and its companion
+`.tsv` are the reference the regression gate diffs against. The live
+pipeline (`classify_context.py` onward) now calls the same four states
+`VEHICLE-INTACT` / `VEHICLE-DECAYED` / `VEHICLE-HALF` / `VEHICLE-ABSENT` —
+same classification, renamed because "core" had started meaning two
+different things in the same figure: this vehicle-coverage axis, and the
+conserved context genes (`cytb`/`czc`/`relB`/`relE`/`hok_gef`) the schematic
+panel separately calls "the conserved core". Map old→new 1:1 reading this
+file against current output.
+
 ---
 
 ## Inputs
