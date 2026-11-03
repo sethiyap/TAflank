@@ -811,6 +811,19 @@ def main():
                           fontweight='bold')
         rep = ctx.get(lid, {}).get('replicon_type', '')
         label_rows.append(('__replicon__', y, cls_obj, rep))
+        # core_class is a SECOND, independent axis -- vehicle_class never
+        # looks at cytb/czc/relB/relE/hok_gef at all, so a locus can be
+        # VEHICLE-INTACT with an incomplete core or VEHICLE-HALF with a
+        # complete one (CP010512 here: half vehicle, full core). Drawn
+        # smaller, on its own line, so it reads as a qualifier, not a
+        # restatement of the line above it.
+        ccls = ctx.get(lid, {}).get('core_class', '')
+        if ccls:
+            ax.text(X1 + XW * 0.02, y - 0.24, ccls, ha='left', va='center',
+                    fontsize=5.6,
+                    color={'CORE-INTACT': '#1a7f1a',
+                           'CORE-DEGRADED': '#b8860b',
+                           'CORE-PARTIAL': '#d2691e'}.get(ccls, '#999999'))
 
     ytop = (len(loci) - 1) * PITCH
     if not simple:

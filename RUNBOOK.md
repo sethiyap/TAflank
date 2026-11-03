@@ -1032,6 +1032,43 @@ to anchor to the flank, which put the locus names 20 kb off-screen in a zoomed
 figure and made `bbox_inches='tight'` grow the canvas to include them: a
 6161 px image of an 11 kb window.
 
+### core_class — the second axis, answering "what about the reverse?"
+
+`vehicle_class` and the schematic's "conserved core" are independent by
+design, and until now only one of them had a name you could put on a locus.
+`core_class` gives the other one the same treatment:
+
+| `core_class` | meaning |
+|---|---|
+| `CORE-INTACT` | cytb, czc, relB, relE, hok_gef all present, all >=90% coverage |
+| `CORE-DEGRADED` | all five present, at least one <90% coverage |
+| `CORE-PARTIAL` | one or more of the five entirely absent from the window |
+| `CORE-ABSENT` | none of the five present |
+
+Structured exactly like `vehicle_class` -- best coverage per gene, a gene cut
+by the window edge excluded from the degraded call (unknown, not decayed),
+same 90% threshold -- so the two axes read the same way.
+
+**At the current 14 loci, the combination "vehicle intact, core incomplete"
+does not occur** -- all 6 VEHICLE-INTACT loci are also CORE-INTACT. But the
+REVERSE absolutely does: **CP010512 is VEHICLE-HALF (only ISEsa1) with a
+fully intact core** (cytb, czc, relB, relE, hok_gef all present) -- the core
+cassette survived with only one of its two bracketing IS elements. CP026216
+is VEHICLE-HALF **and** CORE-PARTIAL (missing hok_gef) -- partial on both
+axes, independently. `classify_context.py`'s summary print flags it if the
+first combination ever does show up:
+
+```
+NOTE N locus/loci have an INTACT vehicle but an incomplete core -- the two axes disagree:
+```
+
+relB/relE are included in the 5-gene set for consistency with
+`draw_schematic()`'s own bracket, not because they vary -- every locus here
+passed Tier A FULL, which already requires both at full coverage, so cytb,
+czc and hok_gef are where this axis actually discriminates.
+
+Shown on the figure as a second, smaller line under the vehicle-class label.
+
 ### The figure states its own scope
 
 The title carries the replicon filter — `[plasmids only — 7 loci]`. A figure

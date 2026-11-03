@@ -88,6 +88,9 @@ would destroy the evidence. `is_min_length` is asserted to stay 0.
 | `vehicle_ends` | which of the ends were found |
 | `vehicle_interrupted` | an end broken by a later insertion |
 | `vehicle_edge_clipped` | an end whose true coverage is **unknown** because the window cut it. Such an end does not drive a VEHICLE-DECAYED call; it means widen the window. |
+| `core_class` | the SECOND, independent axis -- CORE-INTACT / CORE-DEGRADED / CORE-PARTIAL / CORE-ABSENT for cytb/czc/relB/relE/hok_gef, computed the same way as `vehicle_class` but never looking at ISEsa1/ISEsa2. A locus can be VEHICLE-HALF with CORE-INTACT (CP010512) -- the two never collapse into one label. |
+| `core_genes_present` | which of the five were found |
+| `core_edge_clipped` | same meaning as `vehicle_edge_clipped`, for the core genes |
 | `n_is`, `n_is_fragment`, `n_is_fragment_real` | as in `summary.tsv` |
 | `cargo_families` | which cargo families are present |
 | `has_czc` / `has_cytb` / `has_hok_gef` | the genes the core is defined by, plus the second TA system |

@@ -84,6 +84,51 @@ def vehicle_class(is_rows, ends=('ISEsa1', 'ISEsa2')):
     return cls, ','.join(sorted(present)), ';'.join(sorted(interrupted)), ec
 
 
+def core_class(cargo_rows, core=('cytb', 'czc', 'relB', 'relE', 'hok_gef')):
+    """CORE-INTACT / CORE-DEGRADED / CORE-PARTIAL / CORE-ABSENT.
+
+    The second, INDEPENDENT axis `vehicle_class` deliberately doesn't cover:
+    whether the conserved context genes draw_schematic() in colour_blocks.py
+    calls "the conserved core" are actually there, regardless of what state
+    the vehicle (ISEsa1/ISEsa2) is in. Structured exactly like
+    `vehicle_class` -- best coverage per gene, edge-clipped genes excluded
+    from the degraded call, same 90% threshold -- so the two axes are read
+    the same way.
+
+    `core` defaults to the same five genes draw_schematic()'s bracket spans
+    (cytb, czc, relB, relE, hok_gef), not just cytb/czc/hok_gef, so "core"
+    means the identical gene set wherever either word is used in this
+    project's output. relB/relE are included for that consistency, not
+    because they vary: every locus here passed Tier A FULL, which already
+    requires both at full coverage, so they are never the limiting factor --
+    cytb, czc and hok_gef are where this axis actually discriminates.
+
+    Returns (class, genes_present, edge_clipped), mirroring vehicle_class.
+    """
+    present, clipped = {}, {}
+    for c in cargo_rows:
+        g = c['family']
+        if g not in core:
+            continue
+        cov = float(c.get('cov') or 0)
+        if cov >= clipped.get(g, (-1.0, False))[0]:
+            clipped[g] = (cov, c.get('clip_cause') == 'window')
+        present[g] = max(present.get(g, 0.0), cov)
+
+    edge_clipped = {g for g, (_, cl) in clipped.items() if cl}
+    degraded = {g for g, cov in present.items()
+                if cov < 90 and g not in edge_clipped}
+    ec = ','.join(sorted(edge_clipped))
+
+    n = len(present)
+    if n == 0:
+        return 'CORE-ABSENT', '', ec
+    if n < len(core):
+        return 'CORE-PARTIAL', ','.join(sorted(present)), ec
+    cls = 'CORE-DEGRADED' if degraded else 'CORE-INTACT'
+    return cls, ','.join(sorted(present)), ec
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--loci', required=True)
@@ -113,6 +158,7 @@ def main():
 
     hdr = ['locus_id', 'accession', 'replicon_type', 'vehicle_class',
            'vehicle_ends', 'vehicle_interrupted', 'vehicle_edge_clipped',
+           'core_class', 'core_genes_present', 'core_edge_clipped',
            'n_is', 'n_is_fragment',
            'n_is_fragment_real', 'cargo_families',
            'has_czc', 'has_cytb', 'has_hok_gef',
@@ -123,6 +169,7 @@ def main():
         ish = is_by.get(lid, [])
         car = cargo_by.get(lid, [])
         vcls, vends, vint, vclip = vehicle_class(ish, ends=ends)
+        ccls, cgenes, cclip = core_class(car)
         fams = sorted({c['family'] for c in car})
         off = {}
         for c in car:
@@ -131,6 +178,7 @@ def main():
         rows.append([
             lid, L['accession'], L.get('replicon_type', ''),
             vcls, vends, vint, vclip or '-',
+            ccls, cgenes, cclip or '-',
             len(ish), sum(1 for h in ish if h.get('is_fragment') == 'yes'),
             # fragments the window edge cut are excluded: they say nothing
             # about decay, only about where we stopped looking
@@ -153,12 +201,28 @@ def main():
     # index by NAME -- these were positional and silently went stale when
     # columns were inserted ahead of them
     ix = {k: i for i, k in enumerate(hdr)}
-    c = {}
+    c, cc = {}, {}
     for r in rows:
         c[r[ix['vehicle_class']]] = c.get(r[ix['vehicle_class']], 0) + 1
+        cc[r[ix['core_class']]] = cc.get(r[ix['core_class']], 0) + 1
     print(f'{len(rows)} loci -> {a.out}')
+    print('  vehicle_class (ISEsa1/ISEsa2 only):')
     for k in sorted(c):
-        print(f'  {k:<11} {c[k]}')
+        print(f'    {k:<16} {c[k]}')
+    print('  core_class (cytb/czc/relB/relE/hok_gef, independent axis):')
+    for k in sorted(cc):
+        print(f'    {k:<16} {cc[k]}')
+    # the combination worth flagging: the two axes disagreeing, which is
+    # exactly what neither label alone can show
+    mismatched = [r for r in rows
+                 if r[ix['vehicle_class']] == 'VEHICLE-INTACT'
+                 and r[ix['core_class']] != 'CORE-INTACT']
+    if mismatched:
+        print(f'  NOTE {len(mismatched)} locus/loci have an INTACT vehicle '
+              f'but an incomplete core -- the two axes disagree:')
+        for r in mismatched:
+            print(f"    {r[ix['locus_id']].split('__')[0]}: "
+                  f"{r[ix['core_class']]} ({r[ix['core_genes_present']]})")
     m = sum(1 for r in rows if r[ix['metal_module']] == 'yes')
     print(f'  with the czc+cytb metal module: {m}/{len(rows)}')
     nclip = sum(1 for r in rows if r[ix['vehicle_edge_clipped']] != '-')
