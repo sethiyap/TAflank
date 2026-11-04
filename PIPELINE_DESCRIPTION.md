@@ -1057,20 +1057,27 @@ to the *bla*NDM literature the method is modelled on.
 
 | step | status | note |
 |---|---|---|
-| Direct repeats / TSDs (F6) | **not built** | would restore the `DR_seq` column the archived table had. Slide 13 already holds the ground truth: a 16 bp `AGGAGAAGAAGGCCAT` family, plus `TTAA` (ISKpn38) and `GAG` (ISKpn28) |
-| Extended core anchor (Stage 2) | **not built** | `anchors/relBE_core.fa` does not exist. This is the gate before any expansion, and the reason a sweep cannot be keyword-led |
-| Uniform annotation (Bakta) | **wired, off by default** | `--run_bakta`; needs a container and `--bakta_db`. The merge it feeds is already built and validated against a GenBank stand-in |
-| Gene families (clustering) | **not built** | blastp + connected components is Roary's `-i 0.9 -s` and needs no new tool |
-| Context classification (Tier C) | **BUILT** | `CLASSIFY_CONTEXT`; reproduces the hand classification on all four overlapping loci |
-| Structural-variant splitting (Stage 6) | **not built** | Acman's method. Do **not** vendor the reference implementation: its released `track_variants.R` sets `step <- 100`, which cannot resolve the 64 bp fragment the decisive test depends on |
-| Colour-block figure (Stage 7) | **not built** | needs Stage 3 for the gene track |
+| Direct repeats / TSDs (F6) | **BUILT** | `relbe_junctions.py`. Proven working -- recovers a 100%-identical, same-coordinate TSD for ISKpn8 shared between CP012599 and CP028197 -- but inconclusive for the vehicle itself: ISEsa1/ISEsa2 sit directly adjacent wherever both are present, so most boundary pairs have no host-DNA gap to search at all. See `PIPELINE.md` §3 Layer 8 |
+| Extended core anchor (Stage 2) | **not built** | `anchors/relBE_core.fa` does not exist. This is still the gate before any expansion, and the reason a sweep cannot be keyword-led. `core_class` (below) answers "is the core present per locus", which is adjacent but not the same question -- it doesn't fix the core's left edge or re-zero offsets to it |
+| Uniform annotation (Bakta) | **BUILT, run on all 14 loci** | `db-light`, via Apptainer on Gadi (`env/gadi_bakta_setup.sh`). Compute nodes have no outbound network, so the container and database are pulled on `copyq` first and the run is given a local `.sif` path, never a `docker://` URI -- that distinction cost one failed run before it was fixed |
+| Gene families (clustering) | **BUILT** | `gene_families.py`: proteins translated from the Bakta GFF3 (verified against the relB/relE sequences in CLAUDE.md via `--check`, since the `.faa` an earlier run should have published wasn't), clustered at 90% id / 80% cov -- Roary's `-i 0.9 -s`, blastp instead of mmseqs2 (not installed; 363 proteins doesn't need it) |
+| Context classification (Tier C) | **BUILT, now two independent axes** | `CLASSIFY_CONTEXT` reproduces the hand classification on all four overlapping loci. `vehicle_class` (ISEsa1/ISEsa2 only) and the newer `core_class` (cytb/czc/relB/relE/hok_gef, never the vehicle) are scored separately and can disagree -- CP010512 is VEHICLE-HALF with a fully intact core |
+| Structural-variant splitting (Stage 6) | **not built** | Acman's method. Do **not** vendor the reference implementation: its released `track_variants.R` sets `step <- 100`, which cannot resolve the 64 bp fragment the decisive test depends on. `structural_groups.py`'s core-architecture Jaccard grouping is a fast proxy for "do these loci plausibly share one history" built in its place for now -- it says explicitly, in its own docstring, that it is not a substitute: two loci can share an element catalogue by convergence, not one insertion event, and this test cannot tell those apart because it never looks at the DNA between the elements |
+| Colour-block figure (Stage 7) | **BUILT** | `colour_blocks.py`. `--style simple` (default: one row per locus, colour by role) or `--style tracks` (IS/CDS/cargo on separate lines, colour by family); `--groups`/`--junctions` overlay the Jaccard grouping and shared TSDs; an idealised-architecture schematic is computed from the data, not asserted, with each element placed at its median offset and flagged when that offset is literally invariant (czc, at -1184, in all 9 loci that carry it) |
 | ISEScan, IntegronFinder, mob_suite, geNomad | **not built** | all reachable via Apptainer on Firefly |
 | NCBI sweep (Stage 9) | **not built** | gated on Stage 2; ~26,539 complete Enterobacterales assemblies |
 
 ### Current scope
 
-Plasmids only, from the 16-record set — **7 loci**, which is 4 from the `nine`
-set plus 3 from `extra`. The extras arrived free with the bait search, and two
-of them (CP023893, LT991956) are the **pECL_A Class II** architecture that is
-absent from the nine, so the working set spans all three architecture classes
-rather than two.
+**All 14 loci with a bait hit** from the 16-record set (`REPLICON=all`): 7
+plasmid + 7 chromosome. The 2 remaining records are the negative controls
+(CP018962, CP006636), correctly returning zero hits. Of the 14, 4 are from the
+`nine` set, 3 are chromosomal members of the `nine` set, and the rest are
+`extra` -- two of them (CP023893, LT991956) are the **pECL_A Class II**
+architecture that is absent from the nine, so the working set spans all three
+architecture classes.
+
+The plasmid-only 7-locus run (`REPLICON=plasmid`, the earlier default) is kept
+as a standing regression check: adding the 7 chromosomal loci left those 7
+rows in `context.tsv` byte-identical, confirming nothing about the broader run
+perturbed the original gate.

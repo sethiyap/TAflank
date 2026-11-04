@@ -71,9 +71,19 @@ which matters because on arm64 the JVM's architecture leaks to child processes.
 | `results/loci.tsv` | extracted window |
 | `results/mge_hits.tsv` | IS call, including fragments and nesting |
 | `results/replicons.tsv` | PlasmidFinder replicon hit |
-| `results/context.tsv` | locus, with the VEHICLE-INTACT/VEHICLE-DECAYED/VEHICLE-HALF/VEHICLE-ABSENT verdict |
+| `results/context.tsv` | locus, with **two independent verdicts**: `vehicle_class` (VEHICLE-INTACT/-DECAYED/-HALF/-ABSENT, from ISEsa1/ISEsa2 coverage only) and `core_class` (CORE-INTACT/-DEGRADED/-PARTIAL/-ABSENT, from cytb/czc/relB/relE/hok_gef — never the vehicle). The two can and do disagree: CP010512 is VEHICLE-HALF with a fully intact core |
 | `results/blocks/*.blocks.tsv` | drawable feature — the figure's input |
+| `results/gene_families.tsv` | CDS, clustered by sequence (90% id / 80% cov) so the figure can colour genes by homology instead of by product name |
+| `results/structural_groups.tsv` | locus, grouped with others sharing ≥90% of the vehicle + conserved-core genes — a fast triage for "do these plausibly share one history", not the decisive sequence-level test |
+| `results/junctions.tsv` | IS call, with its target-site duplication where one boundary pair was clean enough to search, and whether that TSD is shared with another locus |
 | **`results/summary.tsv`** | **locus — read this one first** |
+
+`figures/colour_blocks.png` (+ `.svg`) is the bait-aligned architecture panel —
+one row per locus, IS and cargo coloured by role, an idealised-architecture
+schematic computed from the data underneath. `figures/is_matrix.png` is the
+companion IS presence/absence heatmap. Built by `scripts/colour_blocks.py`;
+`--style tracks` switches from the default one-row-per-locus view to IS/CDS/
+cargo on separate lines coloured by family.
 
 `results/run_report.txt` accounts for the whole run on one page.
 **[`OUTPUTS.md`](OUTPUTS.md) describes every table and every column.**
@@ -87,8 +97,14 @@ different data.
 
 - Nextflow ≥ 23.04 and a **native** JDK 17
 - BLAST+ ≥ 2.17
-- Python 3 (standard library only — no biopython, no pandas)
-- R only for the figures, which are not built yet
+- Python 3 (standard library only — no biopython, no pandas) plus `matplotlib`
+  for the figures (`colour_blocks.py`, `structural_groups.py`)
+- Bakta (`db-light`), for uniform annotation where GenBank's own is absent or
+  inconsistent — runs on Gadi via Apptainer (`env/gadi_bakta_setup.sh`);
+  compute nodes have no network, so the container and database are pulled on
+  `copyq` first and passed to the run as a local `.sif` path, never a
+  `docker://` URI
+- R is **not** required — the figures are Python/matplotlib, not R
 
 Databases: an ISfinder mirror (`db/isfinder/`) and the CGE PlasmidFinder
 database (`db/plasmidfinder/`), both with `PROVENANCE.txt` recording source and
@@ -106,15 +122,30 @@ fetch date.
 
 ## Status
 
-Working end to end on a curated plasmid set, gated against a result verified by
-hand before the pipeline existed: all 7 archived IS calls for CP018961 are
-reproduced with identical offsets, including the 64 bp ISEsa1 fragment and the
-ISKpn21 nesting.
+Working end to end on **all 14 loci with a bait hit** (7 plasmid + 7
+chromosome; `REPLICON=all`), gated against a result verified by hand before
+the pipeline existed: all 7 archived IS calls for CP018961 are reproduced with
+identical offsets, including the 64 bp ISEsa1 fragment and the ISKpn21
+nesting. Adding the 7 chromosomal loci left the 7 plasmid rows in
+`context.tsv` byte-identical — the gate held a second time.
 
-Not yet built: direct-repeat scanning, the extended core anchor, uniform
-annotation and gene families, structural-variant splitting, and the
-colour-block figure. See §11 of `PIPELINE_DESCRIPTION.md` — the gaps are listed
-explicitly rather than implied by their absence.
+**Built since that gate:** uniform Bakta annotation (`db-light`, all 14 loci);
+gene-family clustering (`gene_families.py`); the architecture figure and IS
+heatmap (`colour_blocks.py`, two styles); direct-repeat/TSD scanning
+(`relbe_junctions.py` — proven working on real data, inconclusive for the
+vehicle itself, see `PIPELINE.md` §3 Layer 8); same-history grouping by core
+architecture (`structural_groups.py`); the independent `core_class` axis
+alongside `vehicle_class`, so "vehicle intact but core missing" and the
+reverse are both nameable, not just visually inferable.
+
+**Not yet built:** the extended core anchor (`anchors/relBE_core.fa` — Stage
+2, still the pivot: the current `core_class`/`structural_groups.py` work
+*around* this gap, they don't close it), the TADB3 expansion (Stage 4), the
+decisive sequence-level structural-variant test (all-vs-all `dc-megablast`,
+threshold-stepped, `ggtree` — Stage 5; the figure's schematic panel and the
+Jaccard grouping are useful proxies, not substitutes, and say so in their own
+docs), and species/backbone clustering (Jaccard + PERMANOVA via `vegan` —
+Stage 6). See `PIPELINE.md` §8 for the full per-stage table.
 
 ## Citing
 

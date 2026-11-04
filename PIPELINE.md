@@ -239,8 +239,8 @@ is the level that answers the project's question.
 | # | Question asked | Tool | In → Out | Status |
 |---|---|---|---|---|
 | 1 | Where is relBE in this genome? | **`blastn`** (seed vs genome) | genome → coords + strand | `[OK]` |
-| 2 | Cut out the neighbourhood | **`samtools faidx`** + revcomp | genome + coords → 30 kb window | `[OK]` |
-| 3 | What genes are in the window? | **GenBank annotation**; `bakta` where absent | window → gene list | `[~]` |
+| 2 | Cut out the neighbourhood | **`samtools faidx`** + revcomp | genome + coords → +/-20 kb window | `[OK]` |
+| 3 | What genes are in the window? | **GenBank annotation**; `bakta` (`db-light`, on Gadi) where absent | window → gene list | `[OK]` |
 | 4 | Which **named IS** elements are here? | **`blastn` vs ISfinder**, no length cutoff | window → IS hits + coverage | `[OK]` |
 | 5 | Any IS the database missed? | **`ISEScan`** (de novo) | window → IS + IR/TSD | `[ ]` |
 | 6 | Do two IS bracket the cargo? | **custom script** (two-different-ends rule) | IS hits → TPU call | `[ ]` |
@@ -451,14 +451,23 @@ insertion events, not noise):
   Class III other           CP010512 -5224..-3633 ; CP026216 -3991..-2393
 ```
 
-The VEHICLE-INTACT/VEHICLE-DECAYED/HALF/NO-CORE split **is itself a result** — it says whether the
+The VEHICLE-INTACT/VEHICLE-DECAYED/VEHICLE-HALF/VEHICLE-ABSENT split **is itself a result** — it says whether the
 vehicle generalises or is specific to this metal-resistance lineage. Across TADB3 the
 answer was emphatic: 56/57 are PARALOGUE, 1 is our lineage.
 
-> Open issue: `CLAUDE.md` asserts `Cytb/b6` is present upstream in *every* locus.
-> It is **absent from pEC422_1** — no cytochrome b/b6 anywhere in the 30 kb window,
-> and slide 5 only draws it on three of the nine. The core definition must be settled
-> by homology across all nine before this filter can be finalised.
+> **Resolved** (was: open issue that `Cytb/b6` is absent from pEC422_1 / CP018961).
+> That check predated `cargo_search.py`'s curated reference set and used a 30 kb
+> window; at the current +/-20 kb window, `cytb` IS present in CP018961 — 100%
+> identity, 100% coverage, offset -4738. `core_class` (added once this was built;
+> see `classify_context.py`) now reports it directly: CP018961 is CORE-INTACT.
+> Across the 14 loci with a bait hit, `core_class` finds cytb/czc/relB/relE/hok_gef
+> ALL present in 8/14 (CORE-INTACT) and partially present in the other 6
+> (CORE-PARTIAL -- never fully absent). Two findings worth carrying forward: czc
+> sits at an INVARIANT offset (-1184) in every one of the 9 loci that carry it,
+> the single strongest fixed point in the whole window; and CP010512 is
+> VEHICLE-HALF (only ISEsa1) with a fully intact core -- the vehicle and the core
+> are not welded together, a locus can lose half the vehicle and keep the whole
+> cargo.
 
 ---
 
@@ -484,7 +493,14 @@ Layered, because no single tool sees everything. Each layer has a known blind sp
  LAYER 5  plasmid context      mob_typer/mob_recon  replicon, relaxase, oriT
  LAYER 6  prophage             geNomad              any phage-borne loci?
  LAYER 7  ICE (chromosomal)    ICEfinder/oriTfinder how relBE entered a chromosome
- LAYER 8  junctions            scripts/relbe_junctions.py   §4
+ LAYER 8  junctions            scripts/relbe_junctions.py   §4        [OK]
+          extracts the flank at each IS boundary, searches for the
+          staggered-cut TSD, groups loci sharing an EXACT match. Built
+          and run: no usable signal for the vehicle itself (ISEsa1/
+          ISEsa2 sit directly adjacent wherever both are present -- no
+          host-DNA gap to search), but the method is proven working --
+          it recovers a 100%-identical, same-coordinate TSD for ISKpn8
+          shared between CP012599 and CP028197
  LAYER 9  read-level           soft-clip ≥50 bp vs ISfinder — only where reads exist
 ```
 
@@ -637,20 +653,25 @@ Companion tables: `core_conservation.tsv`, `structural_variants.tsv`.
 
 | Stage | Status |
 |---|---|
-| 0 — environment, scaffold | `[~]` BLAST+ 2.17.0 arm64 at `~/opt/`; ISfinder mirror local. bakta/ISEScan/geNomad/mob_suite still absent |
-| 1 — one genome end to end | `[OK]` **gate passed** on pEC422_1 (CP018961) |
-| 2 — extended anchor from nine loci | `[ ]` needs Stage 1 on remaining eight |
-| 3 — MGE layer | `[~]` Layer 2 working; Layers 1, 3–9 pending |
+| 0 — environment, scaffold | `[OK]` BLAST+ 2.17.0 arm64 at `~/opt/`; ISfinder mirror local. **Bakta now runs**, on Gadi (`env/gadi_bakta_setup.sh`, `db-light`, container pulled via copyq since compute nodes have no network) -- all 14 loci annotated. ISEScan/geNomad/mob_suite still absent |
+| 1 — one genome end to end | `[OK]` **gate passed** on pEC422_1 (CP018961); held again when the chromosomal 7 were added (`REPLICON=all`) -- the plasmid-only rows came back byte-identical |
+| 2 — extended anchor from nine loci | `[ ]` still the pivot. `core_class` (classify_context.py) answers "is the core present" per locus but has NOT yet built the single consensus `anchors/relBE_core.fa` or re-zeroed offsets to its left edge |
+| 3 — MGE layer | `[~]` Layer 2 (IS homology) and Layer 8 (junctions/DR) built and run -- see §3 and §5. Layers 1, 3-7, 9 still pending |
+| 3b — gene families | `[OK]` `scripts/gene_families.py`: proteins translated from the Bakta GFF3 (its own `.faa` wasn't published by an earlier run; `--check` proves the translation against the relB/relE sequences in CLAUDE.md), clustered at 90% id / 80% cov. 363 CDS -> 258 families across 14 loci |
+| 3c — same-history grouping | `[OK]` `scripts/structural_groups.py`: union-find on core-architecture Jaccard (vehicle + cytb/czc/relB/relE/hok_gef only -- the full-window version found almost nothing, see the script's own docstring). 14 loci -> 6 groups at the current gate, every multi-member group pairwise 1.00 internally. This is the FAST triage §8's row 6 (PERMANOVA) still needs, not a replacement for it |
+| 3d — the figure | `[OK]` `scripts/colour_blocks.py`: bait-aligned architecture panel + IS presence heatmap + an idealised-architecture schematic computed from the data (median offset per element, flagged when it is literally invariant -- czc is, at -1184, in all 9 loci that carry it). `--style simple` (default, one row, colour by role) or `--style tracks` (IS/CDS/cargo separated, colour by family); `--groups`/`--junctions` overlay the Stage 3c/Layer 8 results |
 | 4 — TADB3 expansion | `[ ]` |
-| 5 — structural variants, decisive test | `[ ]` |
-| 6 — grouping by species | `[ ]` two tests ready: 0/37 vs 51/108 E. coli HI2 split (Fisher); chromosome co-carriage |
+| 5 — structural variants, decisive test | `[ ]` the real version (all-vs-all `dc-megablast`, threshold-stepped, `ggtree`) is NOT built. Stage 3c's Jaccard grouping and 3d's schematic are useful, honest proxies, not substitutes -- both say so in their own docs |
+| 6 — grouping by species | `[ ]` two tests ready: 0/37 vs 51/108 E. coli HI2 split (Fisher); chromosome co-carriage. Jaccard+PERMANOVA (`vegan`) not run |
 
 **Data in hand:** 16 closed GenBank records, all lengths verified against their `LOCUS`
 lines, all terminating `//`. Two negative controls confirmed carrying zero `relB`
-(CP018962, CP006636) while their own plasmids carry one.
+(CP018962, CP006636) while their own plasmids carry one. 14 of the 16 return a bait
+hit and are carried through the full pipeline (`REPLICON=all`); the other 2 are the
+negative controls, correctly empty.
 
-**Known gap:** `LT991956.1` arrived from ENA with **0 CDS features** — needs annotation
-before Layer 3+ can run on it.
+**Resolved:** `LT991956.1` arrived from ENA with 0 CDS features. Bakta annotation
+(Stage 0) gives it 57 CDS; it is no longer a gap.
 
 **Blocked on tooling:** Layers 1 and 3–7 need bakta / ISEScan / IntegronFinder2 /
 mob_suite / geNomad. conda is broken; micromamba or Firefly is the route (see `CLAUDE.md`).
