@@ -74,6 +74,10 @@ flowchart TD
     window --> cargo
     window --> bakta
 
+    tierA -->|"FULL — 14 kept"| replClass{"replicon type?\n(from assembly metadata)"}:::tier
+    replClass -->|"plasmid — 7 loci"| replicon
+    replClass -->|"chromosome — 7 loci"| noPF["skipped\nno Inc-type replicon to call"]:::dropped
+
     replicon["whole parent replicon\n(not just the window)"]:::input --> plasmidfinder
 
     subgraph annotate["§5 — four independent annotation passes"]
@@ -189,7 +193,19 @@ window, whatever its contents turn out to be.
 ## 5. Annotating what's in the window: tools and filtering criteria
 
 Four largely independent passes were run over each window, with results kept
-deliberately separate rather than collapsed into one score.
+deliberately separate rather than collapsed into one score:
+
+1. **Insertion sequences (IS)** — `blastn` vs a local ISfinder mirror, no length or
+   identity cutoff.
+2. **Cargo genes** — `blastn` against a small curated reference set drawn from this
+   project's own 16 records.
+3. **Replicon typing** — `blastn` against the CGE PlasmidFinder database, run on the
+   whole parent replicon (plasmid loci only).
+4. **Uniform gene annotation** — Bakta (`db-light`), re-annotating CDS from scratch
+   across every window.
+
+(Gene-family clustering, below, is a follow-on analysis built from pass 4's output,
+not a fifth independent pass.)
 
 ### Insertion sequences (IS) — `blastn` vs a local ISfinder mirror
 
