@@ -236,6 +236,25 @@ transfer), `ars` (arsenic resistance), `sil` (silver/copper efflux), `intI`
 extracted directly from this project's own 16 records (traceable to an accession and
 coordinates), not pulled from an external curated database.
 
+**How the set was actually built** (`scripts/build_cargo_set.py`): for each family, a
+hand-written regex is matched against every CDS's `/product=` text across all 16
+`.gbk` files (e.g. `czc` matches `cobalt-zinc-cadmium|czc[ABCD]|cation efflux|CzcD|
+cusA|cusB`). Every matching CDS (≥150 bp) is sliced straight out of that record's own
+sequence, reverse-complemented if on the `complement` strand, and deduplicated by its
+first 200 bp so near-identical alleles collapse to one representative while genuinely
+distinct sequences under the same pattern are kept. Each entry is named
+`{family}|{accession}|{locus_tag}|{coords}`, so it stays traceable to its source.
+This is **product-name-regex curation, not manual sequence review** — it inherits
+whatever each original GenBank submitter called the gene, so a cargo gene that is
+unannotated or named unexpectedly in the source record is invisible to this set.
+
+The current `assets/cargo_genes.fa` holds **333 sequences** and is actually wider than
+the ten families named above: it also carries `mer` (mercury resistance, 30 entries)
+and `ter` (tellurite resistance, 62 entries), picked up by the same build but not yet
+mentioned in this report's prose. Per-family counts: `tra` 128, `ter` 62, `ars` 42,
+`mer` 30, `relE` 18, `czc` 11, `hok_gef` 11, `sil` 9, `qnr` 7, `relB` 7, `intI` 5,
+`cytb` 3.
+
 ### Replicon typing — `blastn` against the CGE PlasmidFinder database
 
 Run on the **whole parent replicon**, not just the ±20 kb window (Inc-type replication
