@@ -52,6 +52,65 @@ The method follows Acman *et al.* 2022 (*Nat Commun* **13**:1131), who used exac
 anchored, alignment-based approach to show that the carbapenem resistance gene *blaNDM*
 spread on one ancestral vehicle. This pilot repeats that logic for `relBE`.
 
+### Pipeline flow
+
+Colour marks the role each stage plays: grey = input, orange = the Tier A/B/C filter
+(§3), blue = window extraction (§4), the four annotation passes of §5 each get their
+own colour, gold = the two classification axes (§5), teal = the TSD/Jaccard history
+tests (§6–7), dark green = the deliverables (§8). GitHub/VS Code render this statically
+— no click-through — but still support pan/zoom and the colour coding below.
+
+```mermaid
+flowchart TD
+    bait["527bp relBE bait\n+ 16 GenBank records"]:::input
+
+    bait --> blast["blastn bait vs records\n15 HSPs"]:::tier
+    blast --> tierA{"Tier A\nidentity/coverage filter"}:::tier
+    tierA -->|"FULL — 14 kept"| window
+    tierA -->|"PARALOGUE — 1 dropped\n(CP006642 background hit, 67.7% id)"| dropped["excluded\nnever reaches window extraction"]:::dropped
+
+    window["reorient relB to '+'\ncut ±20kb window\nclamped + recorded at replicon ends"]:::window
+    window --> isfinder
+    window --> cargo
+    window --> bakta
+
+    replicon["whole parent replicon\n(not just the window)"]:::input --> plasmidfinder
+
+    subgraph annotate["§5 — four independent annotation passes"]
+        isfinder["ISfinder blastn\nNO length/identity cutoff\n→ complete / partial / fragment"]:::isfinder
+        cargo["cargo-gene blastn\nrelB/relE/cytb/czc/hok_gef/tra/ars/sil/intI/qnr\n(curated from this project's own 16 records)"]:::cargo
+        plasmidfinder["PlasmidFinder blastn\nInc typing, cov≥80% id≥95%"]:::plasmidfinder
+        bakta["Bakta db-light\nCDS annotation"]:::bakta
+    end
+
+    bakta --> families["sequence clustering\n90% id / 80% cov\n→ gene families (not product names)"]:::bakta
+
+    isfinder --> vehicle["vehicle_class\nVEHICLE-INTACT/DECAYED/HALF/ABSENT"]:::classify
+    cargo --> core["core_class\nCORE-INTACT/DEGRADED/PARTIAL/ABSENT"]:::classify
+
+    isfinder --> tsd["relbe_junctions.py\nDR/TSD scan on 74 IS calls"]:::history
+    vehicle --> jaccard["Jaccard on vehicle+core signature\nunion-find @ 90%"]:::history
+    core --> jaccard
+    families --> jaccard
+
+    tsd --> figure
+    jaccard --> figure
+    plasmidfinder --> figure
+    figure["figures/colour_blocks.png\nfigures/is_matrix.png\nresults tables"]:::output
+
+    classDef input fill:#eceff4,stroke:#4c566a,color:#2e3440,stroke-width:1px
+    classDef tier fill:#ffd8a8,stroke:#e8590c,color:#7a3700,stroke-width:1px
+    classDef dropped fill:#ffc9c9,stroke:#c92a2a,color:#7a0000,stroke-width:1px,stroke-dasharray: 4 3
+    classDef window fill:#a5d8ff,stroke:#1864ab,color:#0a3d62,stroke-width:1px
+    classDef isfinder fill:#b2f2bb,stroke:#2b8a3e,color:#0b4a1e,stroke-width:1px
+    classDef cargo fill:#d0bfff,stroke:#6741d9,color:#2f1a66,stroke-width:1px
+    classDef plasmidfinder fill:#99e9f2,stroke:#0c8599,color:#063c45,stroke-width:1px
+    classDef bakta fill:#ffd6e8,stroke:#c2255c,color:#5c0f2e,stroke-width:1px
+    classDef classify fill:#ffe066,stroke:#e67700,color:#4d2e00,stroke-width:1px
+    classDef history fill:#63e6e2,stroke:#0b7285,color:#063539,stroke-width:1px
+    classDef output fill:#63e6be,stroke:#087f5b,color:#063d2e,stroke-width:2px
+```
+
 ## 3. The pilot test: 16 input records
 
 The pilot used **16 closed GenBank records** as the search database — nine loci and two
