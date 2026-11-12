@@ -25,7 +25,12 @@ bait.fa ──► local BLAST ──► Tier A ──► fetch metadata ──�
 
 The method follows **Acman et al. 2022**, *Nat Commun* **13**:1131 —
 [*Role of mobile genetic elements in the global dissemination of the carbapenem
-resistance gene blaNDM*](https://doi.org/10.1038/s41467-022-28819-2).
+resistance gene blaNDM*](https://doi.org/10.1038/s41467-022-28819-2) — for the
+overall anchored, alignment-based approach, and uses **pangraph**
+([Noll, Molari & Neher 2023](https://doi.org/10.1099/mgen.0.001034),
+*Microbial Genomics* **9**:001034) as the sequence-homology engine itself: a
+true N-way alignment graph rather than the pairwise `dc-megablast` Acman's
+own pipeline uses.
 
 ---
 
@@ -58,9 +63,15 @@ Against a pre-formatted database on a cluster, with no network at all:
 
 ```bash
 ./tools/nf run main.nf -profile gadi \
+    --bait anchors/relBE_seed.fa \
     --blastdb /scratch/$PROJECT/$USER/blastdb/nt_prok \
     --genome_dir '' --meta_source blast --taxonomy
 ```
+
+`--bait` defaults to `anchors/relBE_seed.fa`, so it's optional here — shown
+explicitly because it's the one flag that changes for a different gene;
+everything else on the line is sweep-scale plumbing (database path, metadata
+source, taxonomy).
 
 Use `./tools/nf`, not bare `nextflow` — the wrapper resolves a **native** JDK,
 which matters because on arm64 the JVM's architecture leaks to child processes.
@@ -169,7 +180,16 @@ heatmap (`colour_blocks.py`, two styles); direct-repeat/TSD scanning
 vehicle itself, see `PIPELINE.md` §3 Layer 8); same-history grouping by core
 architecture (`structural_groups.py`); the independent `core_class` axis
 alongside `vehicle_class`, so "vehicle intact but core missing" and the
-reverse are both nameable, not just visually inferable.
+reverse are both nameable, not just visually inferable; and pangraph
+(`build_pangraph_graph.py`/`pangraph_blocks.py`/`pangraph_annotated.py`/
+`pangraph_context_summary.py`) — a true N-way sequence-homology alignment
+graph, giving a second, independent grouping and three figures alongside the
+gene-annotation ones.
+
+**[`REPORT.md`](REPORT.md)** walks through all of this on the actual
+16-record pilot: the full pipeline flowchart, the Tier A/B/C filter numbers,
+every annotation layer, the Jaccard and pangraph groupings side by side
+(§7–7b), and the figures themselves.
 
 **Not yet built:** the extended core anchor (`anchors/relBE_core.fa` — Stage
 2, still the pivot: the current `core_class`/`structural_groups.py` work

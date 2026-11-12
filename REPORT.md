@@ -57,8 +57,9 @@ spread on one ancestral vehicle. This pilot repeats that logic for `relBE`.
 Colour marks the role each stage plays: grey = input, orange = the Tier A/B/C filter
 (§3), blue = window extraction (§4), the four annotation passes of §5 each get their
 own colour, gold = the two classification axes (§5), teal = the TSD/Jaccard history
-tests (§6–7), dark green = the deliverables (§8). GitHub/VS Code render this statically
-— no click-through — but still support pan/zoom and the colour coding below.
+tests (§6–7), sky blue = pangraph's independent sequence-homology check (§7b), dark
+green = the deliverables (§8). GitHub/VS Code render this statically — no
+click-through — but still support pan/zoom and the colour coding below.
 
 ```mermaid
 flowchart TD
@@ -73,6 +74,7 @@ flowchart TD
     window --> isfinder
     window --> cargo
     window --> bakta
+    window --> pangraphBuild
 
     tierA -->|"FULL — 14 kept"| replClass{"replicon type?\n(from assembly metadata)"}:::tier
     replClass -->|"plasmid — 7 loci"| replicon
@@ -102,6 +104,13 @@ flowchart TD
     plasmidfinder --> figure
     figure["figures/colour_blocks.png\nfigures/is_matrix.png\nresults tables"]:::output
 
+    pangraphBuild["pangraph build\nN-way alignment graph\n(Noll, Molari & Neher 2023)"]:::pangraph
+    pangraphBuild --> pangraphGroups["pangraph_groups.tsv\nunion-find @ shared_frac ≥0.85"]:::pangraph
+    pangraphBuild --> pangraphCtx["pangraph_context_summary\n11 unique contexts"]:::pangraph
+    pangraphGroups --> pangraphOut
+    pangraphCtx --> pangraphOut
+    pangraphOut["pangraph_blocks.png\npangraph_annotated.png\npangraph_context_summary.png/.xlsx"]:::output
+
     classDef input fill:#eceff4,stroke:#4c566a,color:#2e3440,stroke-width:1px
     classDef tier fill:#ffd8a8,stroke:#e8590c,color:#7a3700,stroke-width:1px
     classDef dropped fill:#ffc9c9,stroke:#c92a2a,color:#7a0000,stroke-width:1px,stroke-dasharray: 4 3
@@ -112,6 +121,7 @@ flowchart TD
     classDef bakta fill:#ffd6e8,stroke:#c2255c,color:#5c0f2e,stroke-width:1px
     classDef classify fill:#ffe066,stroke:#e67700,color:#4d2e00,stroke-width:1px
     classDef history fill:#63e6e2,stroke:#0b7285,color:#063539,stroke-width:1px
+    classDef pangraph fill:#d0ebff,stroke:#1971c2,color:#0b3d66,stroke-width:1px
     classDef output fill:#63e6be,stroke:#087f5b,color:#063d2e,stroke-width:2px
 ```
 
@@ -373,6 +383,45 @@ three multi-locus groups **mixes plasmid and chromosomal loci**, consistent with
 `relBE`'s vehicle moving between genomic contexts rather than architecture tracking
 replicon type.
 
+## 7b. A second, independent check: pangraph sequence homology
+
+§7's Jaccard grouping asks "do these loci carry the same **named** elements" — it never
+looks at the DNA itself, so two loci could share an element catalogue by convergence
+rather than by inheritance. `pangraph` (Noll, Molari & Neher 2023, *Microbial Genomics*
+**9**:001034) builds a true N-way alignment graph over all 14 windows and answers a
+different, stricter question: how much of the **actual sequence**, not just which named
+features, do two loci share.
+
+At `shared_frac ≥ 0.85` over the **whole** ±20 kb window (not restricted to the
+vehicle + core the way §7's signature is), pangraph finds far fewer multi-member
+groups:
+
+| pangraph group | loci | weakest internal pair |
+|---|---|---|
+| 3 loci | CP012599, CP028197, CP028537 | 0.842 (CP012599↔CP028537 directly; the group is **chained** through CP028197, whose pairs with each of the other two clear 0.85 at 0.878 and 0.877) |
+| 2 loci | CP020841, CP021960 | 0.995 |
+| 9 singletons | CP006642, CP010512, CP017220, CP018961, CP023893, CP026216, CP026975, LT991956, MF344582 | — |
+
+This is not a contradiction of §7 — it is a stricter cross-check. §7 deliberately
+restricted the comparison to five conserved genes so locus-private insertions would not
+swamp the signal; pangraph's threshold is applied to the whole window, where private
+insertion diversity dominates for most loci. The two groups that clear **both** tests —
+{CP012599, CP028197, CP028537} and {CP020841, CP021960} — are the strongest candidates
+in this pilot for one shared insertion history, having been found independently by two
+methods that look at entirely different evidence. The rest of §7's groups share an
+element catalogue without (yet) sharing enough raw sequence to confirm common descent at
+this coarser threshold — exactly the ambiguity §7 warned its own grouping could not
+resolve on its own.
+
+pangraph also collapses the 14 loci into **11 unique up-/downstream contexts**
+(`results/pangraph_context_summary.xlsx`), each drawn from its most-typical ("medoid")
+member — see `pangraph_context_summary.png` in §8.
+
+An earlier version of this pipeline used a pairwise `blastn -task dc-megablast`
+cross-check here instead. It was retired once pangraph's real N-way alignment graph
+proved to subsume it — pangraph represents a rearrangement directly, rather than
+approximating one by chaining pairwise hits outward from the core.
+
 ## 8. The figure
 
 ![relBE flanking architecture, aligned on the bait](figures/colour_blocks.png)
@@ -399,6 +448,14 @@ position 0). Reading guide:
 
 A companion heatmap (`figures/is_matrix.png`) shows IS element presence/absence across
 all 14 loci, columns grouped by ISfinder family.
+
+Three further figures come from §7b's pangraph check, a purely sequence-based view
+alongside the gene-annotation one above: `pangraph_blocks.png` (one row per locus,
+coloured by pangraph block identity rather than gene name — same colour across rows
+means mutually alignable sequence, pale pink means private), `pangraph_annotated.png`
+(the gene/IS arrows from the figure above, overlaid on that sequence-identity
+background), and `pangraph_context_summary.png` (the 11 contexts from §7b, one row
+each).
 
 ## 9. Next steps: scaling to the whole of NCBI
 
