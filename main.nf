@@ -555,7 +555,11 @@ workflow {
 
         Annotation (complementary layers, not alternatives to each other)
           --run_bakta BOOL             needs amrfinderplus -- no macOS build, cluster only [false]
-          --run_viz BOOL               matplotlib/scipy figures [true]
+          --run_viz BOOL               matplotlib/scipy figures, incl. colour_blocks.py
+                                        and the three pangraph figures [true]
+          --colour_blocks_style STR    simple | tracks -- colour_blocks.py's own --style;
+                                        --groups/--junctions are wired in automatically
+                                        either way (STRUCTURAL_GROUPS/RELBE_JUNCTIONS) [simple]
           --vehicle_ends STR           comma-separated IS names bracketing the core --
                                         LINEAGE-SPECIFIC, change for a non-relBE bait
                                         [ISEsa1,ISEsa2]
