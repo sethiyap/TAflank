@@ -221,10 +221,16 @@ by hand first if needed:
 
 ## 3. The pilot test: 16 input records
 
-The pilot used **16 closed GenBank records** as the search database — nine loci and two
-negative controls hand-picked from a September 2018 lab-meeting survey, plus five
-"extra" records that turned up free alongside them. Every record is annotated below with
-how it was actually used, not just what it was labelled.
+The pilot used **16 closed GenBank records** as the search database — all 14 positive
+loci come from `RelBE_from_Sept2018_lab_meeting.pptx` (`data/public_16/accessions.tsv`
+records exactly which slide each one is from): the core **nine** are from slides
+2/4/5, and five **"extra"** records are from slides 12/13, which show a related
+follow-up group (`pECL_A`-type insertions, a different insertion lineage from the
+core nine). The two **negative controls** are not from either slide range — each is
+the chromosome of a strain whose plasmid is already in the set (CP018962 ↔ plasmid
+CP018961 in "nine"; CP006636 ↔ plasmid CP006642 in "extra"), added specifically to
+confirm the bait search calls no hit where there is none. Every record is annotated
+below with how it was actually used, not just what it was labelled.
 
 | accession | organism | set | replicon | relBE bait hit? |
 |---|---|---|---|---|
