@@ -433,6 +433,79 @@ process RUN_REPORT {
 }
 
 workflow {
+    // `--help`/`-help` prints this and exits before any process runs. Must
+    // live HERE, as the first statement inside workflow{} -- a top-level
+    // `exit` outside this block only logs and does NOT stop the script from
+    // proceeding to actually launch the workflow (learned the hard way: an
+    // earlier version of this check sat above process BUILD_DB and silently
+    // ran the entire pipeline anyway). Kept hand-written (not generated from
+    // nextflow.config) because it groups params by what a user is actually
+    // deciding, not by declaration order; `./tools/nf config` is the
+    // always-in-sync companion for the full dump with CURRENT values, see
+    // the pointer at the bottom of this text.
+    if (params.help) {
+        log.info """
+        TAflank -- bait-anchored discovery of mobile genetic elements in gene
+        flanking regions. Nothing hardcodes relBE: point --bait at any gene.
+
+        Usage:
+          ./tools/nf run main.nf -profile local [options]
+          ./tools/nf run main.nf -profile gadi --blastdb /path/to/db --genome_dir '' [options]
+
+        Core
+          --bait FILE                 bait sequence [anchors/relBE_seed.fa]
+          --subregions STR            named bait parts, e.g. relB:1-240,relE:240-527 ('' to disable)
+
+        Search space (pick ONE way to search)
+          --genome_dir DIR            build a local db from these FASTAs [data/public_16/fasta]
+          --blastdb PATH              pre-built db, no file extension -- skips BUILD_DB entirely
+          --hit_table FILE            import an NCBI web-BLAST hit table instead of searching
+          --meta_source STR           ncbi | cache | blast -- 'blast' makes NO network call [ncbi]
+          --taxonomy BOOL             also fetch staxids/sscinames, needs taxdb [false]
+
+        Tier A -- sequence filters (two INDEPENDENT reasons to drop a hit)
+          --paralogue_max_pident N    below this = PARALOGUE, different gene entirely [90]
+          --full_qcov N               below this (but FULL identity) = INCOMPLETE [95]
+          --blast_task STR            blastn | megablast -- NOT megablast by default,
+                                       it misses 85-92% diverged copies [blastn]
+
+        Tier B -- record filters ('all' disables a filter -- '' means something else, see below)
+          --replicon_type STR         plasmid | chromosome | all [plasmid]
+          --tier_a STR                FULL | all [FULL]
+          --min_flank N               0 keeps short-flank loci and records them [0]
+          --flank N                   window half-width, bp -- shared by extraction AND
+                                       every downstream analysis stage, never override
+                                       just one of them [20000]
+
+        pangraph -- sequence-homology alignment graph (Noll, Molari & Neher 2023)
+          --run_pangraph BOOL          [true]
+          --pangraph_min_similarity N  grouping threshold on shared_frac [0.85]
+          --pangraph_row_scale N       row height / label scale, pangraph_blocks.png [0.5]
+
+        Annotation (complementary layers, not alternatives to each other)
+          --run_bakta BOOL             needs amrfinderplus -- no macOS build, cluster only [false]
+          --run_viz BOOL               matplotlib/scipy figures [true]
+          --vehicle_ends STR           comma-separated IS names bracketing the core --
+                                        LINEAGE-SPECIFIC, change for a non-relBE bait
+                                        [ISEsa1,ISEsa2]
+          --cargo_fa FILE              curated cargo-gene reference [assets/cargo_genes.fa]
+
+        Output
+          --outdir DIR                 [results]
+          --figdir DIR                 [figures]
+          --loci_dir DIR               [loci/plasmids]
+
+        Profiles: -profile local | firefly | gadi | gadi_single
+
+        This lists what you'd actually change. For the FULL parameter dump with
+        CURRENT values (every param, no descriptions):
+          ./tools/nf config main.nf -profile <name>
+        For why each one exists: nextflow.config's own comments, or
+        PIPELINE_DESCRIPTION.md §9. For a copy-paste walkthrough: RUNBOOK.md.
+        """.stripIndent()
+        exit 0
+    }
+
     bait = Channel.fromPath(params.bait, checkIfExists: true)
 
     // Either build a db from local FASTAs, or point at a pre-formatted one
