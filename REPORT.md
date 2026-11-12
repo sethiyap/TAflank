@@ -1,6 +1,6 @@
 # relBE and its mobile genetic element context — pilot report
 
-**Project:** TAflank · **Owner:** Pooja Sethiya · **Pilot date:** 2026-10-26 to 2026-11-03
+**Project:** TAflank · **Owner:** Pooja Sethiya · **Last updated:** 2026-11-12
 **Source deck:** `relBE_schematic.pptx` (19 slides, 19 Aug 2026); hand-drawn predecessor:
 `RelBE_from_Sept2018_lab_meeting.pptx`
 
