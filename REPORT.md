@@ -33,6 +33,53 @@ elements benefit from being harder to lose. The question this pilot asks is what
 rides on, and whether the same vehicle carried it into every locus where it now sits, or
 whether it got picked up independently, more than once.
 
+### 1a. General schematic: vehicle, cargo, and the conserved core
+
+Every locus in this pilot has the same basic shape, read left to right (upstream →
+downstream). The terms below are used throughout the rest of this report:
+
+```mermaid
+flowchart LR
+    subgraph vehicle["VEHICLE (variable, often decayed)"]
+        is1["IS element, e.g. ISEsa1-like\n-- the candidate ancestral vehicle;\noften truncated or interrupted by\na second IS (slide 11)"]
+    end
+    subgraph othercargo["OTHER CARGO (variable)"]
+        other["other IS copies, integrons,\nresistance genes...\n(differs locus to locus)"]
+    end
+    subgraph core["CONSERVED CORE -- this project's anchor"]
+        direction LR
+        cytb["cytb / b6"] --> czc["czc\n(Co-Zn-Cd\nresistance)"] --> relB["relB\n(antitoxin,\n79 aa)"] --> relE["relE\n(toxin,\n95 aa)"]
+    end
+    subgraph downstream["USUALLY EMPTY"]
+        d["variation is one-sided --\nalmost nothing sits downstream\nof the core (slide 11)"]
+    end
+
+    vehicle --> othercargo --> core --> downstream
+
+    classDef vehicleStyle fill:#ffd6e8,stroke:#c2255c,color:#5c0f2e,stroke-width:1px
+    classDef cargoStyle fill:#d0bfff,stroke:#6741d9,color:#2f1a66,stroke-width:1px
+    classDef coreStyle fill:#ffe066,stroke:#e67700,color:#4d2e00,stroke-width:1px
+    classDef emptyStyle fill:#eceff4,stroke:#4c566a,color:#2e3440,stroke-width:1px,stroke-dasharray: 4 3
+    class is1 vehicleStyle
+    class other cargoStyle
+    class cytb,czc,relB,relE coreStyle
+    class d emptyStyle
+```
+
+- **The core** (`cytb`/`b6` → `czc` → `relB` → `relE`) is the one part present and
+  conserved across essentially every locus in this pilot — it is the anchor every
+  coordinate in this report is measured from.
+- **The vehicle** is the mobile element thought to have actually carried `relBE` in —
+  most often an ISEsa1-like insertion sequence, frequently found degraded or with a
+  second IS inserted inside it (§5–§7b asks whether this is *one* ancestral vehicle,
+  reused repeatedly, or several independent ones that happen to look similar).
+- **Other cargo** is everything else riding alongside — other IS copies, integrons,
+  resistance genes — which varies locus to locus and is not itself the question this
+  pilot asks.
+- **Downstream is usually empty.** Variation in this dataset is one-sided: almost every
+  insertion sits upstream of the core, which is itself a finding, not an assumption (§4
+  checks this explicitly rather than just not looking).
+
 ## 2. The pipeline (TAflank)
 
 TAflank is a bait-anchored discovery pipeline, built around a single idea: **anchor
@@ -449,13 +496,36 @@ position 0). Reading guide:
 A companion heatmap (`figures/is_matrix.png`) shows IS element presence/absence across
 all 14 loci, columns grouped by ISfinder family.
 
-Three further figures come from §7b's pangraph check, a purely sequence-based view
-alongside the gene-annotation one above: `pangraph_blocks.png` (one row per locus,
-coloured by pangraph block identity rather than gene name — same colour across rows
-means mutually alignable sequence, pale pink means private), `pangraph_annotated.png`
-(the gene/IS arrows from the figure above, overlaid on that sequence-identity
-background), and `pangraph_context_summary.png` (the 11 contexts from §7b, one row
-each).
+### The same loci, summarised by sequence homology instead
+
+![pangraph: 11 unique contexts summarising 14 loci](figures/pangraph_context_summary.png)
+
+This is §7b's pangraph check, drawn rather than just tabulated: the same 14 loci,
+collapsed into their **11 unique up-/downstream contexts**, one row per context, each
+drawn from its most-typical ("medoid") member. Reading guide:
+
+- **Orange block at position 0** is the conserved core (`relB`+`relE`), the same anchor
+  as the figure above — every context lines up on it.
+- **Same colour on either side of the core** (any colour other than pale pink or orange)
+  means that exact stretch of DNA is shared with at least one other locus; **different
+  colours are different, unrelated combinations of loci** — there is no universal
+  meaning to a given hue beyond "look up which loci share it" (see §7b and
+  `pangraph_blocks.tsv`'s `group_members` column).
+- **Pale pink** is sequence private to that one context — nothing else in the dataset
+  shares it.
+- **The small swatch beside each context's label** is that context's pangraph group
+  (§7b's `pangraph_groups.tsv`) — a different concept from the block colours; it marks
+  which contexts cleared the 0.85 shared-sequence threshold together, not which DNA they
+  literally share.
+- Context 01 (n=3: CP012599, CP028197\*, CP028537) and Context 02 (n=2: CP020841\*,
+  CP021960) are exactly the two groups that also independently clustered together in
+  §7's gene-architecture Jaccard grouping — the strongest candidates in this pilot for
+  one shared insertion history.
+
+Two further figures come from the same pangraph check: `pangraph_blocks.png` (one row
+per **individual** locus rather than per context, same colour scheme) and
+`pangraph_annotated.png` (the gene/IS arrows from the figure above, overlaid on that
+sequence-identity background instead of a plain idealised schematic).
 
 ## 9. Next steps: scaling to the whole of NCBI
 
