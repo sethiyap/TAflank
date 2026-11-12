@@ -156,7 +156,8 @@ def main():
         for r in read_tsv(f):
             cargo_by.setdefault(r['locus_id'], []).append(r)
 
-    hdr = ['locus_id', 'accession', 'replicon_type', 'vehicle_class',
+    hdr = ['locus_id', 'accession', 'organism', 'genus',
+           'replicon_type', 'vehicle_class',
            'vehicle_ends', 'vehicle_interrupted', 'vehicle_edge_clipped',
            'core_class', 'core_genes_present', 'core_edge_clipped',
            'n_is', 'n_is_fragment',
@@ -176,7 +177,8 @@ def main():
             off.setdefault(c['family'], c['offset_from_bait'])
         czc, cytb = 'czc' in fams, 'cytb' in fams
         rows.append([
-            lid, L['accession'], L.get('replicon_type', ''),
+            lid, L['accession'], L.get('organism', ''), L.get('genus', ''),
+            L.get('replicon_type', ''),
             vcls, vends, vint, vclip or '-',
             ccls, cgenes, cclip or '-',
             len(ish), sum(1 for h in ish if h.get('is_fragment') == 'yes'),

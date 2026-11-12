@@ -1,0 +1,41 @@
+cff-version: 1.2.0
+message: "If you use this pipeline, please cite it as below, and cite pangraph separately (see references) -- TAflank wraps and orchestrates it, but did not create it."
+title: "TAflank: bait-anchored discovery of mobile genetic elements in gene flanking regions"
+type: software
+version: 0.1.0
+date-released: 2026-11-11
+authors:
+  - family-names: Sethiya
+    given-names: Pooja
+repository-code: "https://github.com/sethiyap/TAflank"
+license: MIT
+keywords:
+  - mobile genetic elements
+  - toxin-antitoxin systems
+  - relBE
+  - comparative genomics
+  - pangenome graph
+references:
+  - type: article
+    title: "Pangraph: scalable bacterial pan-genome graph construction"
+    authors:
+      - family-names: Noll
+        given-names: Nicolas
+      - family-names: Molari
+        given-names: Marco
+      - family-names: Neher
+        given-names: Richard A.
+    journal: "Microbial Genomics"
+    volume: "9"
+    year: 2023
+    doi: "10.1099/mgen.0.001034"
+  - type: article
+    title: "Role of mobile genetic elements in the global dissemination of the carbapenem resistance gene blaNDM"
+    authors:
+      - family-names: Acman
+        given-names: Mislav
+      - name: "et al."
+    journal: "Nature Communications"
+    volume: "13"
+    year: 2022
+    doi: "10.1038/s41467-022-28819-2"

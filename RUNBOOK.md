@@ -93,6 +93,173 @@ python3 /g/data/rg42/TAflank/scripts/tsvcols.py \
 
 ---
 
+# Running the whole pipeline today (Nextflow) — start here
+
+Everything below STEP 1 is the manual, one-command-at-a-time walkthrough that
+predates `main.nf`'s Nextflow wiring — useful for understanding what each stage
+actually does, but not how anyone should run this day to day any more. This
+section is the current, practical entry point: one Nextflow command runs the
+whole thing, on three different places, with the same flags meaning the same
+thing everywhere.
+
+**What's in the pipeline, in order:** `BAIT_SEARCH` (blastn the bait against
+the candidate genomes) → `SELECT_LOCI` (drop paralogs on identity, incomplete
+hits on coverage — two independent reasons, not one combined filter) →
+`EXTRACT_LOCI` (cut the ±flank window, reorient to `+`) → `IS_SEARCH` /
+`CARGO_SEARCH` / `BAKTA` (annotation, in parallel) → `GENE_BLOCKS` (merge
+those three) → `PLASMIDFINDER` / `CLASSIFY_CONTEXT` / `COLLATE` → the
+sequence-homology stage: **pangraph** (`BUILD_PANGRAPH_GRAPH` →
+`PANGRAPH_BLOCKS` → `PANGRAPH_GROUPS` → `PANGRAPH_ANNOTATED`,
+`PANGRAPH_CONTEXT_SUMMARY`), a true N-way alignment graph (Noll, Molari &
+Neher 2023, Microbial Genomics 9:001034; github.com/neherlab/pangraph) that
+represents structural rearrangements (inversions, internal reordering) and
+small dispersed shared islands directly, instead of approximating them by
+chaining pairwise blast hits outward from an anchor. An earlier pairwise
+`dc-megablast` method (the "flanker" stages) ran alongside pangraph as a
+cross-check; it has been retired now that pangraph's real alignment graph
+has been verified to subsume it (see git history for `scripts/seq_blocks.py`
+if you need the retired method's own figure/tables back). `RUN_REPORT` ties
+it together at the end.
+
+`PANGRAPH_ANNOTATED` overlays `GENE_BLOCKS`' gene/IS arrows — which include
+Bakta's gene calls whenever `--run_bakta true`, falling back to parent
+GenBank annotation, then to no overlay at all if neither is available — on
+top of pangraph's sequence-homology background. `PANGRAPH_BLOCKS` and
+`PANGRAPH_CONTEXT_SUMMARY` never use Bakta; they are pure sequence-identity
+figures.
+
+## A. Local (this laptop)
+
+Nothing to install — `configs/local.config` already pins BLAST, the viz
+Python (matplotlib/scipy/openpyxl), and pangraph.
+
+```bash
+cd /Users/pooja/Documents/mobile_genetic_elements
+./tools/nf run main.nf -profile local \
+  --replicon_type all \
+  --outdir  run_vX/results \
+  --loci_dir run_vX/loci \
+  --figdir  run_vX/figures
+```
+
+Common overrides (all optional):
+
+```bash
+--flank 10000          # window size each side of relB (default 20000) --
+                        # ONE parameter, drives extraction AND both
+                        # homology methods, so they can never drift apart
+--tier_a all            # keep PARALOGUE/INCOMPLETE hits too (default: FULL only)
+--replicon_type plasmid # restrict to plasmids (default here: all)
+--run_viz false         # tables only, skip the pangraph figures (faster iteration)
+--run_pangraph false    # skip the sequence-homology stage entirely (gene annotation only)
+--pangraph_row_scale 1.0 # pangraph_blocks.png row height (default 0.5 = packed tight)
+-resume                 # reuse cached results from a prior run
+```
+
+**What you get**, all under `--outdir`/`--figdir`:
+
+| | |
+|---|---|
+| `loci_selected.tsv`, `filter_summary.tsv` | bait search / paralog-completeness filter audit |
+| `context.tsv`, `loci.tsv`, `summary.tsv`, `replicons.tsv` | per-locus tables |
+| `blocks/`, `is/`, `cargo/`, `pf/` | per-locus annotation |
+| `pangraph/graph.json`, `pangraph_blocks.tsv`, `pangraph_pairwise.tsv`, `pangraph_context_groups.tsv`, `pangraph_groups.tsv` | pangraph sequence-homology tables |
+| `pangraph_blocks.png`/`.svg` | sequence-homology only, one row per locus (half-height rows by default) |
+| `pangraph_annotated.png`/`.svg` | gene/IS annotation (incl. Bakta, if `--run_bakta true`) overlaid on the pangraph background |
+| `pangraph_context_summary.png`/`.xlsx` | one row per UNIQUE context (not per locus), numbered, with every locus traceable in the matching Excel workbook |
+| `run_report.txt`/`.tsv` | one summary of everything |
+
+**Still manual** (not Nextflow stages — judgement calls you make once per
+analysis, not every run): the gene-identity Jaccard grouping and the
+gene-vs-sequence-identity reconciliation, plus the pure-annotation figure:
+
+```bash
+# gene-based Jaccard grouping (the complement to pangraph_groups.tsv)
+/opt/anaconda3/bin/python3.12 scripts/structural_groups.py \
+  --blocks run_vX/results/blocks --out run_vX/results/structural_groups.tsv \
+  --out-pairs run_vX/results/structural_pairs.tsv
+
+# reconcile gene-identity vs sequence-identity into CONCORDANT/DISCORDANT calls
+/opt/anaconda3/bin/python3.12 scripts/pairwise_evidence.py \
+  --genes run_vX/results/structural_pairs.tsv \
+  --seq run_vX/results/pangraph_pairwise.tsv \
+  --out run_vX/results/pairwise_evidence.tsv
+
+# pure gene/IS annotation figure (no sequence-homology background at all)
+/opt/anaconda3/bin/python3.12 scripts/colour_blocks.py \
+  --blocks run_vX/results/blocks --context run_vX/results/context.tsv \
+  --metadata run_vX/results/record_metadata.tsv --outdir run_vX/figures
+```
+
+Use `/opt/anaconda3/bin/python3.12` for anything producing a figure or Excel
+file — `/usr/bin/python3` on this laptop has neither matplotlib nor openpyxl.
+
+## B. Gadi (NCI)
+
+**One-time setup**, each run on `copyq` or a login node (compute queues have
+no outbound network):
+
+```bash
+cd /g/data/rg42/TAflank
+qsub env/gadi_bakta_setup.sh       # full gene annotation (optional)
+qsub env/gadi_viz_setup.sh         # figures: matplotlib+scipy+openpyxl container (optional)
+qsub env/gadi_pangraph_setup.sh    # pangraph binary (optional, but recommended --
+                                    # it is a single static file, this is fast)
+```
+
+Each prints its own smoke test result and is safe to skip if you don't need
+that capability yet — the pipeline runs without any of them, just with less
+(no bakta-named genes, or no `.png`/`.xlsx`, or no pangraph complement).
+
+**Run it:**
+
+```bash
+qsub -v BAKTA=true,VIZ=true,PANGRAPH=true env/gadi_run.sh
+```
+
+Drop any flag you skipped the setup for. Full option list (bait, database,
+flank, replicon filter, output location, etc.) is in the comment header at
+the top of `env/gadi_run.sh`.
+
+This uses `-profile gadi_single` (the whole pipeline in one PBS job — right
+for curated sets like this one). For the much larger nt_prok sweep, use
+`-profile gadi` directly instead (fans out across nodes; see that profile's
+own header in `configs/gadi.config`).
+
+## C. Firefly (CIDM)
+
+**Status: largely unverified.** `configs/firefly.config` itself says so —
+run `bash env/firefly_probe.sh` first (with the VPN up) and paste the output
+back before trusting anything here. It checks the actual scheduler name,
+whether apptainer is present, and — the one that matters most for the setup
+below — whether any node has outbound internet at all.
+
+If a node does have outbound access:
+
+```bash
+bash env/firefly_pangraph_setup.sh   # downloads the pangraph binary directly
+                                       # (not a queued job -- see its own header
+                                       # for why: Firefly has no confirmed
+                                       # copyq-equivalent yet)
+```
+
+Then:
+
+```bash
+nextflow run main.nf -profile firefly \
+  --run_pangraph true --pangraph_bin $HOME/opt/pangraph/bin \
+  --outdir ... --loci_dir ... --figdir ...
+```
+
+`run_viz`/`run_pangraph` both default to **false** on this profile —
+`configs/firefly.config` has the container directives wired (same
+`jupyter/scipy-notebook` image Gadi uses for viz), but neither has actually
+been pulled-and-tested via apptainer on this specific cluster, so flipping
+them on is a real test, not a known-good step. Expect to iterate on
+`executor`/queue names too (`slurm` is a guess pending the probe).
+
+---
+
 # STEP 1 — Build the search database
 
 ```bash

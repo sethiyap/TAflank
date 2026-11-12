@@ -55,7 +55,16 @@ def esummary(accs, delay):
 
 OUT_HDR = ['accession'] + FIELDS + ['replicon_type', 'replicon_name',
                                     'genus', 'is_complete',
-                                    'replicon_type_evidence']
+                                    'replicon_type_evidence', 'organism_short']
+
+
+def short_organism(org):
+    """'Escherichia coli PCN061' -> 'Escherichia coli'. Genus+species only,
+    strain dropped. The single canonical short label every downstream table
+    and figure should join against, instead of each one re-truncating the
+    full organism string its own way (colour_blocks.py and flanker_blocks.py
+    both did `' '.join(org.split()[:2])` independently before this)."""
+    return ' '.join(org.split()[:2]) if org else ''
 
 
 def write_table(path, rows):
@@ -106,7 +115,7 @@ def metadata_from_blast(hits_path):
         out.append([acc] + vals + [rtype, rname,
                                    org.split(' ')[0] if org else '',
                                    'yes' if 'complete' in title.lower() else 'no',
-                                   evid + '_from_blast'])
+                                   evid + '_from_blast', short_organism(org)])
     return out
 
 
@@ -222,7 +231,8 @@ def main():
     for x in accs:
         f = os.path.join(a.cache, x + '.json')
         if not os.path.exists(f):
-            rows.append([x] + [''] * len(FIELDS) + ['unknown', '', '', '', 'no_record'])
+            rows.append([x] + [''] * len(FIELDS)
+                       + ['unknown', '', '', '', 'no_record', ''])
             continue
         r = json.load(open(f))
         vals = [r.get(k, '') for k in FIELDS]
@@ -230,7 +240,8 @@ def main():
         org = r.get('organism', '')
         rows.append([x] + vals + [rtype, rname, org.split(' ')[0] if org else '',
                                   'yes' if (r.get('completeness') or '').lower()
-                                  == 'complete' else 'no', evid])
+                                  == 'complete' else 'no', evid,
+                                  short_organism(org)])
 
     write_table(a.out, rows)
 

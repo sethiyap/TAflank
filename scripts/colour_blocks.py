@@ -59,6 +59,9 @@ from matplotlib.lines import Line2D
 
 import colorsys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from fetch_metadata import short_organism  # noqa: E402
+
 # ---------------------------------------------------------------------------
 # Palettes lifted from the project's own decks, by reading the shape fills out
 # of the .pptx XML rather than sampling a screenshot.
@@ -797,8 +800,7 @@ def main():
                     ha='left', va='center')
         cls = ctx.get(lid, {}).get('vehicle_class', '?')
         acc = lid.split('__')[0]
-        org = meta.get(acc, {}).get('organism', '')
-        org = ' '.join(org.split()[:2]) if org else ''
+        org = short_organism(meta.get(acc, {}).get('organism', ''))
         label_obj = ax.text(X0 - XW * 0.045, y, f'{acc}\n{org}', ha='right',
                             va='center', fontsize=7.2, linespacing=1.25,
                             style='italic' if org else 'normal')

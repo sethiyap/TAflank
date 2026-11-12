@@ -91,9 +91,11 @@ def main():
                    help='the Tier A survivors, in the SAME outfmt 6 columns as '
                         '--raw-out so the two are directly comparable')
     p.add_argument('--subregions', default='')
-    p.add_argument('--full-pident', type=float, default=95.0)
     p.add_argument('--full-qcov', type=float, default=95.0)
-    p.add_argument('--paralogue-max-pident', type=float, default=85.0)
+    p.add_argument('--paralogue-max-pident', type=float, default=90.0,
+                   help='pident below this = PARALOGUE (dropped, too '
+                        'divergent). Identity has exactly one cutoff now; '
+                        'completeness is checked separately via --full-qcov')
     p.add_argument('--evalue', default='1e-5')
     p.add_argument('--max-target-seqs', type=int, default=100000,
                    help='NOT a top-N filter -- it prunes during search, so it '
@@ -154,27 +156,35 @@ def main():
         for _, a1, a2 in subs:
             subcov.append(round(100.0 * overlap(qs, qe, a1, a2) / (a2 - a1 + 1), 1))
 
+        # Two independent reasons to drop a hit, checked independently rather
+        # than as one combined AND condition with an unlabeled gray zone
+        # in between (the old scheme: FULL required pident>=95 AND qcov>=95
+        # at once, pident<85 was PARALOGUE, and anything in between --
+        # e.g. 91% identity, 97% coverage -- fell into an unnamed PARTIAL
+        # bucket that tier_a=FULL filtering silently dropped anyway).
+        # pident is a PARALOGY question (is this even the same gene), qcov is
+        # a COMPLETENESS question (did the whole bait match) -- they answer
+        # different things and should not share one pass/fail gate.
         reason = ''
-        if pid >= a.full_pident and qcov >= a.full_qcov:
-            cls = 'FULL'
-        elif pid < a.paralogue_max_pident:
+        if pid < a.paralogue_max_pident:
             cls = 'PARALOGUE'
             reason = f'pident {pid} < {a.paralogue_max_pident}: superfamily background'
-        elif subs:
-            # a half hit: which named subregion survived?
-            present = [subs[i][0] for i, c in enumerate(subcov) if c >= 80.0]
-            if len(present) == 1:
-                cls = 'ORPHAN_' + present[0].upper()
-                reason = f'only {present[0]} covered >=80%'
-            elif not present:
-                cls = 'PARTIAL'
-                reason = f'qcov {qcov} below {a.full_qcov}, no subregion >=80%'
+        elif qcov < a.full_qcov:
+            cls = 'INCOMPLETE'
+            if subs:
+                # which named subregion survived, if any -- kept in `reason`
+                # even though `cls` no longer distinguishes ORPHAN_<name>
+                # from a plain partial hit, so the detail is not lost
+                present = [subs[i][0] for i, c in enumerate(subcov) if c >= 80.0]
+                if len(present) == 1:
+                    reason = (f'only {present[0]} covered >=80% '
+                             f'(qcov {qcov} < {a.full_qcov})')
+                else:
+                    reason = f'qcov {qcov} below {a.full_qcov}'
             else:
-                cls = 'PARTIAL'
                 reason = f'qcov {qcov} below {a.full_qcov}'
         else:
-            cls = 'PARTIAL'
-            reason = f'qcov {qcov} below {a.full_qcov}'
+            cls = 'FULL'
 
         counts[cls] = counts.get(cls, 0) + 1
         rows.append([d.get(c, '') for c in FMT.split()]
@@ -192,8 +202,9 @@ def main():
         kept = ['\t'.join(str(x) for x in r[:nf])
                 for r in rows if r[-2] not in ('PARALOGUE', 'REJECT')]
         write_blast6(a.kept_out, FMT, kept,
-                     f'Tier A kept: pident>={a.full_pident} qcov>={a.full_qcov} '
-                     f'(FULL), orphans and partials retained; '
+                     f'Tier A kept: pident>={a.paralogue_max_pident} (FULL '
+                     f'and INCOMPLETE both retained here -- qcov<{a.full_qcov} '
+                     f'is a completeness flag, not a paralogy one); '
                      f'PARALOGUE (<{a.paralogue_max_pident}%) removed',
                      f'{len(raw_lines)} in -> {len(kept)} out')
         print(f'  [2] after Tier A   {len(kept):>7} HSPs -> {a.kept_out}')

@@ -86,9 +86,8 @@ def main():
     p.add_argument('--subregions', default='')
     p.add_argument('--raw-out', default='')
     p.add_argument('--kept-out', default='')
-    p.add_argument('--full-pident', type=float, default=95.0)
     p.add_argument('--full-qcov', type=float, default=95.0)
-    p.add_argument('--paralogue-max-pident', type=float, default=85.0)
+    p.add_argument('--paralogue-max-pident', type=float, default=90.0)
     a = p.parse_args()
 
     subs = parse_subregions(a.subregions)
@@ -122,21 +121,24 @@ def main():
         subcov = [round(100.0 * overlap(qs, qe, a1, a2) / (a2 - a1 + 1), 1)
                   for _, a1, a2 in subs]
 
+        # Same two-independent-reasons scheme as bait_search.py: pident is a
+        # paralogy check, qcov is a completeness check, kept apart rather
+        # than combined into one AND condition with an unlabeled gray zone.
         reason = ''
-        if pid >= a.full_pident and qcov >= a.full_qcov:
-            cls = 'FULL'
-        elif pid < a.paralogue_max_pident:
+        if pid < a.paralogue_max_pident:
             cls = 'PARALOGUE'
             reason = f'pident {pid} < {a.paralogue_max_pident}: superfamily background'
-        elif subs:
-            present = [subs[i][0] for i, c in enumerate(subcov) if c >= 80.0]
+        elif qcov < a.full_qcov:
+            cls = 'INCOMPLETE'
+            present = ([subs[i][0] for i, c in enumerate(subcov) if c >= 80.0]
+                      if subs else [])
             if len(present) == 1:
-                cls, reason = 'ORPHAN_' + present[0].upper(), \
-                              f'only {present[0]} covered >=80%'
+                reason = (f'only {present[0]} covered >=80% '
+                         f'(qcov {qcov} < {a.full_qcov})')
             else:
-                cls, reason = 'PARTIAL', f'qcov {qcov} below {a.full_qcov}'
+                reason = f'qcov {qcov} below {a.full_qcov}'
         else:
-            cls, reason = 'PARTIAL', f'qcov {qcov} below {a.full_qcov}'
+            cls = 'FULL'
 
         counts[cls] = counts.get(cls, 0) + 1
         vals = [d.get(c, '') for c in out_cols]
@@ -158,7 +160,9 @@ def main():
         kept = ['\t'.join(str(x) for x in r[:nf])
                 for r in rows if r[-2] not in ('PARALOGUE', 'REJECT')]
         write_blast6(a.kept_out, FMT, kept,
-                     f'Tier A kept: pident>={a.full_pident} qcov>={a.full_qcov}; '
+                     f'Tier A kept: pident>={a.paralogue_max_pident} (FULL and '
+                     f'INCOMPLETE both retained here -- qcov<{a.full_qcov} is a '
+                     f'completeness flag, not a paralogy one); '
                      f'PARALOGUE (<{a.paralogue_max_pident}%) removed',
                      f'{len(raw_lines)} in -> {len(kept)} out')
         print(f'  [2] after Tier A   {len(kept):>7} HSPs -> {a.kept_out}')

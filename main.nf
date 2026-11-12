@@ -11,6 +11,16 @@
  */
 
 def PY = { params.python_exec ?: 'python3' }
+// pangraph_blocks.py / pangraph_annotated.py / pangraph_context_summary.py
+// import matplotlib. On this arm64 macOS laptop the Nextflow-wired python
+// (params.python_exec) is deliberately the bare system /usr/bin/python3
+// (see configs/local.config) and does NOT have matplotlib -- only the base
+// Anaconda python here does, reached by bypassing the broken `conda` shell
+// wrapper and calling its binary directly. viz_python_exec is that separate
+// escape hatch, used ONLY by the matplotlib-dependent processes below;
+// everything else keeps using PY(). Falls back to PY() itself where a
+// profile has not set it.
+def PY_VIZ = { params.viz_python_exec ?: PY() }
 
 // Nextflow parses `--tier_a ''` on the command line as the BOOLEAN true, so an
 // "empty means keep everything" filter is unexpressible that way: the value
@@ -48,7 +58,7 @@ process BAIT_SEARCH {
     BLAST_BIN='${params.blast_bin}' ${PY()} ${projectDir}/scripts/bait_search.py \\
         --bait ${bait} --db ${db} --out bait_hits.tsv \\
         --subregions '${filterOf(params.subregions)}' \\
-        --full-pident ${params.full_pident} --full-qcov ${params.full_qcov} \\
+        --full-qcov ${params.full_qcov} \\
         --paralogue-max-pident ${params.paralogue_max_pident} \\
         --task ${params.blast_task} --evalue ${params.evalue} \\
         --max-target-seqs ${params.max_target_seqs} \\
@@ -74,7 +84,7 @@ process IMPORT_BLAST {
     ${PY()} ${projectDir}/scripts/import_blast.py \\
         --hit-table ${hit_table} --bait ${bait} --out bait_hits.tsv \\
         --subregions '${filterOf(params.subregions)}' \\
-        --full-pident ${params.full_pident} --full-qcov ${params.full_qcov} \\
+        --full-qcov ${params.full_qcov} \\
         --paralogue-max-pident ${params.paralogue_max_pident} \\
         --raw-out blast/01_raw.tsv --kept-out blast/02_tier_a.tsv
     """
@@ -228,6 +238,151 @@ process GENE_BLOCKS {
     """
 }
 
+// ---------------------------------------------------------------------------
+// pangraph -- Stage 5's "careful pass" (CLAUDE.md), sequence-homology blocks
+// as a complement to the gene-name annotation GENE_BLOCKS already produced
+// above, using a true N-way alignment graph (Noll, Molari & Neher 2023)
+// rather than pairwise dc-megablast chained outward from the core. Runs on
+// the SAME filtered, extracted loci set everything above already built.
+// All stages share ${params.flank}, the SAME single parameter EXTRACT_LOCI
+// used to cut the windows in the first place -- never override flank on
+// just one of these, or the window a locus was extracted at and the window
+// these stages analyse drift out of sync with each other.
+//
+// An earlier version of this pipeline ran a SECOND, independent method here
+// (pairwise dc-megablast, chained outward from the core and raising a
+// similarity threshold over the resulting matrix) as a cross-check.
+// pangraph's real alignment graph subsumes it -- it is not an approximation
+// blind to inversions/rearrangements the way the pairwise method was -- so
+// that second method (BUILD_FLANKER_BLAST/FLANKER_BLOCKS/FLANKER_GROUPS/
+// FLANKER_ANNOTATED/CONTEXT_SUMMARY, scripts/build_flanker_blast.py,
+// flanker_annotated.py, context_summary.py) was retired rather than kept
+// running in parallel. The shared drawing/colouring primitives it left
+// behind live on in scripts/seq_blocks.py, imported by the pangraph scripts
+// below; scripts/groups.py (ex flanker_groups.py) is the generic
+// similarity-threshold grouping script PANGRAPH_GROUPS uses.
+// ---------------------------------------------------------------------------
+
+process BUILD_PANGRAPH_GRAPH {
+    publishDir "${params.outdir}/pangraph", mode: 'copy'
+    label 'python'
+    cpus params.blast_cpus
+    // Gates the whole pangraph chain -- see run_pangraph's comment in
+    // nextflow.config for why only this one process needs the `when:`.
+    when:   params.run_pangraph
+    input:  path loci_fa_all
+    output: path 'graph.json', emit: graph
+    script:
+    """
+    ${PY()} ${projectDir}/scripts/build_pangraph_graph.py \\
+        --loci . --out graph.json --jobs ${task.cpus} \\
+        --pangraph-bin '${params.pangraph_bin}'
+    """
+}
+
+process PANGRAPH_GROUPS {
+    publishDir params.outdir, mode: 'copy'
+    label 'python'
+    input:  path pairwise_tsv
+    output: path 'pangraph_groups.tsv', emit: groups
+    script:
+    """
+    ${PY()} ${projectDir}/scripts/groups.py \\
+        --pairwise ${pairwise_tsv} --out pangraph_groups.tsv \\
+        --min-similarity ${params.pangraph_min_similarity}
+    """
+}
+
+process PANGRAPH_BLOCKS {
+    publishDir params.outdir, mode: 'copy',
+              pattern: 'pangraph_{blocks,pairwise,context_groups}.tsv'
+    publishDir "${params.figdir}", mode: 'copy',
+              pattern: 'pangraph_blocks.{png,svg}'
+    label 'python'
+    // ALWAYS runs, regardless of run_viz: pangraph_pairwise.tsv is a plain-
+    // stdlib table with no plotting dependency (matplotlib is imported
+    // lazily inside seq_blocks.py's draw_figure(), only when drawing), and
+    // PANGRAPH_GROUPS needs it on every profile, including ones where
+    // matplotlib is not yet verified. --no-figure skips only the .png/.svg,
+    // which is why they are declared optional.
+    //
+    // NO --groups here, deliberately: PANGRAPH_GROUPS consumes THIS
+    // process's own pairwise.tsv output, so taking pangraph_groups.tsv as
+    // an input here would be circular. --groups is swatch-only (see
+    // seq_blocks.py's draw_figure() docstring) -- skippable with no loss of
+    // the block data itself. PANGRAPH_ANNOTATED runs after PANGRAPH_GROUPS
+    // and gets the swatch there instead.
+    input:  path loci_fa_all
+            path graph_json
+            path context_tsv
+    output: path 'pangraph_blocks.png', optional: true
+            path 'pangraph_blocks.svg', optional: true
+            path 'pangraph_blocks.tsv'
+            path 'pangraph_pairwise.tsv',       emit: pairwise
+            path 'pangraph_context_groups.tsv'
+    script:
+    def viz  = params.run_viz
+    def pybin = viz ? PY_VIZ() : PY()
+    def flag  = viz ? '' : '--no-figure'
+    """
+    ${pybin} ${projectDir}/scripts/pangraph_blocks.py \\
+        --graph ${graph_json} --context ${context_tsv} \\
+        --outdir . --out-tables . ${flag} --flank ${params.flank} \\
+        --row-scale ${params.pangraph_row_scale}
+    """
+}
+
+process PANGRAPH_ANNOTATED {
+    publishDir "${params.figdir}", mode: 'copy',
+              pattern: 'pangraph_annotated.{png,svg}'
+    label 'viz'
+    // Pure figure, no tables-only fallback -- so it is simply skipped (see
+    // the workflow{} block) rather than run in a degraded form when
+    // run_viz is off.
+    when:   params.run_viz
+    input:  path graph_json
+            path blocks_all
+            path context_tsv
+            path groups_tsv
+    output: path 'pangraph_annotated.png'
+            path 'pangraph_annotated.svg'
+    script:
+    """
+    ${PY_VIZ()} ${projectDir}/scripts/pangraph_annotated.py \\
+        --graph ${graph_json} --blocks . --context ${context_tsv} \\
+        --groups ${groups_tsv} --outdir . --flank ${params.flank}
+    """
+}
+
+process PANGRAPH_CONTEXT_SUMMARY {
+    publishDir "${params.figdir}", mode: 'copy',
+              pattern: 'pangraph_context_summary.{png,svg}'
+    publishDir params.outdir, mode: 'copy',
+              pattern: 'pangraph_context_summary.xlsx'
+    label 'viz'
+    // Also needs openpyxl specifically (not just matplotlib+scipy) --
+    // verified present alongside matplotlib in the local-profile anaconda
+    // python; env/gadi_viz_setup.sh checks for it in the Gadi container too
+    // but only WARNS if missing, since it is not needed by the other two
+    // viz processes.
+    when:   params.run_viz
+    input:  path graph_json
+            path groups_tsv
+            path pairwise_tsv
+            path context_tsv
+    output: path 'pangraph_context_summary.png'
+            path 'pangraph_context_summary.svg'
+            path 'pangraph_context_summary.xlsx'
+    script:
+    """
+    ${PY_VIZ()} ${projectDir}/scripts/pangraph_context_summary.py \\
+        --graph ${graph_json} --groups ${groups_tsv} \\
+        --pairwise ${pairwise_tsv} --context ${context_tsv} \\
+        --outdir . --out-xlsx pangraph_context_summary.xlsx \\
+        --flank ${params.flank}
+    """
+}
+
 process CLASSIFY_CONTEXT {
     publishDir params.outdir, mode: 'copy'
     label 'python'
@@ -335,7 +490,26 @@ workflow {
 
     collated = COLLATE(is_ch.hits.collect(), pf_ch.hits.collect(), loci.table)
 
+    // pangraph: sequence-homology blocks (Stage 5's "careful pass"), using
+    // the SAME filtered, extracted loci set everything above already built
+    // -- not a separate run. PANGRAPH_GROUPS consumes PANGRAPH_BLOCKS' own
+    // pairwise.tsv output, so it necessarily runs after it; PANGRAPH_BLOCKS
+    // itself does not take pangraph_groups.tsv as an input (see its own
+    // comment) to avoid a cycle. CLASSIFY_CONTEXT.out.ctx is referenced
+    // here the same way RUN_REPORT already does below -- CLASSIFY_CONTEXT
+    // was called above without capturing its process object into a var.
+    pangraph       = BUILD_PANGRAPH_GRAPH(loci_fa.collect())
+    pangraph_blocks = PANGRAPH_BLOCKS(loci_fa.collect(), pangraph.graph,
+                                      CLASSIFY_CONTEXT.out.ctx)
+    pangraph_groups = PANGRAPH_GROUPS(pangraph_blocks.pairwise)
+    PANGRAPH_ANNOTATED(pangraph.graph, blocks_ch.blocks.collect(),
+                       CLASSIFY_CONTEXT.out.ctx, pangraph_groups.groups)
+    PANGRAPH_CONTEXT_SUMMARY(pangraph.graph, pangraph_groups.groups,
+                            pangraph_blocks.pairwise, CLASSIFY_CONTEXT.out.ctx)
+
     // Last: one readable account of what went in, what each filter removed,
     // and what came out at every layer. Gated on everything else finishing.
-    RUN_REPORT(collated[0].mix(blocks_ch, CLASSIFY_CONTEXT.out.ctx).collect())
+    RUN_REPORT(collated[0].mix(blocks_ch, CLASSIFY_CONTEXT.out.ctx,
+                               pangraph_blocks.pairwise, pangraph_groups.groups)
+              .collect())
 }

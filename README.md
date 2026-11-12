@@ -76,6 +76,10 @@ which matters because on arm64 the JVM's architecture leaks to child processes.
 | `results/gene_families.tsv` | CDS, clustered by sequence (90% id / 80% cov) so the figure can colour genes by homology instead of by product name |
 | `results/structural_groups.tsv` | locus, grouped with others sharing ≥90% of the vehicle + conserved-core genes — a fast triage for "do these plausibly share one history", not the decisive sequence-level test |
 | `results/junctions.tsv` | IS call, with its target-site duplication where one boundary pair was clean enough to search, and whether that TSD is shared with another locus |
+| `results/pangraph/graph.json` | pangraph's own N-way alignment graph (Noll, Molari & Neher 2023) over all loci — every input is an explicit ordered walk over blocks, so rearrangements are represented directly, not approximated |
+| `results/pangraph_pairwise.tsv` | locus pair, with `shared_frac` (sequence identity-derived) — always produced, independent of `run_viz` |
+| `results/pangraph_groups.tsv` | locus, grouped by `scripts/groups.py`'s union-find over `pangraph_pairwise.tsv` at `--min-similarity 0.85` |
+| `results/pangraph_blocks.tsv`, `results/pangraph_context_groups.tsv` | the drawable pangraph blocks and the up/downstream context groupings behind the figures below |
 | **`results/summary.tsv`** | **locus — read this one first** |
 
 `figures/colour_blocks.png` (+ `.svg`) is the bait-aligned architecture panel —
@@ -84,6 +88,20 @@ schematic computed from the data underneath. `figures/is_matrix.png` is the
 companion IS presence/absence heatmap. Built by `scripts/colour_blocks.py`;
 `--style tracks` switches from the default one-row-per-locus view to IS/CDS/
 cargo on separate lines coloured by family.
+
+`figures/pangraph_blocks.png` (+ `.svg`) is the sequence-homology counterpart —
+one row per locus, coloured by pangraph block identity rather than gene name,
+built by `scripts/pangraph_blocks.py` (`--row-scale`, default 0.5, packs rows
+to roughly half height so more loci fit in one figure). `figures/
+pangraph_annotated.png` overlays `colour_blocks.py`'s gene/IS arrows (Bakta's
+calls among them, when `run_bakta=true`) on top of that same sequence-identity
+background, one coordinate system, via `scripts/pangraph_annotated.py`.
+`figures/pangraph_context_summary.png` (+ `.svg` and a two-sheet
+`results/pangraph_context_summary.xlsx`) summarises loci by shared up/
+downstream context group. This is now the **sole** sequence-homology method —
+an earlier pairwise dc-megablast cross-check ("flanker") was retired once
+pangraph's real alignment graph proved to subsume it; see `main.nf`'s comment
+above `BUILD_PANGRAPH_GRAPH` for why.
 
 `results/run_report.txt` accounts for the whole run on one page.
 **[`OUTPUTS.md`](OUTPUTS.md) describes every table and every column.**
@@ -98,12 +116,21 @@ different data.
 - Nextflow ≥ 23.04 and a **native** JDK 17
 - BLAST+ ≥ 2.17
 - Python 3 (standard library only — no biopython, no pandas) plus `matplotlib`
-  for the figures (`colour_blocks.py`, `structural_groups.py`)
+  and `scipy` for the figures (`colour_blocks.py`, `structural_groups.py`,
+  `pangraph_blocks.py`, `pangraph_annotated.py`), plus `openpyxl` for
+  `pangraph_context_summary.py`'s workbook
+- `pangraph` (native binary, no build needed — `env/gadi_pangraph_setup.sh`
+  / `env/firefly_pangraph_setup.sh` fetch it) for the sequence-homology
+  alignment graph
 - Bakta (`db-light`), for uniform annotation where GenBank's own is absent or
   inconsistent — runs on Gadi via Apptainer (`env/gadi_bakta_setup.sh`);
   compute nodes have no network, so the container and database are pulled on
   `copyq` first and passed to the run as a local `.sif` path, never a
   `docker://` URI
+- Same container-on-copyq pattern for the matplotlib/scipy stage on Gadi
+  (`env/gadi_viz_setup.sh`) — see `env/gadi_run.sh`'s `VIZ=true` flag.
+  Without it, the pipeline still produces every TSV table, just not the two
+  `.png`/`.svg` figures from the sequence-homology stage.
 - R is **not** required — the figures are Python/matplotlib, not R
 
 Databases: an ISfinder mirror (`db/isfinder/`) and the CGE PlasmidFinder
@@ -149,7 +176,11 @@ Stage 6). See `PIPELINE.md` §8 for the full per-stage table.
 
 ## Citing
 
-If you use TAflank, please cite Acman et al. 2022 for the method it follows.
-The structural-variant splitting step is a reimplementation, not a fork, of
+See [`CITATION.cff`](CITATION.cff) for how to cite TAflank itself. It cites
+pangraph (Noll, Molari & Neher 2023) and Acman et al. 2022 **separately**, in
+its `references:` section — TAflank wraps and orchestrates both, but created
+neither, and the file deliberately does not fold them into TAflank's own
+authorship. The structural-variant splitting step is a reimplementation, not
+a fork, of
 [`macman123/track_structural_variants`](https://github.com/macman123/track_structural_variants) —
 see `PIPELINE_DESCRIPTION.md` for why, and for the parameter differences.

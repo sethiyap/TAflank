@@ -50,6 +50,19 @@
 #                 puts it. Nextflow is given this FILE, never the docker://
 #                 URI -- handed a URI it tries to pull from quay.io on the
 #                 compute node and dies with "network is unreachable".
+#   VIZ=true      render the PANGRAPH_ANNOTATED/PANGRAPH_CONTEXT_SUMMARY
+#                 .png/.svg figures, not just their TSV tables. Run
+#                 env/gadi_viz_setup.sh first: same reasoning as Bakta, it
+#                 pulls a container and compute nodes have no network to do
+#                 that themselves.
+#   VIZ_SIF=...   override the container image. Default: the newest
+#                 *.sif in /g/data/rg42/viz_env, where the installer puts it.
+#   PANGRAPH=true run the pangraph (N-way alignment graph) sequence-homology
+#                 stage -- BUILD_PANGRAPH_GRAPH and everything downstream of
+#                 it. Run env/gadi_pangraph_setup.sh first: compute nodes
+#                 have no network to download the binary themselves.
+#   PANGRAPH_BIN= override the binary path. Default: the newest
+#                 bin/pangraph under /g/data/rg42/pangraph.
 #
 #   A different bait needs ENDS changed with it:
 #   qsub -v BAIT=/path/parDE.fa,ENDS=IS26 env/gadi_run.sh
@@ -81,6 +94,10 @@ FLANK="${FLANK:-20000}"
 BAKTA="${BAKTA:-false}"
 BAKTA_DB="${BAKTA_DB:-/g/data/rg42/bakta_db/db-light}"
 BAKTA_SIF="${BAKTA_SIF:-}"
+VIZ="${VIZ:-false}"
+VIZ_SIF="${VIZ_SIF:-}"
+PANGRAPH="${PANGRAPH:-false}"
+PANGRAPH_BIN="${PANGRAPH_BIN:-}"
 
 # Fail now, with a readable message, rather than 20 minutes into the queue.
 [ -s "$BAIT" ] || { echo "BAIT not found or empty: $BAIT" >&2; exit 2; }
@@ -112,10 +129,33 @@ if [ "$BAKTA" = "true" ]; then
         exit 2; }
 fi
 
+if [ "$VIZ" = "true" ]; then
+    if [ -z "$VIZ_SIF" ]; then
+        VIZ_SIF=$(ls -t /g/data/rg42/viz_env/*.sif 2>/dev/null | head -1) || true
+    fi
+    [ -s "$VIZ_SIF" ] || {
+        echo "no viz container image found in /g/data/rg42/viz_env" >&2
+        echo "compute nodes have NO outbound network, so Nextflow cannot pull" >&2
+        echo "one. Run env/gadi_viz_setup.sh, or pass VIZ_SIF=/path.sif" >&2
+        exit 2; }
+fi
+
+if [ "$PANGRAPH" = "true" ]; then
+    if [ -z "$PANGRAPH_BIN" ]; then
+        PANGRAPH_BIN=$(dirname "$(ls -t /g/data/rg42/pangraph/bin/pangraph 2>/dev/null | head -1)") || true
+    fi
+    [ -x "$PANGRAPH_BIN/pangraph" ] || {
+        echo "no pangraph binary found in /g/data/rg42/pangraph/bin" >&2
+        echo "compute nodes have NO outbound network, so it cannot be" >&2
+        echo "downloaded here. Run env/gadi_pangraph_setup.sh, or pass" >&2
+        echo "PANGRAPH_BIN=/dir/holding/pangraph" >&2
+        exit 2; }
+fi
+
 module purge
 module load nextflow/24.04.5
 module load blast/2.11.0
-[ "$BAKTA" = "true" ] && module load singularity
+{ [ "$BAKTA" = "true" ] || [ "$VIZ" = "true" ]; } && module load singularity
 
 export NXF_OPTS='-Xms512m -Xmx4g'
 export NXF_HOME="${NXF_HOME:-/scratch/rg42/$USER/.nextflow}"
@@ -131,6 +171,8 @@ echo "subregion: ${SUBREGIONS:-<none>}"
 echo "ends     : $ENDS"
 echo "filters  : tier_a=$TIER  replicon_type=$REPLICON  flank=$FLANK"
 echo "bakta    : $BAKTA${BAKTA:+  ${BAKTA_SIF:+image=$BAKTA_SIF}}"
+echo "viz      : $VIZ${VIZ:+  ${VIZ_SIF:+image=$VIZ_SIF}}"
+echo "pangraph : $PANGRAPH${PANGRAPH:+  ${PANGRAPH_BIN:+bin=$PANGRAPH_BIN}}"
 echo
 
 ARGS=(-profile gadi_single
@@ -155,6 +197,8 @@ fi
 
 [ "$BAKTA" = "true" ] && ARGS+=(--run_bakta true --bakta_db "$BAKTA_DB" \
                                 --bakta_container "$BAKTA_SIF")
+[ "$VIZ" = "true" ] && ARGS+=(--run_viz true --viz_container "$VIZ_SIF")
+[ "$PANGRAPH" = "true" ] && ARGS+=(--run_pangraph true --pangraph_bin "$PANGRAPH_BIN")
 
 nextflow run main.nf "${ARGS[@]}"
 

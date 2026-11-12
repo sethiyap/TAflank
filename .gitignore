@@ -13,6 +13,8 @@ work/
 .nextflow*
 configs/system_paths_local.yaml
 configs/system_paths.config
+__pycache__/
+*.pyc
 
 # Decks and lock files
 *.pptx
@@ -37,3 +39,8 @@ run_all/bakta/
 figures_tracks/
 figures_zoom/
 results/_families_tmp/
+run_all_v2/
+run_flank10k/
+run_vX/
+results/pangraph/
+results/pairwise_evidence.tsv
