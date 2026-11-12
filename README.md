@@ -53,6 +53,71 @@ survives.
   identified Tn125 for blaNDM. `is_min_length` defaults to 0 and is *asserted*
   to stay there.
 
+## Installation
+
+```bash
+git clone https://github.com/sethiyap/TAflank.git
+cd TAflank
+```
+
+1. **Nextflow ≥ 23.04 + a native JDK 17.** Install Nextflow normally (e.g.
+   `curl -s https://get.nextflow.io | bash`), then a JDK built for your
+   machine's actual architecture — on arm64 macOS that means
+   `brew install openjdk@17` from an **arm64** Homebrew, not an x86_64/Rosetta
+   one, since on arm64 the JVM's architecture leaks to every child process
+   Nextflow spawns. Always run via **`./tools/nf`**, not bare `nextflow` —
+   the wrapper finds and validates a native JDK for you and refuses to run
+   under a mismatched one; see the comment at the top of `tools/nf` for why
+   this was worth automating rather than just documenting.
+2. **BLAST+ ≥ 2.17** — either `brew install blast`, or the native build
+   ([ncbi/blast+ downloads](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/))
+   if your package manager's version is older or the wrong architecture.
+3. **`pangraph`** — a single statically-linked binary, no build step: fetch
+   the release matching your OS/arch from
+   [neherlab/pangraph releases](https://github.com/neherlab/pangraph/releases)
+   (`env/gadi_pangraph_setup.sh`/`env/firefly_pangraph_setup.sh` do this
+   automatically on those clusters; there is no local-mac equivalent script
+   yet, so fetch the binary by hand and note where you put it).
+4. **Python for the figures** — the core pipeline needs only the standard
+   library, but `colour_blocks.py`/`pangraph_blocks.py`/`pangraph_annotated.py`
+   need `matplotlib`+`scipy`, and `pangraph_context_summary.py` additionally
+   needs `openpyxl`. Any Python 3 with those installed works (a venv +
+   `pip install matplotlib scipy openpyxl`, or a conda/anaconda environment);
+   note its path for the next step.
+5. **ISfinder + PlasmidFinder databases** — no automated fetch script exists
+   for these yet; follow the exact commands recorded in
+   `db/isfinder/PROVENANCE.txt` and `db/plasmidfinder/PROVENANCE.txt` (a
+   community mirror clone and a `bitbucket.org/genomicepidemiology/plasmidfinder_db`
+   clone + concatenation, respectively — both gitignored since they're
+   fetched data, not source).
+6. **Point `configs/local.config` at your actual paths** — `blast_bin`,
+   `python_exec`/`viz_python_exec`, and `pangraph_bin` are machine-specific
+   absolute paths, not shipped with the repo (every laptop's install
+   locations differ). Edit the four `params {}` lines in that file to match
+   steps 2–4 above.
+7. **Bakta is the one piece with no local-mac path at all** —
+   `amrfinderplus` has no macOS build, so `run_bakta` stays `false` locally
+   and `GENE_BLOCKS` falls back to GenBank's own annotation automatically
+   (no flag needed). Bakta only runs via Apptainer on Gadi/Firefly
+   (`env/gadi_bakta_setup.sh`); this is optional, not required to use the
+   pipeline.
+
+Sanity-check each piece before a real run (there is no `--help`/dry-run mode
+in `main.nf` itself, so check the tools directly rather than via Nextflow):
+
+```bash
+./tools/nf -version   # confirms the native-JDK wrapper works
+
+# paths below are read straight out of configs/local.config -- edit that
+# file first (step 6), then this just confirms what you pointed it at
+BB=$(grep -E "^\s*blast_bin\s*=" configs/local.config | cut -d"'" -f2)
+PB=$(grep -E "^\s*pangraph_bin\s*=" configs/local.config | cut -d"'" -f2)
+VP=$(grep -E "^\s*viz_python_exec\s*=" configs/local.config | cut -d"'" -f2)
+"$BB/blastn" -version
+"$PB/pangraph" --version
+"$VP" -c "import matplotlib, scipy, openpyxl; print('viz deps ok')"
+```
+
 ## Quick start
 
 ```bash
