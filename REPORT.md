@@ -192,6 +192,33 @@ loci). Sending the output to `test_relBE_run/` rather than the default
 See the README's **Installation** section first if any of the tools
 (`blastn`, `pangraph`, the Python figure dependencies) aren't set up yet.
 
+**Skipping the rebuild, with a caveat.** The command above lets `BUILD_DB`
+rebuild `blastdb/public16` from `data/public_16/fasta` on every run — fast
+for 16 genomes, and one less thing to keep in sync. To search an
+**already-built** database instead (the point of `--blastdb` for a real
+sweep against something like NCBI's `nt_prok`), add it and clear
+`genome_dir` so `BUILD_DB` is skipped entirely:
+
+```bash
+./tools/nf run main.nf -profile local \
+    --bait anchors/relBE_seed.fa \
+    --replicon_type all \
+    --blastdb "$(pwd)/blastdb/public16" --genome_dir '' \
+    --outdir test_relBE_run/results --figdir test_relBE_run/figures
+```
+
+`--blastdb` takes an absolute path with **no file extension** — this is a
+prefix for `public16.n*`, not a directory. The caveat: setting `--blastdb`
+means `BUILD_DB` genuinely never runs, so if `blastdb/public16.*` doesn't
+already exist (e.g. it was cleaned up as a regenerable build artifact, which
+it is — see `.gitignore`), `blastn` fails with *"No alias or index file
+found for nucleotide database"* rather than building one for you. Rebuild it
+by hand first if needed:
+
+```bash
+./scripts/build_blastdb.sh data/public_16/fasta public16 'public16 (manual rebuild)'
+```
+
 ## 3. The pilot test: 16 input records
 
 The pilot used **16 closed GenBank records** as the search database — nine loci and two
