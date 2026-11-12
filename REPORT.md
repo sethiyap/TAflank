@@ -440,13 +440,23 @@ features, do two loci share.
 
 At `shared_frac ≥ 0.85` over the **whole** ±20 kb window (not restricted to the
 vehicle + core the way §7's signature is), pangraph finds far fewer multi-member
-groups:
+groups — these same groups are also the **11 unique up-/downstream contexts** drawn in
+`pangraph_context_summary.png` (§8) and tabulated in
+`results/pangraph_context_summary.xlsx`:
 
-| pangraph group | loci | weakest internal pair |
-|---|---|---|
-| 3 loci | CP012599, CP028197, CP028537 | 0.842 (CP012599↔CP028537 directly; the group is **chained** through CP028197, whose pairs with each of the other two clear 0.85 at 0.878 and 0.877) |
-| 2 loci | CP020841, CP021960 | 0.995 |
-| 9 singletons | CP006642, CP010512, CP017220, CP018961, CP023893, CP026216, CP026975, LT991956, MF344582 | — |
+| context | n | representative (medoid) | members | weakest internal pair |
+|---|---|---|---|---|
+| 1 | 3 | CP028197 | CP012599, **CP028197**, CP028537 | 0.842 (CP012599↔CP028537 directly; the group is **chained** through CP028197, whose pairs with each of the other two clear 0.85 at 0.878 and 0.877) |
+| 2 | 2 | CP020841 | **CP020841**, CP021960 | 0.995 |
+| 3 | 1 | CP006642 | CP006642 | — |
+| 4 | 1 | CP010512 | CP010512 | — |
+| 5 | 1 | CP017220 | CP017220 | — |
+| 6 | 1 | CP018961 | CP018961 | — |
+| 7 | 1 | CP023893 | CP023893 | — |
+| 8 | 1 | CP026216 | CP026216 | — |
+| 9 | 1 | CP026975 | CP026975 | — |
+| 10 | 1 | LT991956 | LT991956 | — |
+| 11 | 1 | MF344582 | MF344582 | — |
 
 This is not a contradiction of §7 — it is a stricter cross-check. §7 deliberately
 restricted the comparison to five conserved genes so locus-private insertions would not
@@ -454,14 +464,13 @@ swamp the signal; pangraph's threshold is applied to the whole window, where pri
 insertion diversity dominates for most loci. The two groups that clear **both** tests —
 {CP012599, CP028197, CP028537} and {CP020841, CP021960} — are the strongest candidates
 in this pilot for one shared insertion history, having been found independently by two
-methods that look at entirely different evidence. The rest of §7's groups share an
-element catalogue without (yet) sharing enough raw sequence to confirm common descent at
-this coarser threshold — exactly the ambiguity §7 warned its own grouping could not
-resolve on its own.
-
-pangraph also collapses the 14 loci into **11 unique up-/downstream contexts**
-(`results/pangraph_context_summary.xlsx`), each drawn from its most-typical ("medoid")
-member — see `pangraph_context_summary.png` in §8.
+methods that look at entirely different evidence. The remaining 9 singleton contexts
+share no up-/downstream sequence with any other locus at this threshold — including
+loci that §7's gene-architecture Jaccard still grouped together (CP023893, CP026975
+and LT991956 all landed in §7's "ISEsa1 only" group, but are 3 separate singleton
+contexts here): an element catalogue in common without (yet) enough raw sequence in
+common to confirm one shared insertion event — exactly the ambiguity §7 warned its own
+grouping could not resolve on its own.
 
 An earlier version of this pipeline used a pairwise `blastn -task dc-megablast`
 cross-check here instead. It was retired once pangraph's real N-way alignment graph
