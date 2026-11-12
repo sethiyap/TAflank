@@ -16,7 +16,11 @@ bait.fa ──► local BLAST ──► Tier A ──► fetch metadata ──�
  (any gene)   (vs a DB)    (sequence)    (batched)       (record)         │
                                                                           ├─► IS elements (ISfinder)
                                                                           ├─► replicon type (PlasmidFinder)
-                                                                          └─► collated tables
+                                                                          ├─► gene annotation (Bakta / GenBank)
+                                                                          ├─► pangraph: N-way alignment graph
+                                                                          │   over all windows (sequence homology,
+                                                                          │   independent of gene calls)
+                                                                          └─► collated tables + figures
 ```
 
 The method follows **Acman et al. 2022**, *Nat Commun* **13**:1131 —
@@ -145,7 +149,9 @@ fetch date.
 | `OUTPUTS.md` | **what every output table and column means** |
 | `PIPELINE_DESCRIPTION.md` | **the implementation** — what runs, with what parameters, producing what files |
 | `PIPELINE.md` | **the scientific rationale** — why each filter exists, the MGE layers, the decision tree |
-| `CLAUDE.md` | project plan and conventions |
+
+`CLAUDE.md` (project plan and conventions) is kept locally and gitignored —
+not published to GitHub.
 
 ## Status
 

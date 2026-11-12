@@ -396,20 +396,78 @@ Every locus in `loci.tsv` appears in `summary.tsv` even if a layer produced
 nothing for it, so a silent drop shows up as a visible gap rather than a
 quietly smaller number.
 
+### BUILD_PANGRAPH_GRAPH → PANGRAPH_GROUPS → PANGRAPH_BLOCKS → PANGRAPH_ANNOTATED / PANGRAPH_CONTEXT_SUMMARY
+
+A second, independent characterisation of the same extracted loci windows,
+running alongside the gene-annotation stages above rather than after them —
+sequence homology instead of gene names. Gated by `params.run_pangraph`
+(`when:` on `BUILD_PANGRAPH_GRAPH` alone cascades to every process below it,
+since each depends on the one before).
+
+- **`BUILD_PANGRAPH_GRAPH`** (`scripts/build_pangraph_graph.py`) concatenates
+  every locus FASTA and runs `pangraph build` once over the lot
+  (Noll, Molari & Neher 2023, *Microbial Genomics* **9**:001034; native Rust
+  binary, `${params.pangraph_bin}`). Output: `graph.json`, a true N-way
+  alignment graph — every genome is an explicit ordered walk over shared
+  blocks, each block with its own strand, so a rearrangement is represented
+  directly rather than approximated by chaining pairwise hits outward from a
+  core. An earlier version of this pipeline ran that pairwise approach
+  instead (`dc-megablast` all-vs-all, codenamed "flanker" in this repo's
+  history) as a cross-check; it was retired once pangraph's real alignment
+  graph proved to subsume it.
+- **`PANGRAPH_BLOCKS`** (`scripts/pangraph_blocks.py`) reads `graph.json` and
+  writes `pangraph_pairwise.tsv` (shared sequence fraction per locus pair),
+  `pangraph_blocks.tsv` and `pangraph_context_groups.tsv` (the drawable block
+  table and the up-/downstream grouping behind the figure). The TSVs always
+  run, regardless of `run_viz` — no plotting import happens unless
+  `draw_figure()` is actually called — but `pangraph_blocks.png`/`.svg` are
+  `optional:` outputs, skipped via `--no-figure` when `run_viz` is off.
+  `--row-scale` (`params.pangraph_row_scale`, default 0.5) halves row height
+  and scales label font to match, so more loci still fit in one legible
+  figure. The core (relB/relE span) is offset zero, same convention
+  `blocks/*.blocks.tsv` uses for gene calls.
+- **`PANGRAPH_GROUPS`** (`scripts/groups.py`, generic — the same
+  union-find-at-a-threshold pattern as `structural_groups.py`) groups loci by
+  `pangraph_pairwise.tsv`'s `shared_frac` at `params.pangraph_min_similarity`
+  (default 0.85). An independent, apples-to-apples second classification
+  beside `structural_groups.tsv`'s gene-Jaccard grouping — same column shape,
+  different evidence.
+- **`PANGRAPH_ANNOTATED`** (`scripts/pangraph_annotated.py`, `when:
+  params.run_viz`, pure figure with no tables-only fallback) overlays
+  `colour_blocks.py`'s gene/IS/cargo arrows — Bakta's calls among them,
+  whenever `run_bakta=true` — on top of the pangraph sequence-homology
+  background, at the same coordinate. Takes `pangraph_groups.tsv` only for
+  its swatch colour (visual only — it does not reorder rows, to avoid a
+  circular dependency on `PANGRAPH_BLOCKS`'s own pairwise output).
+- **`PANGRAPH_CONTEXT_SUMMARY`** (`scripts/pangraph_context_summary.py`,
+  `when: params.run_viz`) collapses loci by shared context group into one
+  figure plus a two-sheet `pangraph_context_summary.xlsx` workbook. Needs
+  `openpyxl` specifically, checked (warn-only) by
+  `env/gadi_viz_setup.sh` alongside matplotlib/scipy for the other two.
+
+The shared drawing/colouring primitives (`cluster_order`, content-addressed
+`colour_for`, `draw_figure`) that these three figure scripts all import live
+in `scripts/seq_blocks.py` — the renamed, slimmed survivor of the retired
+pairwise method's own block-drawing code.
+
 ---
 
 ## 4. On what basis hits are filtered
 
-Three tiers. Numbers are from the default plasmid run on the 16-record set.
+Three tiers. Diagram counts below are from the historical 16-record run,
+**before** Tier A's classification was rewritten from one combined
+pident-AND-qcov gate (with an unlabeled gray zone in between) to two
+independent checks — pident answers a paralogy question, qcov a completeness
+one, and they should not share one pass/fail gate. Re-run `BAIT_SEARCH` on
+the current code to get up-to-date counts under the current rule, below:
 
 ```
 blastn bait vs DB                                            15 HSPs
       │
 TIER A  sequence only — free, from the BLAST output alone
-      │    FULL        pident ≥95 AND qcov ≥95                    14
-      │    ORPHAN_*    half hit, one named subregion ≥80% covered  0
-      │    PARTIAL     below qcov, no single subregion dominant    0
-      │    PARALOGUE   pident <85 → RelE/ParE superfamily          1
+      │    PARALOGUE    pident <90 → RelE/ParE superfamily background  1
+      │    INCOMPLETE   pident ≥90 but qcov <95 (bait only partly hit) 0
+      │    FULL         pident ≥90 AND qcov ≥95                       14
       ▼
 TIER B  record metadata — batched esummary
       │    replicon_type = plasmid        → dropped 7 chromosomes
@@ -663,6 +721,11 @@ figure. All offsets assume the bait on `+`.
 | `results/blocks/*.blocks.tsv` | drawable feature | `feature_type, name, start, end, clipped_at_window_edge, colour_key, colour_source, annot_source` — the figure's input |
 | `results/summary.tsv` | locus | one line per locus joining all of the above, incl. `lab_alias`, `plasmidfinder_replicons`, `has_ISEsa1`, `has_ISEsa2`, `nested_events` |
 | `loci/plasmids/*.fa` | locus | the window itself; the FASTA header carries flank, truncation, wrap and bait position |
+| `results/pangraph/graph.json` | — | pangraph's N-way alignment graph over every locus window, one explicit ordered walk per genome |
+| `results/pangraph_pairwise.tsv` | locus pair | `locus_a, locus_b, shared_frac` |
+| `results/pangraph_groups.tsv` | locus | same shape as `structural_groups.tsv`, grouped by `shared_frac` instead of gene-Jaccard |
+| `results/pangraph_blocks.tsv`, `pangraph_context_groups.tsv` | block / locus | the sequence-homology figures' own input |
+| `figures/pangraph_blocks.png`, `pangraph_annotated.png`, `pangraph_context_summary.{png,xlsx}` | — | see §3's pangraph stage for what each shows |
 
 Read any of these with `scripts/tsvcols.py <file> <column> ...`, which selects
 columns **by name**. `cut -f<numbers>` is not safe on these tables: inserting a
@@ -964,8 +1027,8 @@ All settable on the command line (`--flank 15000`) or in `nextflow.config`.
 | `blast_cpus` | 1 | threads for the bait search |
 | `meta_source` | `ncbi` | `ncbi` \| `cache` \| `blast`. **`blast` makes no network call at all** |
 | `meta_cache` | `data/metadata_cache` | per-accession JSON cache |
-| `full_pident` / `full_qcov` | 95 / 95 | Tier A FULL threshold |
-| `paralogue_max_pident` | 85 | below this is superfamily background |
+| `full_qcov` | 95 | below this (at `pident >= paralogue_max_pident`) is `INCOMPLETE`, not `FULL` |
+| `paralogue_max_pident` | 90 | below this is `PARALOGUE` — superfamily background, dropped regardless of coverage |
 | `blast_task` | `blastn` | **not** megablast locally — but see the sweep note below |
 | `tier_a` | `FULL` | Tier A classes to carry forward |
 | `replicon_type` | `plasmid` | `''` keeps all |
@@ -974,6 +1037,11 @@ All settable on the command line (`--flank 15000`) or in `nextflow.config`.
 | `is_min_length` | **0** | asserted to stay 0 |
 | `is_max_target` | 10000 | above the 5,970-sequence ISfinder db |
 | `pf_min_cov` / `pf_min_id` | 80 / 95 | Acman et al. 2022 |
+| `run_pangraph` | true | gates the whole pangraph chain — one `when:` on `BUILD_PANGRAPH_GRAPH` cascades to every process after it |
+| `pangraph_bin` | `''` | dir holding the `pangraph` binary; `''` falls back to `PATH` |
+| `pangraph_min_similarity` | 0.85 | `PANGRAPH_GROUPS`' threshold on `shared_frac` |
+| `pangraph_row_scale` | 0.5 | row height / label font multiplier for `pangraph_blocks.png` |
+| `run_viz` | true | gates every matplotlib/scipy figure stage (not pangraph-specific — also `colour_blocks.py`'s figures) |
 
 
 ---
@@ -1062,7 +1130,8 @@ to the *bla*NDM literature the method is modelled on.
 | Uniform annotation (Bakta) | **BUILT, run on all 14 loci** | `db-light`, via Apptainer on Gadi (`env/gadi_bakta_setup.sh`). Compute nodes have no outbound network, so the container and database are pulled on `copyq` first and the run is given a local `.sif` path, never a `docker://` URI -- that distinction cost one failed run before it was fixed |
 | Gene families (clustering) | **BUILT** | `gene_families.py`: proteins translated from the Bakta GFF3 (verified against the relB/relE sequences in CLAUDE.md via `--check`, since the `.faa` an earlier run should have published wasn't), clustered at 90% id / 80% cov -- Roary's `-i 0.9 -s`, blastp instead of mmseqs2 (not installed; 363 proteins doesn't need it) |
 | Context classification (Tier C) | **BUILT, now two independent axes** | `CLASSIFY_CONTEXT` reproduces the hand classification on all four overlapping loci. `vehicle_class` (ISEsa1/ISEsa2 only) and the newer `core_class` (cytb/czc/relB/relE/hok_gef, never the vehicle) are scored separately and can disagree -- CP010512 is VEHICLE-HALF with a fully intact core |
-| Structural-variant splitting (Stage 6) | **not built** | Acman's method. Do **not** vendor the reference implementation: its released `track_variants.R` sets `step <- 100`, which cannot resolve the 64 bp fragment the decisive test depends on. `structural_groups.py`'s core-architecture Jaccard grouping is a fast proxy for "do these loci plausibly share one history" built in its place for now -- it says explicitly, in its own docstring, that it is not a substitute: two loci can share an element catalogue by convergence, not one insertion event, and this test cannot tell those apart because it never looks at the DNA between the elements |
+| Sequence-homology alignment graph (pangraph) | **BUILT** | `BUILD_PANGRAPH_GRAPH` → `pangraph_blocks.tsv`/`pangraph_groups.tsv`/three figures (§3). A true N-way alignment graph over every locus, replacing an earlier pairwise `dc-megablast` cross-check this repo retired once pangraph proved to subsume it |
+| Structural-variant splitting (Stage 6) | **not built as Acman's full method** | pangraph's alignment graph is a real step closer than `structural_groups.py`'s gene-Jaccard proxy -- it looks at the actual shared sequence, not just which named elements co-occur -- but it still does not do Acman's specific decisive test: cutting each hit at the core, resolving upstream/downstream separately, raising the splitting threshold in 10 bp steps, and building a `ggtree` with branch position = distance from core. Do **not** vendor the reference implementation either way: its released `track_variants.R` sets `step <- 100`, which cannot resolve the 64 bp fragment the decisive test depends on |
 | Colour-block figure (Stage 7) | **BUILT** | `colour_blocks.py`. `--style simple` (default: one row per locus, colour by role) or `--style tracks` (IS/CDS/cargo on separate lines, colour by family); `--groups`/`--junctions` overlay the Jaccard grouping and shared TSDs; an idealised-architecture schematic is computed from the data, not asserted, with each element placed at its median offset and flagged when that offset is literally invariant (czc, at -1184, in all 9 loci that carry it) |
 | ISEScan, IntegronFinder, mob_suite, geNomad | **not built** | all reachable via Apptainer on Firefly |
 | NCBI sweep (Stage 9) | **not built** | gated on Stage 2; ~26,539 complete Enterobacterales assemblies |

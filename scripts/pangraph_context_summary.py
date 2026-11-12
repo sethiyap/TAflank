@@ -225,8 +225,29 @@ def main():
         '(pangraph)\n'
         'one row = one context, drawn from its medoid (most-typical) '
         f'member; see {os.path.basename(a.out_xlsx)} for every locus '
-        'in each context',
-        fontsize=10, pad=14)
+        'in each context\n'
+        'block colour = pangraph sequence identity (same colour = same set '
+        'of loci sharing that exact block); pale pink = private to this '
+        'context; left-edge swatch = context-group colour',
+        fontsize=10, pad=16)
+
+    legend_items = [
+        ('sequence: shared (colour = which loci share it)',
+         dict(facecolor='#6baed6')),
+        ('sequence: private (unique to this context)',
+         dict(facecolor=PRIVATE_COLOUR)),
+        ('sequence: core (relB + relE)', dict(facecolor=CORE_COLOUR)),
+        ('left-edge swatch = context group (pangraph_groups.tsv), '
+         'not a sequence block', dict(facecolor='#999999')),
+    ]
+    for i, (label, spec) in enumerate(legend_items):
+        yy = -1.4 - i * 0.4
+        xx = -a.flank * 1.30
+        ax.add_patch(Rectangle((xx, yy - 0.12), a.flank * 0.04, 0.24,
+                               edgecolor='black', lw=0.4, clip_on=False,
+                               **spec))
+        ax.text(xx + a.flank * 0.06, yy, label, fontsize=6.5, va='center',
+               clip_on=False)
 
     os.makedirs(a.outdir, exist_ok=True)
     fig.savefig(os.path.join(a.outdir, 'pangraph_context_summary.png'),

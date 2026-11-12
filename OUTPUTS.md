@@ -299,6 +299,62 @@ One row per locus, from `scripts/structural_groups.py`.
 `results/structural_pairs.tsv` (written with `--out-pairs`) has every
 pairwise score, for checking a specific pair without re-running anything.
 
+### `results/pangraph/graph.json` — the sequence-homology alignment graph
+
+pangraph's own output (Noll, Molari & Neher 2023; `scripts/build_pangraph_graph.py`
+runs `pangraph build` over every extracted locus window in one call). Every
+input genome is represented as an explicit ordered walk over shared blocks,
+each block with its own strand — a true N-way alignment graph, not a pairwise
+approximation chained outward from the core. This is the **sole**
+sequence-homology method now (an earlier pairwise `dc-megablast` cross-check,
+"flanker", was retired once this proved to subsume it — it could not
+represent inversions/rearrangements the way pangraph's graph does).
+
+### `results/pangraph_pairwise.tsv` — pairwise shared-sequence fraction
+
+One row per locus pair, derived from the graph's blocks by
+`scripts/pangraph_blocks.py`. Always produced, independent of `run_viz` — a
+plain TSV, not a figure.
+
+| column | meaning |
+|---|---|
+| `locus_a`, `locus_b` | the pair |
+| `shared_frac` | fraction of total block length the pair has in common |
+
+### `results/pangraph_groups.tsv` — sequence-identity grouping
+
+One row per locus, from `scripts/groups.py` (generic union-find threshold
+grouping, reused from `structural_groups.py`'s pattern) run on
+`pangraph_pairwise.tsv` at `--min-similarity 0.85`. Same column shape as
+`structural_groups.tsv` above, but grouped by **shared sequence**, not by
+shared gene/element names — an independent, apples-to-apples second
+classification to set beside it.
+
+### `results/pangraph_blocks.tsv`, `results/pangraph_context_groups.tsv`
+
+The drawable block table and the up-/downstream context groupings behind
+`figures/pangraph_blocks.png`. One row per block per locus, with the core
+(relB/relE span) at offset zero, exactly as `blocks/*.blocks.tsv` uses the
+core as coordinate zero for gene calls.
+
+### `figures/pangraph_blocks.png`, `pangraph_annotated.png`, `pangraph_context_summary.{png,xlsx}`
+
+Three pangraph-based figures, one row per locus:
+
+- **`pangraph_blocks.png`** — pure sequence-homology blocks, coloured by
+  content-addressed block identity (`scripts/pangraph_blocks.py`,
+  `--row-scale` default 0.5 packs rows to roughly half height so more loci
+  fit in one legible figure).
+- **`pangraph_annotated.png`** — the same sequence-homology background with
+  `colour_blocks.py`'s gene/IS/cargo arrows overlaid on top at the same
+  coordinate (`scripts/pangraph_annotated.py`). Bakta's calls appear here,
+  via `blocks/*.blocks.tsv`, whenever `--run_bakta true`; this figure never
+  runs Bakta itself.
+- **`pangraph_context_summary.png`** (+ the companion
+  `results/pangraph_context_summary.xlsx` two-sheet workbook) — loci
+  collapsed by shared up-/downstream context group, for a one-screen view of
+  which loci share a history on each side of the core independently.
+
 ### `figures/is_matrix.tsv` — IS presence matrix
 
 One row per locus, one column per IS element, produced by

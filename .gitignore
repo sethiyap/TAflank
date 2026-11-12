@@ -21,6 +21,9 @@ __pycache__/
 ~$*.pptx
 .DS_Store
 
+# Project plan/notes -- internal working doc, not for the public repo
+CLAUDE.md
+
 # Local archive of the pre-pipeline state (duplicates git tag v0-flank15k)
 archive/
 

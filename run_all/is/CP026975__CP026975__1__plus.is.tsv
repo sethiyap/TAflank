@@ -1,3 +1,0 @@
-locus_id	element	family	group	win_start	win_end	length	strand	pident	query_cov	cov_class	is_fragment	clipped_at_window_edge	clip_cause	clipped_missing_bp	offset_from_bait	sub_start	sub_end	slen	nested_in	interrupts	evalue	bitscore
-CP026975__CP026975__1__plus	ISKpn8	IS3	IS150	6224	7666	1443	+	99.931	100.0	complete	no	no	-	0	-13777	1	1443	1443			0.0	2599.0
-CP026975__CP026975__1__plus	ISEsa1	ISNCY	IS1202	7757	9362	1606	+	91.656	99.8	complete	no	no	-	0	-12244	1	1606	1609			0.0	2293.0

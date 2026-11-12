@@ -249,7 +249,8 @@ is the level that answers the project's question.
 | 9 | Is it phage-borne? | **`geNomad`** | window → prophage | `[ ]` |
 | 10 | How did it enter a chromosome? | **`ICEfinder` / `oriTfinder`** | chr window → ICE | `[ ]` |
 | 11 | **Is there a direct repeat at the junction?** | **custom script** (mismatch-tolerant) | window + IS coords → DR | `[OK]` |
-| 12 | How do the loci relate to each other? | **`blastn` all-vs-all** `dc-megablast` + R | all loci → graph, `ggtree` | `[ ]` |
+| 12 | How do the loci relate to each other, by sequence? | **pangraph** (N-way alignment graph, Noll/Molari/Neher 2023) | all loci → block graph, pairwise `shared_frac`, groups | `[OK]` |
+| 12b | The decisive splitting test: cut at the core, raise the threshold, `ggtree` by distance | **`blastn` all-vs-all** `dc-megablast` + R, Acman's specific method | all loci → graph, `ggtree` | `[ ]` |
 | 13 | Do they cluster by host or by backbone? | **R `vegan`** (Jaccard + PERMANOVA) | IS matrix → stats | `[ ]` |
 
 **BLAST does four distinct jobs** — worth keeping separate in your head:
@@ -660,8 +661,9 @@ Companion tables: `core_conservation.tsv`, `structural_variants.tsv`.
 | 3b — gene families | `[OK]` `scripts/gene_families.py`: proteins translated from the Bakta GFF3 (its own `.faa` wasn't published by an earlier run; `--check` proves the translation against the relB/relE sequences in CLAUDE.md), clustered at 90% id / 80% cov. 363 CDS -> 258 families across 14 loci |
 | 3c — same-history grouping | `[OK]` `scripts/structural_groups.py`: union-find on core-architecture Jaccard (vehicle + cytb/czc/relB/relE/hok_gef only -- the full-window version found almost nothing, see the script's own docstring). 14 loci -> 6 groups at the current gate, every multi-member group pairwise 1.00 internally. This is the FAST triage §8's row 6 (PERMANOVA) still needs, not a replacement for it |
 | 3d — the figure | `[OK]` `scripts/colour_blocks.py`: bait-aligned architecture panel + IS presence heatmap + an idealised-architecture schematic computed from the data (median offset per element, flagged when it is literally invariant -- czc is, at -1184, in all 9 loci that carry it). `--style simple` (default, one row, colour by role) or `--style tracks` (IS/CDS/cargo separated, colour by family); `--groups`/`--junctions` overlay the Stage 3c/Layer 8 results |
+| 3e — pangraph (sequence homology) | `[OK]` `build_pangraph_graph.py` runs pangraph (Noll, Molari & Neher 2023) over all 14 loci -> a true N-way alignment graph; `pangraph_blocks.py`/`groups.py`/`pangraph_annotated.py`/`pangraph_context_summary.py` give pairwise `shared_frac`, sequence-identity grouping, and three figures. Replaces an earlier pairwise `dc-megablast` cross-check ("flanker") this repo retired once pangraph proved to subsume it -- real rearrangement representation, not pairwise approximation |
 | 4 — TADB3 expansion | `[ ]` |
-| 5 — structural variants, decisive test | `[ ]` the real version (all-vs-all `dc-megablast`, threshold-stepped, `ggtree`) is NOT built. Stage 3c's Jaccard grouping and 3d's schematic are useful, honest proxies, not substitutes -- both say so in their own docs |
+| 5 — structural variants, decisive test | `[ ]` the real version (all-vs-all `dc-megablast`, threshold-stepped, `ggtree`) is NOT built. Stage 3c's Jaccard grouping, 3d's schematic, and 3e's pangraph graph are useful, honest proxies -- 3e looks at actual shared sequence rather than named-element co-occurrence, so it is the closest of the three -- but none is a substitute for the specific core-cut, threshold-stepped `ggtree` test; all three say so in their own docs |
 | 6 — grouping by species | `[ ]` two tests ready: 0/37 vs 51/108 E. coli HI2 split (Fisher); chromosome co-carriage. Jaccard+PERMANOVA (`vegan`) not run |
 
 **Data in hand:** 16 closed GenBank records, all lengths verified against their `LOCUS`
