@@ -102,8 +102,12 @@ cd TAflank
    (`env/gadi_bakta_setup.sh`); this is optional, not required to use the
    pipeline.
 
-Sanity-check each piece before a real run (there is no `--help`/dry-run mode
-in `main.nf` itself, so check the tools directly rather than via Nextflow):
+`./tools/nf run main.nf -profile local --help` prints every parameter worth
+knowing about, grouped by what you'd actually change, and exits without
+running anything; `./tools/nf config main.nf -profile local` dumps the full
+resolved parameter list with current values instead, no descriptions.
+
+Sanity-check each tool directly before a real run:
 
 ```bash
 ./tools/nf -version   # confirms the native-JDK wrapper works
