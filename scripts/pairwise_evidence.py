@@ -6,7 +6,7 @@ call per locus pair, so "ancestral vehicle vs. independent acquisition"
 figures.
 
   pairwise_evidence.py --genes results/structural_pairs.tsv \
-                        --seq results/pangraph_pairwise.tsv \
+                        --seq results/pangraph/pangraph_pairwise.tsv \
                         --out results/pairwise_evidence.tsv
 
 structural_pairs.tsv (structural_groups.py) says whether two loci carry the
@@ -43,7 +43,7 @@ def main():
     p.add_argument('--genes', required=True,
                    help='results/structural_pairs.tsv (structural_groups.py)')
     p.add_argument('--seq', required=True,
-                   help='results/pangraph_pairwise.tsv (pangraph_blocks.py)')
+                   help='results/pangraph/pangraph_pairwise.tsv (pangraph_blocks.py)')
     p.add_argument('--out', default='results/pairwise_evidence.tsv')
     p.add_argument('--gene-jaccard-min', type=float, default=0.8,
                    help='>= this core_jaccard counts as "genes agree"')

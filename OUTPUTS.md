@@ -261,7 +261,9 @@ these families are 90%). It is useful as a cross-check, not as a substitute.
 
 ### `results/junctions.tsv` — target-site duplications
 
-One row per IS call, from `scripts/relbe_junctions.py`.
+One row per IS call, from `scripts/relbe_junctions.py`, run automatically as
+`RELBE_JUNCTIONS` every pipeline run (unconditional — cheap, stdlib, and
+feeds `COLOUR_BLOCKS`'s TSD-marker overlay as well as standing on its own).
 
 | column | meaning |
 |---|---|
@@ -283,7 +285,9 @@ didn't quite clear the threshold actually came.
 
 ### `results/structural_groups.tsv` — same-history grouping
 
-One row per locus, from `scripts/structural_groups.py`.
+One row per locus, from `scripts/structural_groups.py`, run automatically as
+`STRUCTURAL_GROUPS` every pipeline run — same reasoning as `RELBE_JUNCTIONS`
+above, and it feeds `COLOUR_BLOCKS`'s grouping-swatch overlay.
 
 | column | meaning |
 |---|---|
@@ -310,7 +314,13 @@ sequence-homology method now (an earlier pairwise `dc-megablast` cross-check,
 "flanker", was retired once this proved to subsume it — it could not
 represent inversions/rearrangements the way pangraph's graph does).
 
-### `results/pangraph_pairwise.tsv` — pairwise shared-sequence fraction
+All pangraph tables below live under `results/pangraph/` (and their figures
+under `figures/pangraph/`) — one subfolder, kept apart from `colour_blocks.py`'s
+own outputs (`figures/colour_blocks/`) and every other top-level table, since
+the two methods answer different questions (sequence identity vs gene
+identity) and used to sit flat, intermixed with everything else.
+
+### `results/pangraph/pangraph_pairwise.tsv` — pairwise shared-sequence fraction
 
 One row per locus pair, derived from the graph's blocks by
 `scripts/pangraph_blocks.py`. Always produced, independent of `run_viz` — a
@@ -321,7 +331,7 @@ plain TSV, not a figure.
 | `locus_a`, `locus_b` | the pair |
 | `shared_frac` | fraction of total block length the pair has in common |
 
-### `results/pangraph_groups.tsv` — sequence-identity grouping
+### `results/pangraph/pangraph_groups.tsv` — sequence-identity grouping
 
 One row per locus, from `scripts/groups.py` (generic union-find threshold
 grouping, reused from `structural_groups.py`'s pattern) run on
@@ -330,14 +340,14 @@ grouping, reused from `structural_groups.py`'s pattern) run on
 shared gene/element names — an independent, apples-to-apples second
 classification to set beside it.
 
-### `results/pangraph_blocks.tsv`, `results/pangraph_context_groups.tsv`
+### `results/pangraph/pangraph_blocks.tsv`, `pangraph_context_groups.tsv`
 
 The drawable block table and the up-/downstream context groupings behind
-`figures/pangraph_blocks.png`. One row per block per locus, with the core
-(relB/relE span) at offset zero, exactly as `blocks/*.blocks.tsv` uses the
-core as coordinate zero for gene calls.
+`figures/pangraph/pangraph_blocks.png`. One row per block per locus, with the
+core (relB/relE span) at offset zero, exactly as `blocks/*.blocks.tsv` uses
+the core as coordinate zero for gene calls.
 
-### `figures/pangraph_blocks.png`, `pangraph_annotated.png`, `pangraph_context_summary.{png,xlsx}`
+### `figures/pangraph/pangraph_blocks.png`, `pangraph_annotated.png`, `pangraph_context_summary.{png,xlsx}`
 
 Three pangraph-based figures, one row per locus:
 
@@ -351,14 +361,15 @@ Three pangraph-based figures, one row per locus:
   via `blocks/*.blocks.tsv`, whenever `--run_bakta true`; this figure never
   runs Bakta itself.
 - **`pangraph_context_summary.png`** (+ the companion
-  `results/pangraph_context_summary.xlsx` two-sheet workbook) — loci
+  `results/pangraph/pangraph_context_summary.xlsx` two-sheet workbook) — loci
   collapsed by shared up-/downstream context group, for a one-screen view of
   which loci share a history on each side of the core independently.
 
-### `figures/is_matrix.tsv` — IS presence matrix
+### `figures/colour_blocks/is_matrix.tsv` — IS presence matrix
 
 One row per locus, one column per IS element, produced by
-`scripts/colour_blocks.py` alongside the figures.
+`scripts/colour_blocks.py` alongside the figures (`figures/colour_blocks/`,
+run automatically as `COLOUR_BLOCKS` — see above).
 
 | column | meaning |
 |---|---|

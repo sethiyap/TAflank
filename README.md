@@ -161,31 +161,43 @@ which matters because on arm64 the JVM's architecture leaks to child processes.
 | `results/structural_groups.tsv` | locus, grouped with others sharing ≥90% of the vehicle + conserved-core genes — a fast triage for "do these plausibly share one history", not the decisive sequence-level test |
 | `results/junctions.tsv` | IS call, with its target-site duplication where one boundary pair was clean enough to search, and whether that TSD is shared with another locus |
 | `results/pangraph/graph.json` | pangraph's own N-way alignment graph (Noll, Molari & Neher 2023) over all loci — every input is an explicit ordered walk over blocks, so rearrangements are represented directly, not approximated |
-| `results/pangraph_pairwise.tsv` | locus pair, with `shared_frac` (sequence identity-derived) — always produced, independent of `run_viz` |
-| `results/pangraph_groups.tsv` | locus, grouped by `scripts/groups.py`'s union-find over `pangraph_pairwise.tsv` at `--min-similarity 0.85` |
-| `results/pangraph_blocks.tsv`, `results/pangraph_context_groups.tsv` | the drawable pangraph blocks and the up/downstream context groupings behind the figures below |
+| `results/pangraph/pangraph_pairwise.tsv` | locus pair, with `shared_frac` (sequence identity-derived) — always produced, independent of `run_viz` |
+| `results/pangraph/pangraph_groups.tsv` | locus, grouped by `scripts/groups.py`'s union-find over `pangraph_pairwise.tsv` at `--min-similarity 0.85` |
+| `results/pangraph/pangraph_blocks.tsv`, `pangraph_context_groups.tsv` | the drawable pangraph blocks and the up/downstream context groupings behind the figures below |
 | **`results/summary.tsv`** | **locus — read this one first** |
 
-`figures/colour_blocks.png` (+ `.svg`) is the bait-aligned architecture panel —
-one row per locus, IS and cargo coloured by role, an idealised-architecture
-schematic computed from the data underneath. `figures/is_matrix.png` is the
-companion IS presence/absence heatmap. Built by `scripts/colour_blocks.py`;
-`--style tracks` switches from the default one-row-per-locus view to IS/CDS/
-cargo on separate lines coloured by family.
+All pangraph tables/figures live under one `pangraph/` subfolder (in both
+`results/` and `figures/`), and `colour_blocks.py`'s own outputs live under
+`figures/colour_blocks/` — kept apart since the two methods answer different
+questions (§ "Why this shape") and used to sit flat, intermixed with every
+other table/figure.
 
-`figures/pangraph_blocks.png` (+ `.svg`) is the sequence-homology counterpart —
-one row per locus, coloured by pangraph block identity rather than gene name,
-built by `scripts/pangraph_blocks.py` (`--row-scale`, default 0.5, packs rows
-to roughly half height so more loci fit in one figure). `figures/
-pangraph_annotated.png` overlays `colour_blocks.py`'s gene/IS arrows (Bakta's
-calls among them, when `run_bakta=true`) on top of that same sequence-identity
-background, one coordinate system, via `scripts/pangraph_annotated.py`.
-`figures/pangraph_context_summary.png` (+ `.svg` and a two-sheet
-`results/pangraph_context_summary.xlsx`) summarises loci by shared up/
-downstream context group. This is now the **sole** sequence-homology method —
-an earlier pairwise dc-megablast cross-check ("flanker") was retired once
-pangraph's real alignment graph proved to subsume it; see `main.nf`'s comment
-above `BUILD_PANGRAPH_GRAPH` for why.
+`figures/colour_blocks/colour_blocks.png` (+ `.svg`) is the bait-aligned
+architecture panel — one row per locus, IS and cargo coloured by role, a
+grouping swatch from `structural_groups.tsv` beside each label, an
+idealised-architecture schematic computed from the data underneath.
+`figures/colour_blocks/is_matrix.png` is the companion IS presence/absence
+heatmap. Built by `scripts/colour_blocks.py`, run automatically
+(`COLOUR_BLOCKS`, gated by `run_viz`) with `--style ${params.colour_blocks_style}`
+(default `simple`; `tracks` switches to IS/CDS/cargo on separate lines
+coloured by family) and the `--groups`/`--junctions` overlay wired in from
+`STRUCTURAL_GROUPS`/`RELBE_JUNCTIONS` automatically — no manual invocation
+needed for any of this now.
+
+`figures/pangraph/pangraph_blocks.png` (+ `.svg`) is the sequence-homology
+counterpart — one row per locus, coloured by pangraph block identity rather
+than gene name, built by `scripts/pangraph_blocks.py` (`--row-scale`, default
+0.5, packs rows to roughly half height so more loci fit in one figure).
+`figures/pangraph/pangraph_annotated.png` overlays `colour_blocks.py`'s
+gene/IS arrows (Bakta's calls among them, when `run_bakta=true`) on top of
+that same sequence-identity background, one coordinate system, via
+`scripts/pangraph_annotated.py`. `figures/pangraph/pangraph_context_summary.png`
+(+ `.svg` and a two-sheet `results/pangraph/pangraph_context_summary.xlsx`)
+summarises loci by shared up/downstream context group. This is now the
+**sole** sequence-homology method — an earlier pairwise dc-megablast
+cross-check ("flanker") was retired once pangraph's real alignment graph
+proved to subsume it; see `main.nf`'s comment above `BUILD_PANGRAPH_GRAPH`
+for why.
 
 `results/run_report.txt` accounts for the whole run on one page.
 **[`OUTPUTS.md`](OUTPUTS.md) describes every table and every column.**
@@ -247,9 +259,12 @@ gene-family clustering (`gene_families.py`); the architecture figure and IS
 heatmap (`colour_blocks.py`, two styles — now a real Nextflow stage,
 `COLOUR_BLOCKS`, gated by `run_viz` like the pangraph figures, rather than a
 hand-run script you had to already know existed); direct-repeat/TSD scanning
-(`relbe_junctions.py` — proven working on real data, inconclusive for the
-vehicle itself, see `PIPELINE.md` §3 Layer 8); same-history grouping by core
-architecture (`structural_groups.py`); the independent `core_class` axis
+(`relbe_junctions.py`, also now a real stage, `RELBE_JUNCTIONS` — proven
+working on real data, inconclusive for the vehicle itself, see
+`PIPELINE.md` §3 Layer 8); same-history grouping by core architecture
+(`structural_groups.py`, also now a real stage, `STRUCTURAL_GROUPS`, feeding
+`COLOUR_BLOCKS`'s grouping-swatch overlay automatically); the independent
+`core_class` axis
 alongside `vehicle_class`, so "vehicle intact but core missing" and the
 reverse are both nameable, not just visually inferable; and pangraph
 (`build_pangraph_graph.py`/`pangraph_blocks.py`/`pangraph_annotated.py`/

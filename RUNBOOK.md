@@ -163,31 +163,31 @@ Common overrides (all optional):
 | `loci_selected.tsv`, `filter_summary.tsv` | bait search / paralog-completeness filter audit |
 | `context.tsv`, `loci.tsv`, `summary.tsv`, `replicons.tsv` | per-locus tables |
 | `blocks/`, `is/`, `cargo/`, `pf/` | per-locus annotation |
-| `pangraph/graph.json`, `pangraph_blocks.tsv`, `pangraph_pairwise.tsv`, `pangraph_context_groups.tsv`, `pangraph_groups.tsv` | pangraph sequence-homology tables |
-| `pangraph_blocks.png`/`.svg` | sequence-homology only, one row per locus (half-height rows by default) |
-| `pangraph_annotated.png`/`.svg` | gene/IS annotation (incl. Bakta, if `--run_bakta true`) overlaid on the pangraph background |
-| `pangraph_context_summary.png`/`.xlsx` | one row per UNIQUE context (not per locus), numbered, with every locus traceable in the matching Excel workbook |
+| `structural_groups.tsv`, `structural_pairs.tsv` | gene-identity Jaccard grouping (vehicle + core genes) |
+| `junctions.tsv`, `junctions_profile.tsv` | target-site-duplication scan at each IS boundary |
+| `pangraph/graph.json`, `pangraph_blocks.tsv`, `pangraph_pairwise.tsv`, `pangraph_context_groups.tsv`, `pangraph_groups.tsv` | pangraph sequence-homology tables — all under one `pangraph/` subfolder |
+| `pangraph/pangraph_blocks.png`/`.svg` (in `--figdir`) | sequence-homology only, one row per locus (half-height rows by default) |
+| `pangraph/pangraph_annotated.png`/`.svg` (in `--figdir`) | gene/IS annotation (incl. Bakta, if `--run_bakta true`) overlaid on the pangraph background |
+| `pangraph/pangraph_context_summary.png`/`.xlsx` | one row per UNIQUE context (not per locus), numbered, with every locus traceable in the matching Excel workbook |
 | `run_report.txt`/`.tsv` | one summary of everything |
 
-`colour_blocks.py` (the pure gene/IS annotation figure, `figures/colour_blocks.png` +
-`figures/is_matrix.png`) is now a real Nextflow stage (`COLOUR_BLOCKS`), gated by
-`run_viz` same as the pangraph figures — no separate command needed, every run
-produces it automatically.
+`colour_blocks.py` (the pure gene/IS annotation figure,
+`figures/colour_blocks/colour_blocks.png` + `is_matrix.png`) is now a real
+Nextflow stage (`COLOUR_BLOCKS`), gated by `run_viz` same as the pangraph
+figures — no separate command needed, every run produces it automatically,
+**with** the `structural_groups.tsv`/`junctions.tsv` grouping-swatch and
+TSD-marker overlay wired in too (`STRUCTURAL_GROUPS`/`RELBE_JUNCTIONS`, both
+unconditional — they're standalone deliverables in their own right, not just
+`COLOUR_BLOCKS` inputs).
 
-**Still manual** (not Nextflow stages — judgement calls you make once per
-analysis, not every run): the gene-identity Jaccard grouping and the
-gene-vs-sequence-identity reconciliation:
+**Still manual** (not a Nextflow stage — a judgement call you make once per
+analysis, not every run): reconciling gene-identity vs sequence-identity
+evidence into CONCORDANT/DISCORDANT calls:
 
 ```bash
-# gene-based Jaccard grouping (the complement to pangraph_groups.tsv)
-/opt/anaconda3/bin/python3.12 scripts/structural_groups.py \
-  --blocks run_vX/results/blocks --out run_vX/results/structural_groups.tsv \
-  --out-pairs run_vX/results/structural_pairs.tsv
-
-# reconcile gene-identity vs sequence-identity into CONCORDANT/DISCORDANT calls
 /opt/anaconda3/bin/python3.12 scripts/pairwise_evidence.py \
   --genes run_vX/results/structural_pairs.tsv \
-  --seq run_vX/results/pangraph_pairwise.tsv \
+  --seq run_vX/results/pangraph/pangraph_pairwise.tsv \
   --out run_vX/results/pairwise_evidence.tsv
 ```
 

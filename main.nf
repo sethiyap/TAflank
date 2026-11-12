@@ -281,7 +281,7 @@ process BUILD_PANGRAPH_GRAPH {
 }
 
 process PANGRAPH_GROUPS {
-    publishDir params.outdir, mode: 'copy'
+    publishDir "${params.outdir}/pangraph", mode: 'copy'
     label 'python'
     input:  path pairwise_tsv
     output: path 'pangraph_groups.tsv', emit: groups
@@ -294,9 +294,9 @@ process PANGRAPH_GROUPS {
 }
 
 process PANGRAPH_BLOCKS {
-    publishDir params.outdir, mode: 'copy',
+    publishDir "${params.outdir}/pangraph", mode: 'copy',
               pattern: 'pangraph_{blocks,pairwise,context_groups}.tsv'
-    publishDir "${params.figdir}", mode: 'copy',
+    publishDir "${params.figdir}/pangraph", mode: 'copy',
               pattern: 'pangraph_blocks.{png,svg}'
     label 'python'
     // ALWAYS runs, regardless of run_viz: pangraph_pairwise.tsv is a plain-
@@ -333,7 +333,7 @@ process PANGRAPH_BLOCKS {
 }
 
 process PANGRAPH_ANNOTATED {
-    publishDir "${params.figdir}", mode: 'copy',
+    publishDir "${params.figdir}/pangraph", mode: 'copy',
               pattern: 'pangraph_annotated.{png,svg}'
     label 'viz'
     // Pure figure, no tables-only fallback -- so it is simply skipped (see
@@ -355,9 +355,9 @@ process PANGRAPH_ANNOTATED {
 }
 
 process PANGRAPH_CONTEXT_SUMMARY {
-    publishDir "${params.figdir}", mode: 'copy',
+    publishDir "${params.figdir}/pangraph", mode: 'copy',
               pattern: 'pangraph_context_summary.{png,svg}'
-    publishDir params.outdir, mode: 'copy',
+    publishDir "${params.outdir}/pangraph", mode: 'copy',
               pattern: 'pangraph_context_summary.xlsx'
     label 'viz'
     // Also needs openpyxl specifically (not just matplotlib+scipy) --
@@ -398,11 +398,44 @@ process CLASSIFY_CONTEXT {
     """
 }
 
+process STRUCTURAL_GROUPS {
+    publishDir params.outdir, mode: 'copy'
+    label 'python'
+    // Unconditional, not gated on run_viz -- a standalone analytical
+    // deliverable in its own right (OUTPUTS.md's own section), not merely a
+    // COLOUR_BLOCKS input. Cheap stdlib union-find, no matplotlib needed.
+    input:  path blocks_all
+    output: path 'structural_groups.tsv', emit: groups
+            path 'structural_pairs.tsv',  emit: pairs
+    script:
+    """
+    ${PY()} ${projectDir}/scripts/structural_groups.py \\
+        --blocks . --out structural_groups.tsv --out-pairs structural_pairs.tsv \\
+        --ends '${params.vehicle_ends}'
+    """
+}
+
+process RELBE_JUNCTIONS {
+    publishDir params.outdir, mode: 'copy'
+    label 'python'
+    // Same reasoning as STRUCTURAL_GROUPS: unconditional, documented as its
+    // own output (OUTPUTS.md), not merely a COLOUR_BLOCKS input.
+    input:  path is_all
+            path loci_fa_all
+    output: path 'junctions.tsv',         emit: junctions
+            path 'junctions_profile.tsv', emit: profile
+    script:
+    """
+    ${PY()} ${projectDir}/scripts/relbe_junctions.py \\
+        --is . --loci . --out junctions.tsv --out-profile junctions_profile.tsv
+    """
+}
+
 process COLOUR_BLOCKS {
     // is_matrix.tsv is the png's own backing data, not a results/ table --
     // both halves (colour_blocks.*, is_matrix.*) are figures/ outputs, per
     // README.md/OUTPUTS.md.
-    publishDir "${params.figdir}", mode: 'copy',
+    publishDir "${params.figdir}/colour_blocks", mode: 'copy',
               pattern: '{colour_blocks,is_matrix}.{png,svg,tsv}'
     label 'viz'
     // Gene-identity figure, the complement to PANGRAPH_BLOCKS/ANNOTATED's
@@ -412,10 +445,16 @@ process COLOUR_BLOCKS {
     // you only ever look at what main.nf produces automatically, so wiring
     // it in means every run gets it without needing to already know it
     // exists. Same run_viz gate as the pangraph figures (matplotlib+scipy).
+    // --groups/--junctions are wired here too (previously only available by
+    // hand-running colour_blocks.py yourself against those two tables), so
+    // the Jaccard-grouping swatch and shared-TSD markers appear in the
+    // automatic figure as well, not just a manually-invoked one.
     when:   params.run_viz
     input:  path blocks_all
             path context_tsv
             path metadata_tsv
+            path groups_tsv
+            path junctions_tsv
     output: path 'colour_blocks.png'
             path 'colour_blocks.svg'
             path 'is_matrix.png'
@@ -424,7 +463,9 @@ process COLOUR_BLOCKS {
     """
     ${PY_VIZ()} ${projectDir}/scripts/colour_blocks.py \\
         --blocks . --context ${context_tsv} --metadata ${metadata_tsv} \\
-        --outdir . --flank ${params.flank} --vehicle-ends '${params.vehicle_ends}'
+        --outdir . --flank ${params.flank} --vehicle-ends '${params.vehicle_ends}' \\
+        --style '${params.colour_blocks_style}' \\
+        --groups ${groups_tsv} --junctions ${junctions_tsv}
     """
 }
 
@@ -591,7 +632,10 @@ workflow {
 
     CLASSIFY_CONTEXT(loci.table, is_ch.hits.collect(), cargo_ch.hits.collect())
 
-    COLOUR_BLOCKS(blocks_ch.blocks.collect(), CLASSIFY_CONTEXT.out.ctx, meta.meta)
+    groups    = STRUCTURAL_GROUPS(blocks_ch.blocks.collect())
+    junctions = RELBE_JUNCTIONS(is_ch.hits.collect(), loci_fa.collect())
+    COLOUR_BLOCKS(blocks_ch.blocks.collect(), CLASSIFY_CONTEXT.out.ctx, meta.meta,
+                  groups.groups, junctions.junctions)
 
     collated = COLLATE(is_ch.hits.collect(), pf_ch.hits.collect(), loci.table)
 
@@ -615,6 +659,7 @@ workflow {
     // Last: one readable account of what went in, what each filter removed,
     // and what came out at every layer. Gated on everything else finishing.
     RUN_REPORT(collated[0].mix(blocks_ch, CLASSIFY_CONTEXT.out.ctx,
-                               pangraph_blocks.pairwise, pangraph_groups.groups)
+                               pangraph_blocks.pairwise, pangraph_groups.groups,
+                               groups.groups, junctions.junctions)
               .collect())
 }

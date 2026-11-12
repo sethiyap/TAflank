@@ -284,15 +284,36 @@ at 96% ISEsa1 coverage yet split in two by a 2,278 bp ISKpn21 insertion.
 
 Reproduces the hand classification on all four overlapping loci.
 
+### STRUCTURAL_GROUPS — `scripts/structural_groups.py`  *(Stage 3c)*
+
+Gene-identity Jaccard grouping on the vehicle + 5 conserved cargo genes
+(`cytb,czc,relB,relE,hok_gef` — not the full window, which is dominated by
+locus-private insertions). Writes `results/structural_groups.tsv` +
+`structural_pairs.tsv`. Unconditional (no `run_viz` gate) — cheap stdlib
+union-find, and a standalone deliverable in its own right (§7 of OUTPUTS.md),
+not merely an input to `COLOUR_BLOCKS` below.
+
+### RELBE_JUNCTIONS — `scripts/relbe_junctions.py`  *(Stage 3/5, Layer 8)*
+
+Target-site-duplication scan at each IS boundary — writes
+`results/junctions.tsv` + `junctions_profile.tsv`. Same reasoning as
+`STRUCTURAL_GROUPS`: unconditional, independently documented, and also feeds
+`COLOUR_BLOCKS` below.
+
 ### COLOUR_BLOCKS — `scripts/colour_blocks.py`
 
-The gene-identity figure (`figures/colour_blocks.png` + `is_matrix.{png,tsv}`)
-— named IS/cargo blocks, `vehicle_class`/`core_class` badges, replicon type —
-as opposed to the pangraph figures' sequence-identity view. Gated by
-`run_viz`, same as the three pangraph figures below. Was a hand-run-only
-script for a while (`--blocks`/`--context`/`--metadata` taken directly from
-the command line); wired in as a real process once it became clear that
-anything not produced automatically is easy to not know exists at all.
+The gene-identity figure (`figures/colour_blocks/colour_blocks.png` +
+`is_matrix.{png,tsv}`) — named IS/cargo blocks, `vehicle_class`/`core_class`
+badges, replicon type — as opposed to the pangraph figures' sequence-identity
+view. Gated by `run_viz`, same as the three pangraph figures below. Was a
+hand-run-only script for a while (`--blocks`/`--context`/`--metadata` taken
+directly from the command line); wired in as a real process once it became
+clear that anything not produced automatically is easy to not know exists at
+all. Takes `STRUCTURAL_GROUPS`'/`RELBE_JUNCTIONS`' outputs as `--groups`/
+`--junctions` automatically, so the grouping swatch and shared-TSD markers
+appear in the automatic figure too, not only in a hand-run invocation.
+`--style` (`params.colour_blocks_style`, default `simple`) is the one thing
+still worth overriding by hand for the richer `tracks` view.
 
 ### BAKTA + GENE_BLOCKS — `scripts/gene_blocks.py`
 
@@ -734,11 +755,11 @@ figure. All offsets assume the bait on `+`.
 | `results/summary.tsv` | locus | one line per locus joining all of the above, incl. `lab_alias`, `plasmidfinder_replicons`, `has_ISEsa1`, `has_ISEsa2`, `nested_events` |
 | `loci/plasmids/*.fa` | locus | the window itself; the FASTA header carries flank, truncation, wrap and bait position |
 | `results/pangraph/graph.json` | — | pangraph's N-way alignment graph over every locus window, one explicit ordered walk per genome |
-| `results/pangraph_pairwise.tsv` | locus pair | `locus_a, locus_b, shared_frac` |
-| `results/pangraph_groups.tsv` | locus | same shape as `structural_groups.tsv`, grouped by `shared_frac` instead of gene-Jaccard |
-| `results/pangraph_blocks.tsv`, `pangraph_context_groups.tsv` | block / locus | the sequence-homology figures' own input |
-| `figures/pangraph_blocks.png`, `pangraph_annotated.png`, `pangraph_context_summary.{png,xlsx}` | — | see §3's pangraph stage for what each shows |
-| `figures/colour_blocks.png`, `is_matrix.{png,tsv}` | — | `COLOUR_BLOCKS` (§3) — the gene-identity counterpart to the pangraph figures, named IS/cargo blocks and `vehicle_class`/`core_class` badges rather than sequence homology |
+| `results/pangraph/pangraph_pairwise.tsv` | locus pair | `locus_a, locus_b, shared_frac` |
+| `results/pangraph/pangraph_groups.tsv` | locus | same shape as `structural_groups.tsv`, grouped by `shared_frac` instead of gene-Jaccard |
+| `results/pangraph/pangraph_blocks.tsv`, `pangraph_context_groups.tsv` | block / locus | the sequence-homology figures' own input |
+| `figures/pangraph/pangraph_blocks.png`, `pangraph_annotated.png`, `pangraph_context_summary.{png,xlsx}` | — | see §3's pangraph stage for what each shows. All pangraph outputs live under one `pangraph/` subfolder (both `results/` and `figures/`) |
+| `figures/colour_blocks/colour_blocks.png`, `is_matrix.{png,tsv}` | — | `COLOUR_BLOCKS` (§3) — the gene-identity counterpart to the pangraph figures, named IS/cargo blocks and `vehicle_class`/`core_class` badges rather than sequence homology. Own subfolder, same reasoning |
 
 Read any of these with `scripts/tsvcols.py <file> <column> ...`, which selects
 columns **by name**. `cut -f<numbers>` is not safe on these tables: inserting a
@@ -1055,6 +1076,7 @@ All settable on the command line (`--flank 15000`) or in `nextflow.config`.
 | `pangraph_min_similarity` | 0.85 | `PANGRAPH_GROUPS`' threshold on `shared_frac` |
 | `pangraph_row_scale` | 0.5 | row height / label font multiplier for `pangraph_blocks.png` |
 | `run_viz` | true | gates every matplotlib/scipy figure stage (not pangraph-specific — also `colour_blocks.py`'s figures) |
+| `colour_blocks_style` | `simple` | `colour_blocks.py`'s own `--style`; `tracks` for IS/CDS/cargo on separate lines, colour by family |
 
 
 ---
@@ -1138,14 +1160,14 @@ to the *bla*NDM literature the method is modelled on.
 
 | step | status | note |
 |---|---|---|
-| Direct repeats / TSDs (F6) | **BUILT** | `relbe_junctions.py`. Proven working -- recovers a 100%-identical, same-coordinate TSD for ISKpn8 shared between CP012599 and CP028197 -- but inconclusive for the vehicle itself: ISEsa1/ISEsa2 sit directly adjacent wherever both are present, so most boundary pairs have no host-DNA gap to search at all. See `PIPELINE.md` §3 Layer 8 |
+| Direct repeats / TSDs (F6) | **BUILT, now a real Nextflow stage (`RELBE_JUNCTIONS`)** | `relbe_junctions.py`. Proven working -- recovers a 100%-identical, same-coordinate TSD for ISKpn8 shared between CP012599 and CP028197 -- but inconclusive for the vehicle itself: ISEsa1/ISEsa2 sit directly adjacent wherever both are present, so most boundary pairs have no host-DNA gap to search at all. See `PIPELINE.md` §3 Layer 8 |
 | Extended core anchor (Stage 2) | **not built** | `anchors/relBE_core.fa` does not exist. This is still the gate before any expansion, and the reason a sweep cannot be keyword-led. `core_class` (below) answers "is the core present per locus", which is adjacent but not the same question -- it doesn't fix the core's left edge or re-zero offsets to it |
 | Uniform annotation (Bakta) | **BUILT, run on all 14 loci** | `db-light`, via Apptainer on Gadi (`env/gadi_bakta_setup.sh`). Compute nodes have no outbound network, so the container and database are pulled on `copyq` first and the run is given a local `.sif` path, never a `docker://` URI -- that distinction cost one failed run before it was fixed |
 | Gene families (clustering) | **BUILT** | `gene_families.py`: proteins translated from the Bakta GFF3 (verified against the relB/relE sequences in `anchors/relBE_seed.fa` via `--check`, since the `.faa` an earlier run should have published wasn't), clustered at 90% id / 80% cov -- Roary's `-i 0.9 -s`, blastp instead of mmseqs2 (not installed; 363 proteins doesn't need it) |
 | Context classification (Tier C) | **BUILT, now two independent axes** | `CLASSIFY_CONTEXT` reproduces the hand classification on all four overlapping loci. `vehicle_class` (ISEsa1/ISEsa2 only) and the newer `core_class` (cytb/czc/relB/relE/hok_gef, never the vehicle) are scored separately and can disagree -- CP010512 is VEHICLE-HALF with a fully intact core |
 | Sequence-homology alignment graph (pangraph) | **BUILT** | `BUILD_PANGRAPH_GRAPH` → `pangraph_blocks.tsv`/`pangraph_groups.tsv`/three figures (§3). A true N-way alignment graph over every locus, replacing an earlier pairwise `dc-megablast` cross-check this repo retired once pangraph proved to subsume it |
 | Structural-variant splitting (Stage 6) | **not built as Acman's full method** | pangraph's alignment graph is a real step closer than `structural_groups.py`'s gene-Jaccard proxy -- it looks at the actual shared sequence, not just which named elements co-occur -- but it still does not do Acman's specific decisive test: cutting each hit at the core, resolving upstream/downstream separately, raising the splitting threshold in 10 bp steps, and building a `ggtree` with branch position = distance from core. Do **not** vendor the reference implementation either way: its released `track_variants.R` sets `step <- 100`, which cannot resolve the 64 bp fragment the decisive test depends on |
-| Colour-block figure (Stage 7) | **BUILT, now a real Nextflow stage** | `COLOUR_BLOCKS` runs `colour_blocks.py` automatically every run (default `--style simple`, no `--groups`/`--junctions` -- `structural_groups.tsv`/`junctions.tsv` aren't pipeline-produced tables, so that richer overlay still needs a manual invocation, same flags as before: `--style tracks` for IS/CDS/cargo on separate lines, `--groups`/`--junctions` for the Jaccard grouping and shared-TSD overlay). An idealised-architecture schematic is computed from the data, not asserted, with each element placed at its median offset and flagged when that offset is literally invariant (czc, at -1184, in all 9 loci that carry it) |
+| Colour-block figure (Stage 7) | **BUILT, now a real Nextflow stage** | `COLOUR_BLOCKS` runs `colour_blocks.py` automatically every run, with `STRUCTURAL_GROUPS`'/`RELBE_JUNCTIONS`' tables wired in as `--groups`/`--junctions` automatically too -- the Jaccard-grouping swatch and shared-TSD markers appear without any manual invocation now. `--style` (`params.colour_blocks_style`, default `simple`) is the one thing still worth overriding by hand for the `tracks` view (IS/CDS/cargo on separate lines). An idealised-architecture schematic is computed from the data, not asserted, with each element placed at its median offset and flagged when that offset is literally invariant (czc, at -1184, in all 9 loci that carry it) |
 | ISEScan, IntegronFinder, mob_suite, geNomad | **not built** | all reachable via Apptainer on Firefly |
 | NCBI sweep (Stage 9) | **not built** | gated on Stage 2; ~26,539 complete Enterobacterales assemblies |
 
