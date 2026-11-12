@@ -521,10 +521,24 @@ drawn from its most-typical ("medoid") member. Reading guide:
   §7's gene-architecture Jaccard grouping — the strongest candidates in this pilot for
   one shared insertion history.
 
-Two further figures come from the same pangraph check: `pangraph_blocks.png` (one row
-per **individual** locus rather than per context, same colour scheme) and
-`pangraph_annotated.png` (the gene/IS arrows from the figure above, overlaid on that
-sequence-identity background instead of a plain idealised schematic).
+Two further figures come from the same pangraph check, one row per
+**individual** locus this time rather than per context:
+
+![pangraph: sequence-homology blocks, one row per locus](figures/pangraph_blocks.png)
+
+`pangraph_blocks.png` — same colour scheme as the context figure above (same
+colour = mutually alignable, pale pink = private), but every one of the 14
+loci gets its own row instead of being collapsed to its context's medoid.
+
+![pangraph background with gene/IS arrows overlaid](figures/pangraph_annotated.png)
+
+`pangraph_annotated.png` — the gene/IS arrows from `colour_blocks.png` (§8,
+top) redrawn on top of this sequence-identity background instead of the
+flat idealised schematic. The same arrow colour on a *different* background
+colour is the same named element sitting on genuinely different DNA — e.g.
+`czc` (blue arrow) appears on blue, green, magenta and plain pink
+backgrounds across different loci, meaning it is conserved as a *named gene*
+far more widely than any single stretch of flanking DNA around it is.
 
 ## 9. Next steps: scaling to the whole of NCBI
 
