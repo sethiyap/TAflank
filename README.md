@@ -145,6 +145,17 @@ source, taxonomy).
 Use `./tools/nf`, not bare `nextflow` — the wrapper resolves a **native** JDK,
 which matters because on arm64 the JVM's architecture leaks to child processes.
 
+**To see every available option**, grouped by what you'd actually change,
+with current defaults:
+
+```bash
+./tools/nf run main.nf -profile local --help
+```
+
+Exits immediately without running anything. See the **Installation**
+section below for `./tools/nf config`, the companion command that dumps
+every resolved parameter with its live value instead (no descriptions).
+
 ## Outputs
 
 | file | one row per |
