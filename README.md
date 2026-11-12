@@ -244,7 +244,9 @@ nesting. Adding the 7 chromosomal loci left the 7 plasmid rows in
 
 **Built since that gate:** uniform Bakta annotation (`db-light`, all 14 loci);
 gene-family clustering (`gene_families.py`); the architecture figure and IS
-heatmap (`colour_blocks.py`, two styles); direct-repeat/TSD scanning
+heatmap (`colour_blocks.py`, two styles — now a real Nextflow stage,
+`COLOUR_BLOCKS`, gated by `run_viz` like the pangraph figures, rather than a
+hand-run script you had to already know existed); direct-repeat/TSD scanning
 (`relbe_junctions.py` — proven working on real data, inconclusive for the
 vehicle itself, see `PIPELINE.md` §3 Layer 8); same-history grouping by core
 architecture (`structural_groups.py`); the independent `core_class` axis

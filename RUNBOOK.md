@@ -169,9 +169,14 @@ Common overrides (all optional):
 | `pangraph_context_summary.png`/`.xlsx` | one row per UNIQUE context (not per locus), numbered, with every locus traceable in the matching Excel workbook |
 | `run_report.txt`/`.tsv` | one summary of everything |
 
+`colour_blocks.py` (the pure gene/IS annotation figure, `figures/colour_blocks.png` +
+`figures/is_matrix.png`) is now a real Nextflow stage (`COLOUR_BLOCKS`), gated by
+`run_viz` same as the pangraph figures — no separate command needed, every run
+produces it automatically.
+
 **Still manual** (not Nextflow stages — judgement calls you make once per
 analysis, not every run): the gene-identity Jaccard grouping and the
-gene-vs-sequence-identity reconciliation, plus the pure-annotation figure:
+gene-vs-sequence-identity reconciliation:
 
 ```bash
 # gene-based Jaccard grouping (the complement to pangraph_groups.tsv)
@@ -184,11 +189,6 @@ gene-vs-sequence-identity reconciliation, plus the pure-annotation figure:
   --genes run_vX/results/structural_pairs.tsv \
   --seq run_vX/results/pangraph_pairwise.tsv \
   --out run_vX/results/pairwise_evidence.tsv
-
-# pure gene/IS annotation figure (no sequence-homology background at all)
-/opt/anaconda3/bin/python3.12 scripts/colour_blocks.py \
-  --blocks run_vX/results/blocks --context run_vX/results/context.tsv \
-  --metadata run_vX/results/record_metadata.tsv --outdir run_vX/figures
 ```
 
 Use `/opt/anaconda3/bin/python3.12` for anything producing a figure or Excel

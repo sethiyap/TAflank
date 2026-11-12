@@ -284,6 +284,16 @@ at 96% ISEsa1 coverage yet split in two by a 2,278 bp ISKpn21 insertion.
 
 Reproduces the hand classification on all four overlapping loci.
 
+### COLOUR_BLOCKS — `scripts/colour_blocks.py`
+
+The gene-identity figure (`figures/colour_blocks.png` + `is_matrix.{png,tsv}`)
+— named IS/cargo blocks, `vehicle_class`/`core_class` badges, replicon type —
+as opposed to the pangraph figures' sequence-identity view. Gated by
+`run_viz`, same as the three pangraph figures below. Was a hand-run-only
+script for a while (`--blocks`/`--context`/`--metadata` taken directly from
+the command line); wired in as a real process once it became clear that
+anything not produced automatically is easy to not know exists at all.
+
 ### BAKTA + GENE_BLOCKS — `scripts/gene_blocks.py`
 
 Bakta and ISfinder are **complementary and independent**, so they run in
@@ -728,6 +738,7 @@ figure. All offsets assume the bait on `+`.
 | `results/pangraph_groups.tsv` | locus | same shape as `structural_groups.tsv`, grouped by `shared_frac` instead of gene-Jaccard |
 | `results/pangraph_blocks.tsv`, `pangraph_context_groups.tsv` | block / locus | the sequence-homology figures' own input |
 | `figures/pangraph_blocks.png`, `pangraph_annotated.png`, `pangraph_context_summary.{png,xlsx}` | — | see §3's pangraph stage for what each shows |
+| `figures/colour_blocks.png`, `is_matrix.{png,tsv}` | — | `COLOUR_BLOCKS` (§3) — the gene-identity counterpart to the pangraph figures, named IS/cargo blocks and `vehicle_class`/`core_class` badges rather than sequence homology |
 
 Read any of these with `scripts/tsvcols.py <file> <column> ...`, which selects
 columns **by name**. `cut -f<numbers>` is not safe on these tables: inserting a
@@ -1134,7 +1145,7 @@ to the *bla*NDM literature the method is modelled on.
 | Context classification (Tier C) | **BUILT, now two independent axes** | `CLASSIFY_CONTEXT` reproduces the hand classification on all four overlapping loci. `vehicle_class` (ISEsa1/ISEsa2 only) and the newer `core_class` (cytb/czc/relB/relE/hok_gef, never the vehicle) are scored separately and can disagree -- CP010512 is VEHICLE-HALF with a fully intact core |
 | Sequence-homology alignment graph (pangraph) | **BUILT** | `BUILD_PANGRAPH_GRAPH` → `pangraph_blocks.tsv`/`pangraph_groups.tsv`/three figures (§3). A true N-way alignment graph over every locus, replacing an earlier pairwise `dc-megablast` cross-check this repo retired once pangraph proved to subsume it |
 | Structural-variant splitting (Stage 6) | **not built as Acman's full method** | pangraph's alignment graph is a real step closer than `structural_groups.py`'s gene-Jaccard proxy -- it looks at the actual shared sequence, not just which named elements co-occur -- but it still does not do Acman's specific decisive test: cutting each hit at the core, resolving upstream/downstream separately, raising the splitting threshold in 10 bp steps, and building a `ggtree` with branch position = distance from core. Do **not** vendor the reference implementation either way: its released `track_variants.R` sets `step <- 100`, which cannot resolve the 64 bp fragment the decisive test depends on |
-| Colour-block figure (Stage 7) | **BUILT** | `colour_blocks.py`. `--style simple` (default: one row per locus, colour by role) or `--style tracks` (IS/CDS/cargo on separate lines, colour by family); `--groups`/`--junctions` overlay the Jaccard grouping and shared TSDs; an idealised-architecture schematic is computed from the data, not asserted, with each element placed at its median offset and flagged when that offset is literally invariant (czc, at -1184, in all 9 loci that carry it) |
+| Colour-block figure (Stage 7) | **BUILT, now a real Nextflow stage** | `COLOUR_BLOCKS` runs `colour_blocks.py` automatically every run (default `--style simple`, no `--groups`/`--junctions` -- `structural_groups.tsv`/`junctions.tsv` aren't pipeline-produced tables, so that richer overlay still needs a manual invocation, same flags as before: `--style tracks` for IS/CDS/cargo on separate lines, `--groups`/`--junctions` for the Jaccard grouping and shared-TSD overlay). An idealised-architecture schematic is computed from the data, not asserted, with each element placed at its median offset and flagged when that offset is literally invariant (czc, at -1184, in all 9 loci that carry it) |
 | ISEScan, IntegronFinder, mob_suite, geNomad | **not built** | all reachable via Apptainer on Firefly |
 | NCBI sweep (Stage 9) | **not built** | gated on Stage 2; ~26,539 complete Enterobacterales assemblies |
 

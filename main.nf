@@ -398,6 +398,36 @@ process CLASSIFY_CONTEXT {
     """
 }
 
+process COLOUR_BLOCKS {
+    // is_matrix.tsv is the png's own backing data, not a results/ table --
+    // both halves (colour_blocks.*, is_matrix.*) are figures/ outputs, per
+    // README.md/OUTPUTS.md.
+    publishDir "${params.figdir}", mode: 'copy',
+              pattern: '{colour_blocks,is_matrix}.{png,svg,tsv}'
+    label 'viz'
+    // Gene-identity figure, the complement to PANGRAPH_BLOCKS/ANNOTATED's
+    // sequence-identity ones (named IS/cargo blocks, vehicle_class/core_class
+    // badges, replicon type) -- see PIPELINE.md/REPORT.md for why both are
+    // kept. Was a hand-run-only script until now: easy to miss entirely if
+    // you only ever look at what main.nf produces automatically, so wiring
+    // it in means every run gets it without needing to already know it
+    // exists. Same run_viz gate as the pangraph figures (matplotlib+scipy).
+    when:   params.run_viz
+    input:  path blocks_all
+            path context_tsv
+            path metadata_tsv
+    output: path 'colour_blocks.png'
+            path 'colour_blocks.svg'
+            path 'is_matrix.png'
+            path 'is_matrix.tsv'
+    script:
+    """
+    ${PY_VIZ()} ${projectDir}/scripts/colour_blocks.py \\
+        --blocks . --context ${context_tsv} --metadata ${metadata_tsv} \\
+        --outdir . --flank ${params.flank} --vehicle-ends '${params.vehicle_ends}'
+    """
+}
+
 process COLLATE {
     publishDir params.outdir, mode: 'copy'
     label 'python'
@@ -560,6 +590,8 @@ workflow {
     pf_ch   = PLASMIDFINDER(rep_ch)
 
     CLASSIFY_CONTEXT(loci.table, is_ch.hits.collect(), cargo_ch.hits.collect())
+
+    COLOUR_BLOCKS(blocks_ch.blocks.collect(), CLASSIFY_CONTEXT.out.ctx, meta.meta)
 
     collated = COLLATE(is_ch.hits.collect(), pf_ch.hits.collect(), loci.table)
 
