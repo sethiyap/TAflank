@@ -84,8 +84,8 @@ seed search is not specific. Requiring ≥400 of 527 bp at ≥90% identity deman
 ```
 
 `relB_start` becomes the **anchor** — offset zero for everything in Step 2.
-(Per `CLAUDE.md` this is provisional; final offsets re-zero to the core's left edge
-once Stage 2 fixes it.)
+(This is provisional; final offsets re-zero to the core's left edge once
+Stage 2 fixes it.)
 
 All nine passed: eight at **100.0%** identity over the full 527 bp, one
 (`CP017220.1`) at **99.4%**.

@@ -7,9 +7,11 @@ Companion documents, kept deliberately separate:
 
 | file | holds |
 |---|---|
-| `CLAUDE.md` | the project plan and conventions |
 | `PIPELINE.md` | the **scientific rationale** — why each filter exists (F1–F6), the MGE layers, the decision tree |
 | **`PIPELINE_DESCRIPTION.md`** (this file) | the **implementation** — what actually runs, with what parameters, producing what files |
+
+(`CLAUDE.md`, the original project plan and conventions, is kept locally and
+gitignored — not published to GitHub.)
 
 ---
 
@@ -205,7 +207,7 @@ on `-` the subject runs backwards relative to the window.
 | `clip_cause` | meaning | how to read it |
 |---|---|---|
 | `window` | the ±20 kb cut ended there while the replicon continued | **discount as evidence** — widen the window to resolve |
-| `replicon` | the replicon or contig genuinely ends there (header says `truncated_up/dn=yes`) | **real truncation** — a signal, per CLAUDE.md |
+| `replicon` | the replicon or contig genuinely ends there (header says `truncated_up/dn=yes`) | **real truncation** — a signal, not noise |
 | `mixed` | one edge of each | both |
 
 Nothing is filtered. `is_fragment` keeps its plain meaning (`query_cov < 50`)
@@ -490,7 +492,7 @@ alone cannot discriminate, but `ISEsa1–ISEsa2–relBE` can.
 
 **Nothing is deleted.** All 15 rows remain in `loci_selected.tsv` with
 `selected` and `deselect_reason`. You can always see what the filter removed
-and why. This is CLAUDE.md's "never silently drop" rule made mechanical.
+and why. This is the project's "never silently drop" rule made mechanical.
 
 **And the accounting is written out, not reconstructed.** Two intermediate
 files make the whole cascade auditable:
@@ -1128,7 +1130,7 @@ to the *bla*NDM literature the method is modelled on.
 | Direct repeats / TSDs (F6) | **BUILT** | `relbe_junctions.py`. Proven working -- recovers a 100%-identical, same-coordinate TSD for ISKpn8 shared between CP012599 and CP028197 -- but inconclusive for the vehicle itself: ISEsa1/ISEsa2 sit directly adjacent wherever both are present, so most boundary pairs have no host-DNA gap to search at all. See `PIPELINE.md` §3 Layer 8 |
 | Extended core anchor (Stage 2) | **not built** | `anchors/relBE_core.fa` does not exist. This is still the gate before any expansion, and the reason a sweep cannot be keyword-led. `core_class` (below) answers "is the core present per locus", which is adjacent but not the same question -- it doesn't fix the core's left edge or re-zero offsets to it |
 | Uniform annotation (Bakta) | **BUILT, run on all 14 loci** | `db-light`, via Apptainer on Gadi (`env/gadi_bakta_setup.sh`). Compute nodes have no outbound network, so the container and database are pulled on `copyq` first and the run is given a local `.sif` path, never a `docker://` URI -- that distinction cost one failed run before it was fixed |
-| Gene families (clustering) | **BUILT** | `gene_families.py`: proteins translated from the Bakta GFF3 (verified against the relB/relE sequences in CLAUDE.md via `--check`, since the `.faa` an earlier run should have published wasn't), clustered at 90% id / 80% cov -- Roary's `-i 0.9 -s`, blastp instead of mmseqs2 (not installed; 363 proteins doesn't need it) |
+| Gene families (clustering) | **BUILT** | `gene_families.py`: proteins translated from the Bakta GFF3 (verified against the relB/relE sequences in `anchors/relBE_seed.fa` via `--check`, since the `.faa` an earlier run should have published wasn't), clustered at 90% id / 80% cov -- Roary's `-i 0.9 -s`, blastp instead of mmseqs2 (not installed; 363 proteins doesn't need it) |
 | Context classification (Tier C) | **BUILT, now two independent axes** | `CLASSIFY_CONTEXT` reproduces the hand classification on all four overlapping loci. `vehicle_class` (ISEsa1/ISEsa2 only) and the newer `core_class` (cytb/czc/relB/relE/hok_gef, never the vehicle) are scored separately and can disagree -- CP010512 is VEHICLE-HALF with a fully intact core |
 | Sequence-homology alignment graph (pangraph) | **BUILT** | `BUILD_PANGRAPH_GRAPH` → `pangraph_blocks.tsv`/`pangraph_groups.tsv`/three figures (§3). A true N-way alignment graph over every locus, replacing an earlier pairwise `dc-megablast` cross-check this repo retired once pangraph proved to subsume it |
 | Structural-variant splitting (Stage 6) | **not built as Acman's full method** | pangraph's alignment graph is a real step closer than `structural_groups.py`'s gene-Jaccard proxy -- it looks at the actual shared sequence, not just which named elements co-occur -- but it still does not do Acman's specific decisive test: cutting each hit at the core, resolving upstream/downstream separately, raising the splitting threshold in 10 bp steps, and building a `ggtree` with branch position = distance from core. Do **not** vendor the reference implementation either way: its released `track_variants.R` sets `step <- 100`, which cannot resolve the 64 bp fragment the decisive test depends on |

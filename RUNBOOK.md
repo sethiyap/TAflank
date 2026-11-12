@@ -811,10 +811,10 @@ python3 scripts/gene_families.py \
   --check
 ```
 
-`--check` asserts that relB and relE translate to the sequences recorded in
-CLAUDE.md (79 aa `MGSINLRIDDEL…TLDEL`, 95 aa `MAYFLDFDERAL…VKRIL`). Keep it on
-— it is a free proof that the proteins are right before anything is built on
-them.
+`--check` asserts that relB and relE translate to the sequences in
+`anchors/relBE_seed.fa` (79 aa `MGSINLRIDDEL…TLDEL`, 95 aa
+`MAYFLDFDERAL…VKRIL`). Keep it on — it is a free proof that the proteins are
+right before anything is built on them.
 
 **Proteins are translated from the GFF3, not read from Bakta's `.faa`.** The
 BAKTA process originally declared only the GFF3 as output, so publishDir never
@@ -899,8 +899,8 @@ python3 scripts/relbe_junctions.py \
   --out results/junctions.tsv --out-profile results/junctions_profile.tsv
 ```
 
-CLAUDE.md Stage 3: extract the flank at each IS boundary and look for the
-short duplicated sequence (TSD) a staggered-cut transposase leaves behind.
+Extract the flank at each IS boundary and look for the short duplicated
+sequence (TSD) a staggered-cut transposase leaves behind.
 Identical TSDs across loci are the strongest single piece of evidence for one
 insertion event; different TSDs on the same element are independent events.
 
@@ -955,9 +955,9 @@ STEP 13, so this corroborates it from an independent signal.
 **Why the vehicle itself stayed silent is likely coordinate precision, not
 absence of a TSD.** `is_search.py` calls IS boundaries from where a BLAST
 %identity cutoff happens to fall, which wobbles a few bp from the true
-IR/TSD boundary a dedicated caller would find. CLAUDE.md already names the
-right tool for this -- `ISEScan | unbiased IS calls + IR/TSD coordinates` --
-not yet run. Until it is, the honest statement is: **this method cannot
+IR/TSD boundary a dedicated caller would find. The right tool for this is
+`ISEScan` (unbiased IS calls + IR/TSD coordinates), not yet run. Until it is,
+the honest statement is: **this method cannot
 currently confirm or rule out a shared ancestral TSD for ISEsa1/ISEsa2**,
 and the figure should not be read as if it had tried and found nothing to
 report, when what happened is narrower than that.
@@ -1029,9 +1029,10 @@ This can chain (A-B and B-C both clear it without A-C clearing it) -- the
 output's `chained` column flags any group where that happened. It did not
 happen here; every multi-member group's `weakest_internal_pair` is 1.00.
 
-**What this is not.** It is the fast triage CLAUDE.md Stage 6 calls for
-before the sequence-level pass, not a replacement for the decisive test in
-Stage 5 (all-vs-all `blastn -task dc-megablast`, threshold-stepped). Two loci
+**What this is not.** It is the fast triage Stage 6 (species/backbone
+grouping) calls for before the sequence-level pass, not a replacement for the
+decisive test in Stage 5 (all-vs-all `blastn -task dc-megablast`,
+threshold-stepped). Two loci
 could share an element catalogue by convergence rather than by one insertion
 event -- this script cannot tell those apart, because it never looks at the
 DNA between the elements, only at which named elements are present.
@@ -1060,8 +1061,8 @@ multi-member groups from STEP 13 contain **both** replicon types --
 
 A locus's architecture does not predict which kind of replicon it sits on.
 That is consistent with relBE being cargo on a mobile element that moves
-between plasmid and chromosome -- which is exactly the open question in
-CLAUDE.md Stage 3 ("ICE, chromosomal loci: how relBE entered a chromosome").
+between plasmid and chromosome -- which is exactly the open question Stage 3's
+ICE layer asks ("chromosomal loci: how did relBE enter a chromosome?").
 **This grouping cannot say which direction the movement went, or whether it
 happened once per group or several times convergently** -- it only shows
 that replicon type is not the variable separating these loci. The ICE/oriT
@@ -1356,7 +1357,7 @@ decks' own.
 | `default` | this script's own | blue | cyan | red | orange | green shades |
 
 `deck` is the default because slide 11 is the nine-loci figure this pipeline
-reproduces, and CLAUDE.md names that deck as the source.
+reproduces, and `relBE_schematic.pptx` is that source deck.
 
 IS families the decks never drew are given tints **constrained to the deck's
 warm hue range**, so the variable upstream still reads as one kind of thing at
@@ -1405,7 +1406,8 @@ cargo   relE   strand=+   offset=241
 
 The `minus` in the locus id `CP018961__CP018961__1__minus` refers to the
 orientation of relBE in the **original record**, before the window was flipped.
-Every window is reoriented so relB is on `+` (CLAUDE.md, "Reorient first"), so
+Every window is reoriented so relB is on `+` ("reorient first" is the
+project's standing convention — see `PIPELINE.md`), so
 within the figure's coordinates relB is always on the plus strand — if it were
 not, every offset in every table would be meaningless. Check the FASTA header:
 
@@ -1424,8 +1426,8 @@ twelve hues now do the work of twenty-four, and related elements look related.
 Two things that per-element colour hid, and this does not:
 
 - **ISEsa1 is ISNCY; ISEsa2 is IS110.** The two ends of the candidate vehicle
-  are *different families*. The composite-transposon rule in CLAUDE.md Stage 3
-  looks for two IS of the **same** family flanking the cargo — it does not
+  are *different families*. The composite-transposon rule (Stage 3) looks for
+  two IS of the **same** family flanking the cargo — it does not
   describe this structure, and should not be expected to fire on it.
 - **ISEsa1 and ISKpn21 are the same family and group** (ISNCY/IS1202). They now
   share a hue, which is exactly the pair that makes a naive same-family rule

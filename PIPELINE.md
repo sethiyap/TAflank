@@ -1,6 +1,5 @@
 # relBE MGE pipeline — filtering and element-calling schematic
 
-Companion to `CLAUDE.md` (which holds the scientific rationale and stage plan).
 This file answers two questions only:
 
 1. **How does data get filtered** — what enters, what is kept, what is flagged, what is never dropped.
@@ -362,7 +361,7 @@ carry **5–12** annotated relE-family genes each (CP026216 has 12, CP020841 has
 bare seed is *not* specific. Full-length 95/95 hits are the discriminator; `relE`-only
 hits are RelE/ParE superfamily noise.
 
-> Per `CLAUDE.md`: paralogous relE-family loci must never collapse into one node.
+> Convention: paralogous relE-family loci must never collapse into one node.
 > Each surviving copy gets its own record: `{accession}__{contig}__{copy}__{strand}`.
 
 Verified on CP018961: exactly **1** hit, 100% id, 527/527, minus strand. No ambiguity.
@@ -620,9 +619,10 @@ Slide 13 already assigns three distinct chromosomal entry routes — direct ISEs
 (CP026216), ISEcp1-mediated (CP020841/CP021960), and whole-plasmid integration
 (CP012599/CP010512/CP026975). The question is not either/or.
 
-**Also run the downstream side explicitly.** `CLAUDE.md` says only KPN1482 shows anything
-downstream, but pEC422_1 carries a second complete ISEcp1 (100% id, 100% cov) at
-**+6028, downstream of relBE**. "Empty" must be demonstrated, not assumed.
+**Also run the downstream side explicitly.** Of the nine preliminary loci, only
+KPN1482 was thought to show anything downstream, but pEC422_1 carries a second
+complete ISEcp1 (100% id, 100% cov) at **+6028, downstream of relBE**. "Empty"
+must be demonstrated, not assumed.
 
 ---
 
@@ -636,8 +636,8 @@ window_len, flank_up, flank_dn, truncated, relBE_in_window,
 seed_pident, seed_qcov, n_seed_hits
 ```
 
-**`results/mge_hits.tsv`** — one row per MGE call *(extended beyond CLAUDE.md with the
-last five columns, because the evidence is nested, not flat)*
+**`results/mge_hits.tsv`** — one row per MGE call *(the last five columns are an
+extension to the original schema, because the evidence is nested, not flat)*
 ```
 locus_id, element, family, win_start, win_end, len, identity, query_cov, is_fragment,
 offset_from_relB, nested_in, interrupts, DR_seq, DR_len, note
@@ -646,7 +646,8 @@ offset_from_relB, nested_in, interrupts, DR_seq, DR_len, note
 Companion tables: `core_conservation.tsv`, `structural_variants.tsv`.
 
 > Offsets are currently relative to **relB start**. After Stage 2 fixes the core's left
-> edge, every offset is re-zeroed to that edge per the `CLAUDE.md` convention.
+> edge, every offset is re-zeroed to that edge — coordinate zero is the left edge of
+> the conserved core, not the relB start codon.
 
 ---
 
@@ -658,7 +659,7 @@ Companion tables: `core_conservation.tsv`, `structural_variants.tsv`.
 | 1 — one genome end to end | `[OK]` **gate passed** on pEC422_1 (CP018961); held again when the chromosomal 7 were added (`REPLICON=all`) -- the plasmid-only rows came back byte-identical |
 | 2 — extended anchor from nine loci | `[ ]` still the pivot. `core_class` (classify_context.py) answers "is the core present" per locus but has NOT yet built the single consensus `anchors/relBE_core.fa` or re-zeroed offsets to its left edge |
 | 3 — MGE layer | `[~]` Layer 2 (IS homology) and Layer 8 (junctions/DR) built and run -- see §3 and §5. Layers 1, 3-7, 9 still pending |
-| 3b — gene families | `[OK]` `scripts/gene_families.py`: proteins translated from the Bakta GFF3 (its own `.faa` wasn't published by an earlier run; `--check` proves the translation against the relB/relE sequences in CLAUDE.md), clustered at 90% id / 80% cov. 363 CDS -> 258 families across 14 loci |
+| 3b — gene families | `[OK]` `scripts/gene_families.py`: proteins translated from the Bakta GFF3 (its own `.faa` wasn't published by an earlier run; `--check` proves the translation against the relB/relE sequences in `anchors/relBE_seed.fa`), clustered at 90% id / 80% cov. 363 CDS -> 258 families across 14 loci |
 | 3c — same-history grouping | `[OK]` `scripts/structural_groups.py`: union-find on core-architecture Jaccard (vehicle + cytb/czc/relB/relE/hok_gef only -- the full-window version found almost nothing, see the script's own docstring). 14 loci -> 6 groups at the current gate, every multi-member group pairwise 1.00 internally. This is the FAST triage §8's row 6 (PERMANOVA) still needs, not a replacement for it |
 | 3d — the figure | `[OK]` `scripts/colour_blocks.py`: bait-aligned architecture panel + IS presence heatmap + an idealised-architecture schematic computed from the data (median offset per element, flagged when it is literally invariant -- czc is, at -1184, in all 9 loci that carry it). `--style simple` (default, one row, colour by role) or `--style tracks` (IS/CDS/cargo separated, colour by family); `--groups`/`--junctions` overlay the Stage 3c/Layer 8 results |
 | 3e — pangraph (sequence homology) | `[OK]` `build_pangraph_graph.py` runs pangraph (Noll, Molari & Neher 2023) over all 14 loci -> a true N-way alignment graph; `pangraph_blocks.py`/`groups.py`/`pangraph_annotated.py`/`pangraph_context_summary.py` give pairwise `shared_frac`, sequence-identity grouping, and three figures. Replaces an earlier pairwise `dc-megablast` cross-check ("flanker") this repo retired once pangraph proved to subsume it -- real rearrangement representation, not pairwise approximation |
@@ -676,7 +677,7 @@ negative controls, correctly empty.
 (Stage 0) gives it 57 CDS; it is no longer a gap.
 
 **Blocked on tooling:** Layers 1 and 3–7 need bakta / ISEScan / IntegronFinder2 /
-mob_suite / geNomad. conda is broken; micromamba or Firefly is the route (see `CLAUDE.md`).
+mob_suite / geNomad. conda is broken; micromamba or Firefly is the route.
 
 
 ---

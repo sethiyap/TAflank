@@ -376,9 +376,9 @@ occur, and elements within a family by how many loci carry them. Where a
 locus carries more than one copy of an element, the cell reports the **best**
 one, so `fragment` in a cell means every copy in that locus is a fragment.
 
-This is the input to the Jaccard distance + PERMANOVA grouping (CLAUDE.md
-Stage 6), which asks whether neighbourhood content tracks host species or
-plasmid backbone.
+This is the input to the Jaccard distance + PERMANOVA grouping (Stage 6),
+which asks whether neighbourhood content tracks host species or plasmid
+backbone.
 
 ## Conventions that apply to every table
 

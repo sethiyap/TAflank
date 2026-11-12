@@ -336,7 +336,7 @@ cargo cassette survived even though half its vehicle did not. Across the 14 loci
   IS element almost always leave different TSD sequences** — while every descendant of
   one single ancestral insertion event inherits the *same* TSD, because it is simply
   copied along with the rest of the DNA. Comparing TSDs across loci is therefore a
-  direct test of CLAUDE.md's central question: a TSD shared, letter for letter, by
+  direct test of this project's central question: a TSD shared, letter for letter, by
   several loci is strong evidence of one shared historical event; TSDs that differ from
   locus to locus point to repeated, independent acquisition.
 
