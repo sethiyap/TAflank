@@ -40,30 +40,21 @@ downstream). The terms below are used throughout the rest of this report:
 
 ```mermaid
 flowchart LR
-    subgraph vehicle["VEHICLE (variable, often decayed)"]
-        is1["IS element, e.g. ISEsa1-like\n-- the candidate ancestral vehicle;\noften truncated or interrupted by\na second IS (slide 11)"]
-    end
-    subgraph othercargo["OTHER CARGO (variable)"]
-        other["other IS copies, integrons,\nresistance genes...\n(differs locus to locus)"]
-    end
-    subgraph core["CONSERVED CORE -- this project's anchor"]
+    vehicle["VEHICLE\n(e.g. ISEsa1-like,\noften decayed)"]:::vehicleStyle
+    cargo["OTHER CARGO\n(variable)"]:::cargoStyle
+    subgraph core["CONSERVED CORE (the anchor)"]
         direction LR
-        cytb["cytb / b6"] --> czc["czc\n(Co-Zn-Cd\nresistance)"] --> relB["relB\n(antitoxin,\n79 aa)"] --> relE["relE\n(toxin,\n95 aa)"]
+        cytb["cytb/b6"] --> czc["czc"] --> relB["relB"] --> relE["relE"]
     end
-    subgraph downstream["USUALLY EMPTY"]
-        d["variation is one-sided --\nalmost nothing sits downstream\nof the core (slide 11)"]
-    end
+    downstream["usually EMPTY"]:::emptyStyle
 
-    vehicle --> othercargo --> core --> downstream
+    vehicle --> cargo --> core --> downstream
 
-    classDef vehicleStyle fill:#ffd6e8,stroke:#c2255c,color:#5c0f2e,stroke-width:1px
-    classDef cargoStyle fill:#d0bfff,stroke:#6741d9,color:#2f1a66,stroke-width:1px
-    classDef coreStyle fill:#ffe066,stroke:#e67700,color:#4d2e00,stroke-width:1px
-    classDef emptyStyle fill:#eceff4,stroke:#4c566a,color:#2e3440,stroke-width:1px,stroke-dasharray: 4 3
-    class is1 vehicleStyle
-    class other cargoStyle
+    classDef vehicleStyle fill:#ffd6e8,stroke:#c2255c,color:#5c0f2e
+    classDef cargoStyle fill:#d0bfff,stroke:#6741d9,color:#2f1a66
+    classDef coreStyle fill:#ffe066,stroke:#e67700,color:#4d2e00
+    classDef emptyStyle fill:#eceff4,stroke:#4c566a,color:#2e3440,stroke-dasharray: 4 3
     class cytb,czc,relB,relE coreStyle
-    class d emptyStyle
 ```
 
 - **The core** (`cytb`/`b6` → `czc` → `relB` → `relE`) is the one part present and
@@ -108,6 +99,14 @@ tests (§6–7), sky blue = pangraph's independent sequence-homology check (§7b
 green = the deliverables (§8). GitHub/VS Code render this statically — no
 click-through — but still support pan/zoom and the colour coding below.
 
+**Where it ran:** everything in this pilot ran locally (arm64 macOS) except
+**Bakta** (marked `[Gadi]` below), which has no macOS build and runs on Gadi
+via Apptainer — compute nodes there have no outbound network, so the
+container and database are pulled on `copyq` first (`env/gadi_bakta_setup.sh`).
+The matplotlib/scipy figure stage (`colour_blocks.py`, the pangraph figures)
+has the same container-on-copyq option available on Gadi
+(`env/gadi_viz_setup.sh`) for cluster-scale runs, but ran locally here.
+
 ```mermaid
 flowchart TD
     bait["527bp relBE bait\n+ 16 GenBank records"]:::input
@@ -133,7 +132,7 @@ flowchart TD
         isfinder["ISfinder blastn\nNO length/identity cutoff\n→ complete / partial / fragment"]:::isfinder
         cargo["cargo-gene blastn\nrelB/relE/cytb/czc/hok_gef/tra/ars/sil/intI/qnr\n(curated from this project's own 16 records)"]:::cargo
         plasmidfinder["PlasmidFinder blastn\nInc typing, cov≥80% id≥95%"]:::plasmidfinder
-        bakta["Bakta db-light\nCDS annotation"]:::bakta
+        bakta["Bakta db-light\nCDS annotation\n[Gadi -- Apptainer]"]:::bakta
     end
 
     bakta --> families["sequence clustering\n90% id / 80% cov\n→ gene families (not product names)"]:::bakta
