@@ -171,6 +171,27 @@ flowchart TD
     classDef output fill:#63e6be,stroke:#087f5b,color:#063d2e,stroke-width:2px
 ```
 
+### Reproducing this pilot yourself
+
+Run from the pipeline's own directory — every path in `nextflow.config` is
+relative to it (`cd TAflank` after cloning, not from wherever your shell
+happens to start):
+
+```bash
+cd TAflank
+./tools/nf run main.nf -profile local \
+    --bait anchors/relBE_seed.fa \
+    --replicon_type all \
+    --outdir test_relBE_run/results --figdir test_relBE_run/figures
+```
+
+`--replicon_type all` is what makes this the full 14-locus pilot (7 plasmid
++ 7 chromosome) rather than the config's own default of `plasmid`-only (7
+loci). Sending the output to `test_relBE_run/` rather than the default
+`results/`/`figures/` keeps it separate from anything already in the repo.
+See the README's **Installation** section first if any of the tools
+(`blastn`, `pangraph`, the Python figure dependencies) aren't set up yet.
+
 ## 3. The pilot test: 16 input records
 
 The pilot used **16 closed GenBank records** as the search database — nine loci and two
