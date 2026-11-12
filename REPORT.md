@@ -545,9 +545,14 @@ rather than all at once.
    hit them — if it does, the anchor needs to extend further upstream.
 2. **Search by homology, not by keyword**, against a realistic target set — RefSeq
    Enterobacterales complete genomes (~26,500 assemblies) and/or a curated plasmid
-   collection (PLSDB) — using the extended anchor from step 1, on HPC (Gadi), since a
-   sweep at this scale needs a pre-built BLAST database and compute-node queues there
-   have no outbound network for anything else.
+   collection (PLSDB) — using the extended anchor from step 1. This step moves to HPC
+   (**Gadi or Firefly**, whichever has that database already staged) rather than
+   running locally, because a sweep at this scale needs a **pre-built BLAST database
+   available on disk**, not fetched per-query over the network — compute-node queues
+   on both clusters have no outbound network for anything else, and re-downloading
+   ~26,500 assemblies per run is not realistic regardless. Firefly is also where the
+   larger annotation tools this pilot could not run locally (ISEScan, IntegronFinder2,
+   mob_suite, geNomad) would run at this scale, alongside Bakta.
 3. **Stage through the 58-entry TADB3 curated relBE set first**, as a smaller
    intermediate validation step before committing to the full sweep — specifically to
    check what fraction of those 58 carry the full `cytb–czc` core versus a bare TA pair,
