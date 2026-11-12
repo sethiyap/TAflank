@@ -96,7 +96,7 @@ Colour marks the role each stage plays: grey = input, orange = the Tier A/B/C fi
 (§3), blue = window extraction (§4), the four annotation passes of §5 each get their
 own colour, gold = the two classification axes (§5), teal = the TSD/Jaccard history
 tests (§6–7), sky blue = pangraph's independent sequence-homology check (§7b), dark
-green = the deliverables (§8). GitHub/VS Code render this statically — no
+green = the deliverables (§7/§7b). GitHub/VS Code render this statically — no
 click-through — but still support pan/zoom and the colour coding below.
 
 **Where it ran:** everything in this pilot ran locally (arm64 macOS) except
@@ -394,7 +394,7 @@ exactly the kind of sequence under-represented in reference databases.
 Because over a third of CDS have no usable name, genes were additionally clustered by
 **sequence** (90% identity, 80% mutual coverage — the Roary `-i 0.9 -s` convention),
 giving every CDS a family ID independent of whether it has a name at all. This is what
-lets the figure (§8) colour "hypothetical protein" genes consistently when the same
+lets the figure (§7) colour "hypothetical protein" genes consistently when the same
 unnamed gene recurs across loci, rather than painting every unnamed gene the same
 flat grey. 715 CDS resolved into **470 families**, 116 of them shared by more than one
 locus; the 264 previously-identical-looking "hypothetical protein" CDS split into 187
@@ -465,7 +465,7 @@ cargo cassette survived even though half its vehicle did not. Across the 14 loci
 ## 7. A fast proxy for "do these loci share one history"
 
 Short of the full sequence-level structural-variant test (planned, not yet built — see
-§9), a lighter check was run: **Jaccard similarity restricted to the vehicle and the
+§8), a lighter check was run: **Jaccard similarity restricted to the vehicle and the
 five conserved cargo genes** (not the full ±20 kb window, which is dominated by
 locus-specific insertions and would hide the signal). At a 90% similarity threshold,
 union-find clustering on this restricted signature split the 14 loci into:
@@ -483,6 +483,33 @@ three multi-locus groups **mixes plasmid and chromosomal loci**, consistent with
 `relBE`'s vehicle moving between genomic contexts rather than architecture tracking
 replicon type.
 
+### The figure
+
+![relBE flanking architecture, aligned on the bait](figures/colour_blocks/colour_blocks.png)
+
+Fourteen loci, one row each, aligned on the `relB` start codon (the dashed blue line at
+position 0). Reading guide:
+
+- **IS elements**: mustard = forward strand, yellow = reverse strand (which named
+  element it is comes from the label above the block, not the colour).
+- **Cargo genes**: `relB`/`relE` green/red; `cytb`/`czc` purple/blue (labelled "the
+  conserved core"); other cargo in neutral grey.
+- **● / —** beside the classification badge marks plasmid vs chromosome.
+- **VEHICLE-\* / CORE-\*** two-line badge on the right is the independent two-axis
+  classification from §5.
+- **Coloured swatch** beside the locus name marks membership in one of the groups
+  above.
+- **†** after an IS label marks a target-site duplication shared, letter for letter,
+  with another locus (§6).
+- The **"idealised architecture" panel** at the bottom is not asserted — every element
+  in it is placed at the **median offset** measured across the real loci that carry it,
+  and is marked "same in all N" only where that offset is genuinely invariant. `czc` is
+  the single fixed point in the whole dataset: **−1184 bp from relB in all nine loci
+  that carry it, with zero variation.**
+
+A companion heatmap (`figures/colour_blocks/is_matrix.png`) shows IS element
+presence/absence across all 14 loci, columns grouped by ISfinder family.
+
 ## 7b. A second, independent check: pangraph sequence homology
 
 §7's Jaccard grouping asks "do these loci carry the same **named** elements" — it never
@@ -495,7 +522,7 @@ features, do two loci share.
 At `shared_frac ≥ 0.85` over the **whole** ±20 kb window (not restricted to the
 vehicle + core the way §7's signature is), pangraph finds far fewer multi-member
 groups — these same groups are also the **11 unique up-/downstream contexts** drawn in
-`pangraph_context_summary.png` (§8) and tabulated in
+`pangraph_context_summary.png` (below) and tabulated in
 `results/pangraph/pangraph_context_summary.xlsx`:
 
 | context | n | representative (medoid) | members | weakest internal pair |
@@ -531,34 +558,7 @@ cross-check here instead. It was retired once pangraph's real N-way alignment gr
 proved to subsume it — pangraph represents a rearrangement directly, rather than
 approximating one by chaining pairwise hits outward from the core.
 
-## 8. The figure
-
-![relBE flanking architecture, aligned on the bait](figures/colour_blocks/colour_blocks.png)
-
-Fourteen loci, one row each, aligned on the `relB` start codon (the dashed blue line at
-position 0). Reading guide:
-
-- **IS elements**: mustard = forward strand, yellow = reverse strand (which named
-  element it is comes from the label above the block, not the colour).
-- **Cargo genes**: `relB`/`relE` green/red; `cytb`/`czc` purple/blue (labelled "the
-  conserved core"); other cargo in neutral grey.
-- **● / —** beside the classification badge marks plasmid vs chromosome.
-- **VEHICLE-\* / CORE-\*** two-line badge on the right is the independent two-axis
-  classification from §5.
-- **Coloured swatch** beside the locus name marks membership in one of the §7
-  architecture groups.
-- **†** after an IS label marks a target-site duplication shared, letter for letter,
-  with another locus (§6).
-- The **"idealised architecture" panel** at the bottom is not asserted — every element
-  in it is placed at the **median offset** measured across the real loci that carry it,
-  and is marked "same in all N" only where that offset is genuinely invariant. `czc` is
-  the single fixed point in the whole dataset: **−1184 bp from relB in all nine loci
-  that carry it, with zero variation.**
-
-A companion heatmap (`figures/colour_blocks/is_matrix.png`) shows IS element presence/absence across
-all 14 loci, columns grouped by ISfinder family.
-
-### The same loci, summarised by sequence homology instead
+### The figures
 
 ![pangraph: 11 unique contexts summarising 14 loci](figures/pangraph/pangraph_context_summary.png)
 
@@ -567,7 +567,7 @@ collapsed into their **11 unique up-/downstream contexts**, one row per context,
 drawn from its most-typical ("medoid") member. Reading guide:
 
 - **Orange block at position 0** is the conserved core (`relB`+`relE`), the same anchor
-  as the figure above — every context lines up on it.
+  as §7's figure — every context lines up on it.
 - **Same colour on either side of the core** (any colour other than pale pink or orange)
   means that exact stretch of DNA is shared with at least one other locus; **different
   colours are different, unrelated combinations of loci** — there is no universal
@@ -595,15 +595,15 @@ loci gets its own row instead of being collapsed to its context's medoid.
 
 ![pangraph background with gene/IS arrows overlaid](figures/pangraph/pangraph_annotated.png)
 
-`pangraph_annotated.png` — the gene/IS arrows from `colour_blocks.png` (§8,
-top) redrawn on top of this sequence-identity background instead of the
+`pangraph_annotated.png` — the gene/IS arrows from `colour_blocks.png` (§7)
+redrawn on top of this sequence-identity background instead of the
 flat idealised schematic. The same arrow colour on a *different* background
 colour is the same named element sitting on genuinely different DNA — e.g.
 `czc` (blue arrow) appears on blue, green, magenta and plain pink
 backgrounds across different loci, meaning it is conserved as a *named gene*
 far more widely than any single stretch of flanking DNA around it is.
 
-## 9. Next steps: scaling to the whole of NCBI
+## 8. Next steps: scaling to the whole of NCBI
 
 This pilot deliberately used a small, hand-curated set of 16 records so every step
 could be checked by hand against a result verified before the pipeline existed. Scaling
