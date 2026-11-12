@@ -1,0 +1,47 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP026216__CP026216__1__plus	CDS	C4-dicarboxylate ABC transporter		1	426	+					C4-dicarboxylate ABC transporter	annotation	genbank	-20000
+CP026216__CP026216__1__plus	CDS	TRAP transporter small permease		488	997	+					TRAP transporter small permease	annotation	genbank	-19513
+CP026216__CP026216__1__plus	CDS	TRAP transporter large permease		1028	2314	+					TRAP transporter large permease	annotation	genbank	-18973
+CP026216__CP026216__1__plus	CDS	hypothetical protein		2444	3157	+					hypothetical protein	annotation	genbank	-17557
+CP026216__CP026216__1__plus	CDS	hypothetical protein		3150	3563	+					hypothetical protein	annotation	genbank	-16851
+CP026216__CP026216__1__plus	CDS	2-iminobutanoate/2-iminopropanoate deami		3984	4370	-					2-iminobutanoate/2-iminopropanoate deami	annotation	genbank	-16017
+CP026216__CP026216__1__plus	CDS	aspartate carbamoyltransferase regulator		4447	4908	-					aspartate carbamoyltransferase regulator	annotation	genbank	-15554
+CP026216__CP026216__1__plus	CDS	aspartate carbamoyltransferase		4923	5858	-					aspartate carbamoyltransferase	annotation	genbank	-15078
+CP026216__CP026216__1__plus	CDS	pyr operon leader peptide		5895	6011	-					pyr operon leader peptide	annotation	genbank	-14106
+CP026216__CP026216__1__plus	CDS	ArgR family transcriptional regulator		6095	6574	-					ArgR family transcriptional regulator	annotation	genbank	-13906
+CP026216__CP026216__1__plus	CDS	arcD		6826	8301	-					arcD	annotation	genbank	-13175
+CP026216__CP026216__1__plus	CDS	alanine/ornithine racemase family PLP-de		8336	9415	-					alanine/ornithine racemase family PLP-de	annotation	genbank	-11665
+CP026216__CP026216__1__plus	CDS	argF		9481	10497	-					argF	annotation	genbank	-10520
+CP026216__CP026216__1__plus	CDS	arcC		10608	11540	-					arcC	annotation	genbank	-9393
+CP026216__CP026216__1__plus	CDS	arcA		11551	12771	-					arcA	annotation	genbank	-8450
+CP026216__CP026216__1__plus	CDS	YhcH/YjgK/YiaL family protein		13449	13901	+					YhcH/YjgK/YiaL family protein	annotation	genbank	-6552
+CP026216__CP026216__1__plus	IS	ISKpn38	IS3	14413	16010	-	complete	no	no		ISKpn38	isfinder	genbank	-5588
+CP026216__CP026216__1__plus	CDS	IS3-like element ISKpn38 family transpos		14439	15971	-					ISKpn38	isfinder	genbank	-5562
+CP026216__CP026216__1__plus	IS	ISEsa1	ISNCY	16010	17608	+	complete	no	no		ISEsa1	isfinder	genbank	-3991
+CP026216__CP026216__1__plus	CDS	transposase		16060	17400	+					ISEsa1	isfinder	genbank	-3941
+CP026216__CP026216__1__plus	cargo	cytb		18041	18613	+			no		cytb	cargo	genbank	-1960
+CP026216__CP026216__1__plus	CDS	cytochrome b/b6 domain-containing protei		18043	18615	+					cytochrome b/b6 domain-containing protei	annotation	genbank	-1958
+CP026216__CP026216__1__plus	CDS	cation transporter		18815	19738	+					cation transporter	annotation	genbank	-1186
+CP026216__CP026216__1__plus	cargo	czc		18817	19740	+			no		czc	cargo	genbank	-1184
+CP026216__CP026216__1__plus	CDS	hypothetical protein		19782	19976	-					hypothetical protein	annotation	genbank	-219
+CP026216__CP026216__1__plus	cargo	relB		19999	20238	+			no		relB	cargo	genbank	-2
+CP026216__CP026216__1__plus	CDS	antitoxin RelB		20001	20240	+					antitoxin RelB	annotation	genbank	0
+CP026216__CP026216__1__plus	CDS	mRNA interferase RelE		20240	20527	+					mRNA interferase RelE	annotation	genbank	239
+CP026216__CP026216__1__plus	cargo	relE		20242	20529	+			no		relE	cargo	genbank	241
+CP026216__CP026216__1__plus	CDS	cytochrome C		20589	21689	+					cytochrome C	annotation	genbank	588
+CP026216__CP026216__1__plus	CDS	molybdopterin guanine dinucleotide-conta		21717	24164	+					molybdopterin guanine dinucleotide-conta	annotation	genbank	1716
+CP026216__CP026216__1__plus	CDS	argF		24260	25264	-					argF	annotation	genbank	4259
+CP026216__CP026216__1__plus	CDS	ribonuclease E inhibitor RraB		25428	25853	+					ribonuclease E inhibitor RraB	annotation	genbank	5427
+CP026216__CP026216__1__plus	CDS	miaE		25915	26679	+					miaE	annotation	genbank	5914
+CP026216__CP026216__1__plus	CDS	topoisomerase II		26767	27597	+					topoisomerase II	annotation	genbank	6766
+CP026216__CP026216__1__plus	CDS	GNAT family N-acetyltransferase		27604	28101	-					GNAT family N-acetyltransferase	annotation	genbank	7603
+CP026216__CP026216__1__plus	CDS	DUF898 domain-containing protein		28292	29491	+					DUF898 domain-containing protein	annotation	genbank	8291
+CP026216__CP026216__1__plus	CDS	valine--tRNA ligase		29546	32401	-					valine--tRNA ligase	annotation	genbank	9545
+CP026216__CP026216__1__plus	CDS	DNA polymerase III subunit chi		32401	32844	-					DNA polymerase III subunit chi	annotation	genbank	12400
+CP026216__CP026216__1__plus	CDS	leucyl aminopeptidase		32945	34456	-					leucyl aminopeptidase	annotation	genbank	12944
+CP026216__CP026216__1__plus	CDS	hypothetical protein		34566	34760	-					hypothetical protein	annotation	genbank	14565
+CP026216__CP026216__1__plus	CDS	LPS export ABC transporter permease LptF		34723	35823	+					LPS export ABC transporter permease LptF	annotation	genbank	14722
+CP026216__CP026216__1__plus	CDS	LPS export ABC transporter permease LptG		35823	36905	+					LPS export ABC transporter permease LptG	annotation	genbank	15822
+CP026216__CP026216__1__plus	CDS	DUF853 domain-containing protein		36969	38471	-					DUF853 domain-containing protein	annotation	genbank	16968
+CP026216__CP026216__1__plus	CDS	LacI family DNA-binding transcriptional 		38550	39548	-					LacI family DNA-binding transcriptional 	annotation	genbank	18549
+CP026216__CP026216__1__plus	CDS	gluconate permease		39606	40527	-					gluconate permease	annotation	genbank	19605

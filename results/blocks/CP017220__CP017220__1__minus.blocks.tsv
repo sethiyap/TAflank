@@ -1,0 +1,62 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP017220__CP017220__1__minus	CDS	LysR family transcriptional regulator		1	603	+					LysR family transcriptional regulator	annotation	genbank	-20000
+CP017220__CP017220__1__minus	CDS	transcriptional regulator		738	1958	+					transcriptional regulator	annotation	genbank	-19263
+CP017220__CP017220__1__minus	CDS	dethiobiotin synthase		2083	2778	+					dethiobiotin synthase	annotation	genbank	-17918
+CP017220__CP017220__1__minus	CDS	voltage-gated ClC-type chloride channel 		2731	3987	-					voltage-gated ClC-type chloride channel 	annotation	genbank	-17270
+CP017220__CP017220__1__minus	CDS	DMSO reductase maturation protein DsmD		4182	4796	-					DMSO reductase maturation protein DsmD	annotation	genbank	-15819
+CP017220__CP017220__1__minus	CDS	dimethylsulfoxide reductase		4839	5693	-					dimethylsulfoxide reductase	annotation	genbank	-15162
+CP017220__CP017220__1__minus	CDS	dimethylsulfoxide reductase, chain B		5695	6312	-					dimethylsulfoxide reductase, chain B	annotation	genbank	-14306
+CP017220__CP017220__1__minus	CDS	dimethyl sulfoxide reductase subunit A		6323	8719	-					dimethyl sulfoxide reductase subunit A	annotation	genbank	-13678
+CP017220__CP017220__1__minus	CDS	dimethyl sulfoxide reductase subunit A		8807	9619	-					dimethyl sulfoxide reductase subunit A	annotation	genbank	-11194
+CP017220__CP017220__1__minus	IS	IS629	IS3	9622	10931	+	complete	no	no		IS629	isfinder	genbank	-10379
+CP017220__CP017220__1__minus	CDS	transposase		9676	10002	+					IS629	isfinder	genbank	-10325
+CP017220__CP017220__1__minus	CDS	transposase		10002	10889	+					IS629	isfinder	genbank	-9999
+CP017220__CP017220__1__minus	CDS	dimethyl sulfoxide reductase subunit A		10933	12546	-					dimethyl sulfoxide reductase subunit A	annotation	genbank	-9068
+CP017220__CP017220__1__minus	CDS	hypothetical protein		12745	13050	-					hypothetical protein	annotation	genbank	-7256
+CP017220__CP017220__1__minus	CDS	hypothetical protein		13122	13868	+					hypothetical protein	annotation	genbank	-6879
+CP017220__CP017220__1__minus	CDS	spermidine acetyltransferase		13871	14431	-					spermidine acetyltransferase	annotation	genbank	-6130
+CP017220__CP017220__1__minus	CDS	hypothetical protein		14466	14807	-					hypothetical protein	annotation	genbank	-5535
+CP017220__CP017220__1__minus	CDS	hypothetical protein		14942	15268	+					hypothetical protein	annotation	genbank	-5059
+CP017220__CP017220__1__minus	CDS	bifunctional D-altronate/D-mannonate deh		15474	16688	+					bifunctional D-altronate/D-mannonate deh	annotation	genbank	-4527
+CP017220__CP017220__1__minus	CDS	Zn-dependent oxidoreductase		16700	17557	+					Zn-dependent oxidoreductase	annotation	genbank	-3301
+CP017220__CP017220__1__minus	IS	IS1R	IS1	17553	18320	-	complete	no	no		IS1R	isfinder	genbank	-2448
+CP017220__CP017220__1__minus	CDS	transposase		17568	18071	-					IS1R	isfinder	genbank	-2433
+CP017220__CP017220__1__minus	IS	ISSen4	IS3	18614	19834	+	complete	no	no		ISSen4	isfinder	genbank	-1387
+CP017220__CP017220__1__minus	CDS	transposase		18685	18948	+					ISSen4	isfinder	genbank	-1316
+CP017220__CP017220__1__minus	CDS	transposase		18975	19805	+					ISSen4	isfinder	genbank	-1026
+CP017220__CP017220__1__minus	CDS	bifunctional antitoxin/transcriptional r		20001	20240	+					bifunctional antitoxin/transcriptional r	annotation	genbank	0
+CP017220__CP017220__1__minus	cargo	relB		20003	20242	+			no		relB	cargo	genbank	2
+CP017220__CP017220__1__minus	CDS	addiction module toxin RelE		20240	20527	+					addiction module toxin RelE	annotation	genbank	239
+CP017220__CP017220__1__minus	cargo	relE		20242	20529	+			no		relE	cargo	genbank	241
+CP017220__CP017220__1__minus	CDS	hypothetical protein		20599	20754	+					hypothetical protein	annotation	genbank	598
+CP017220__CP017220__1__minus	CDS	hypothetical protein		20971	21222	+					hypothetical protein	annotation	genbank	970
+CP017220__CP017220__1__minus	CDS	hypothetical protein		21289	21567	+					hypothetical protein	annotation	genbank	1288
+CP017220__CP017220__1__minus	CDS	hypothetical protein		21569	22618	+					hypothetical protein	annotation	genbank	1568
+CP017220__CP017220__1__minus	CDS	antitermination protein		22632	23384	+					antitermination protein	annotation	genbank	2631
+CP017220__CP017220__1__minus	CDS	cold-shock protein		23806	24018	-					cold-shock protein	annotation	genbank	3805
+CP017220__CP017220__1__minus	CDS	cold-shock protein		24319	24534	+					cold-shock protein	annotation	genbank	4318
+CP017220__CP017220__1__minus	CDS	holin		25288	25503	+					holin	annotation	genbank	5287
+CP017220__CP017220__1__minus	CDS	hypothetical protein		25508	25819	+					hypothetical protein	annotation	genbank	5507
+CP017220__CP017220__1__minus	CDS	lysozyme		25816	26349	+					lysozyme	annotation	genbank	5815
+CP017220__CP017220__1__minus	CDS	hypothetical protein		26346	26843	+					hypothetical protein	annotation	genbank	6345
+CP017220__CP017220__1__minus	CDS	cold-shock protein		27206	27418	+					cold-shock protein	annotation	genbank	7205
+CP017220__CP017220__1__minus	CDS	hypothetical protein		27690	27920	+					hypothetical protein	annotation	genbank	7689
+CP017220__CP017220__1__minus	CDS	addiction module toxin, GnsA/GnsB family		28092	28265	+					addiction module toxin, GnsA/GnsB family	annotation	genbank	8091
+CP017220__CP017220__1__minus	CDS	hypothetical protein		28417	28827	-					hypothetical protein	annotation	genbank	8416
+CP017220__CP017220__1__minus	CDS	DUF3950 domain-containing protein		28885	29118	-					DUF3950 domain-containing protein	annotation	genbank	8884
+CP017220__CP017220__1__minus	CDS	hypothetical protein		29134	29282	-					hypothetical protein	annotation	genbank	9133
+CP017220__CP017220__1__minus	CDS	protein convertase		29507	30052	+					protein convertase	annotation	genbank	9506
+CP017220__CP017220__1__minus	CDS	terminase		30027	31952	+					terminase	annotation	genbank	10026
+CP017220__CP017220__1__minus	CDS	phage tail protein		31949	32155	+					phage tail protein	annotation	genbank	11948
+CP017220__CP017220__1__minus	CDS	phage portal protein		32152	33753	+					phage portal protein	annotation	genbank	12151
+CP017220__CP017220__1__minus	CDS	capsid assembly protein		33734	35053	+					capsid assembly protein	annotation	genbank	13733
+CP017220__CP017220__1__minus	CDS	head decoration protein		35063	35395	+					head decoration protein	annotation	genbank	15062
+CP017220__CP017220__1__minus	CDS	major capsid protein E		35451	36476	+					major capsid protein E	annotation	genbank	15450
+CP017220__CP017220__1__minus	CDS	DNA-packaging protein FI		36479	36913	+					DNA-packaging protein FI	annotation	genbank	16478
+CP017220__CP017220__1__minus	CDS	phage tail protein		36925	37278	+					phage tail protein	annotation	genbank	16924
+CP017220__CP017220__1__minus	CDS	phage tail protein		37290	37868	+					phage tail protein	annotation	genbank	17289
+CP017220__CP017220__1__minus	CDS	phage tail protein		37865	38260	+					phage tail protein	annotation	genbank	17864
+CP017220__CP017220__1__minus	CDS	phage tail protein		38268	39008	+					phage tail protein	annotation	genbank	18267
+CP017220__CP017220__1__minus	CDS	phage minor tail protein G		39024	39446	+					phage minor tail protein G	annotation	genbank	19023
+CP017220__CP017220__1__minus	CDS	phage tail assembly protein T		39428	39862	+					phage tail assembly protein T	annotation	genbank	19427
+CP017220__CP017220__1__minus	CDS	phage tail tape measure protein		39855	40527	+					phage tail tape measure protein	annotation	genbank	19854

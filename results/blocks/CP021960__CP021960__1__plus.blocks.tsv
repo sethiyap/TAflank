@@ -1,0 +1,67 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP021960__CP021960__1__plus	CDS	erythronate-4-phosphate dehydrogenase		1	40527	-					erythronate-4-phosphate dehydrogenase	annotation	genbank	-20000
+CP021960__CP021960__1__plus	CDS	oxidoreductase		1	179	-					oxidoreductase	annotation	genbank	-20000
+CP021960__CP021960__1__plus	CDS	LysR family transcriptional regulator		346	1251	+					LysR family transcriptional regulator	annotation	genbank	-19655
+CP021960__CP021960__1__plus	CDS	DNA polymerase V subunit UmuC		1258	2523	-					DNA polymerase V subunit UmuC	annotation	genbank	-18743
+CP021960__CP021960__1__plus	CDS	DNA polymerase V subunit UmuD		2526	2945	-					DNA polymerase V subunit UmuD	annotation	genbank	-17475
+CP021960__CP021960__1__plus	CDS	DNA-damage-inducible protein I		3216	3458	+					DNA-damage-inducible protein I	annotation	genbank	-16785
+CP021960__CP021960__1__plus	CDS	glycosyl transferase		3629	4765	-					glycosyl transferase	annotation	genbank	-16372
+CP021960__CP021960__1__plus	CDS	hypothetical protein		5012	5512	+					hypothetical protein	annotation	genbank	-14989
+CP021960__CP021960__1__plus	CDS	DUF441 family protein		5629	6075	+					DUF441 family protein	annotation	genbank	-14372
+CP021960__CP021960__1__plus	CDS	AraC family transcriptional regulator		6059	6853	-					AraC family transcriptional regulator	annotation	genbank	-13942
+CP021960__CP021960__1__plus	CDS	cyanate MFS transporter		6961	8136	+					cyanate MFS transporter	annotation	genbank	-13040
+CP021960__CP021960__1__plus	CDS	hypothetical protein		8168	8860	-					hypothetical protein	annotation	genbank	-11833
+CP021960__CP021960__1__plus	CDS	purine-nucleoside phosphorylase		9006	9515	+					purine-nucleoside phosphorylase	annotation	genbank	-10995
+CP021960__CP021960__1__plus	CDS	MarR family transcriptional regulator		9520	9858	+					MarR family transcriptional regulator	annotation	genbank	-10481
+CP021960__CP021960__1__plus	CDS	hemolysin		9848	10087	-					hemolysin	annotation	genbank	-10153
+CP021960__CP021960__1__plus	CDS	GGDEF domain-containing protein		10388	11401	+					GGDEF domain-containing protein	annotation	genbank	-9613
+CP021960__CP021960__1__plus	CDS	hypothetical protein		11423	11560	+					hypothetical protein	annotation	genbank	-8578
+CP021960__CP021960__1__plus	CDS	hypothetical protein		11518	11634	+					hypothetical protein	annotation	genbank	-8483
+CP021960__CP021960__1__plus	CDS	hypothetical protein		11752	11877	+					hypothetical protein	annotation	genbank	-8249
+CP021960__CP021960__1__plus	CDS	hypothetical protein		11937	12200	-					hypothetical protein	annotation	genbank	-8064
+CP021960__CP021960__1__plus	CDS	leucine efflux protein		12331	12969	-					leucine efflux protein	annotation	genbank	-7670
+CP021960__CP021960__1__plus	CDS	lipid A biosynthesis palmitoleoyl acyltr		13059	13973	-					lipid A biosynthesis palmitoleoyl acyltr	annotation	genbank	-6942
+CP021960__CP021960__1__plus	CDS	hypothetical protein		13972	14127	+					hypothetical protein	annotation	genbank	-6029
+CP021960__CP021960__1__plus	CDS	hypothetical protein		14189	14380	+					hypothetical protein	annotation	genbank	-5812
+CP021960__CP021960__1__plus	IS	ISKpn38	IS3	14436	14518	-	fragment	yes	no		ISKpn38	isfinder	genbank	-5565
+CP021960__CP021960__1__plus	IS	ISEsa1	ISNCY	14518	16103	+	complete	no	no		ISEsa1	isfinder	genbank	-5483
+CP021960__CP021960__1__plus	CDS	transposase		14568	15908	+					ISEsa1	isfinder	genbank	-5433
+CP021960__CP021960__1__plus	IS	ISEsa2	IS110	16104	17595	+	complete	no	no		ISEsa2	isfinder	genbank	-3897
+CP021960__CP021960__1__plus	CDS	IS110 family transposase		16329	17567	+					ISEsa2	isfinder	genbank	-3672
+CP021960__CP021960__1__plus	CDS	hypothetical protein		17727	17939	-					hypothetical protein	annotation	genbank	-2274
+CP021960__CP021960__1__plus	cargo	cytb		18041	18613	+			no		cytb	cargo	genbank	-1960
+CP021960__CP021960__1__plus	CDS	hypothetical protein		18043	18615	+					hypothetical protein	annotation	genbank	-1958
+CP021960__CP021960__1__plus	CDS	cation-efflux pump		18815	19738	+					cation-efflux pump	annotation	genbank	-1186
+CP021960__CP021960__1__plus	cargo	czc		18817	19740	+			no		czc	cargo	genbank	-1184
+CP021960__CP021960__1__plus	cargo	relB		19999	20238	+			no		relB	cargo	genbank	-2
+CP021960__CP021960__1__plus	CDS	antitoxin RelB		20001	20240	+					antitoxin RelB	annotation	genbank	0
+CP021960__CP021960__1__plus	CDS	mRNA interferase RelE		20240	20527	+					mRNA interferase RelE	annotation	genbank	239
+CP021960__CP021960__1__plus	cargo	relE		20242	20529	+			no		relE	cargo	genbank	241
+CP021960__CP021960__1__plus	CDS	integrase		20585	21628	-					ISKpn28	isfinder	genbank	584
+CP021960__CP021960__1__plus	IS	ISKpn28	IS481	20591	21684	-	complete	no	no		ISKpn28	isfinder	genbank	590
+CP021960__CP021960__1__plus	cargo	hok_gef		21686	21837	+			no		hok_gef	cargo	genbank	1685
+CP021960__CP021960__1__plus	CDS	small toxic polypeptide		21688	21849	+					small toxic polypeptide	annotation	genbank	1687
+CP021960__CP021960__1__plus	CDS	cytoplasmic protein		22010	22495	-					cytoplasmic protein	annotation	genbank	2009
+CP021960__CP021960__1__plus	CDS	hypothetical protein		22493	22840	+					hypothetical protein	annotation	genbank	2492
+CP021960__CP021960__1__plus	CDS	MBL fold metallo-hydrolase		22763	23404	-					MBL fold metallo-hydrolase	annotation	genbank	2762
+CP021960__CP021960__1__plus	IS	ISEcp1	IS1380	23437	25092	-	complete	no	no		ISEcp1	isfinder	genbank	3436
+CP021960__CP021960__1__plus	CDS	hypothetical protein		23541	23663	-					ISEcp1	isfinder	genbank	3540
+CP021960__CP021960__1__plus	CDS	IS1380 family transposase		23644	24906	-					ISEcp1	isfinder	genbank	3643
+CP021960__CP021960__1__plus	CDS	hypothetical protein		25095	25214	-					hypothetical protein	annotation	genbank	5094
+CP021960__CP021960__1__plus	CDS	L-asparaginase		25295	26338	-					L-asparaginase	annotation	genbank	5294
+CP021960__CP021960__1__plus	CDS	phosphodiesterase		26641	27849	+					phosphodiesterase	annotation	genbank	6640
+CP021960__CP021960__1__plus	CDS	hypothetical protein		27922	29706	+					hypothetical protein	annotation	genbank	7921
+CP021960__CP021960__1__plus	CDS	LysR family transcriptional regulator		29713	30603	-					LysR family transcriptional regulator	annotation	genbank	9712
+CP021960__CP021960__1__plus	CDS	3,4-dihydroxybenzoate decarboxylase		30724	32232	+					3,4-dihydroxybenzoate decarboxylase	annotation	genbank	10723
+CP021960__CP021960__1__plus	CDS	hypothetical protein		32266	32430	+					hypothetical protein	annotation	genbank	12265
+CP021960__CP021960__1__plus	CDS	diguanylate phosphodiesterase		32543	33229	-					diguanylate phosphodiesterase	annotation	genbank	12542
+CP021960__CP021960__1__plus	CDS	hypothetical protein		33628	33798	-					hypothetical protein	annotation	genbank	13627
+CP021960__CP021960__1__plus	CDS	DNA-binding protein		33838	34470	-					DNA-binding protein	annotation	genbank	13837
+CP021960__CP021960__1__plus	CDS	hypothetical protein		35037	35234	+					hypothetical protein	annotation	genbank	15036
+CP021960__CP021960__1__plus	CDS	cytochrome d ubiquinol oxidase subunit I		35350	36360	-					cytochrome d ubiquinol oxidase subunit I	annotation	genbank	15349
+CP021960__CP021960__1__plus	CDS	cytochrome ubiquinol oxidase subunit I		36357	37763	-					cytochrome ubiquinol oxidase subunit I	annotation	genbank	16356
+CP021960__CP021960__1__plus	CDS	Mn-containing catalase		37819	38694	-					Mn-containing catalase	annotation	genbank	17818
+CP021960__CP021960__1__plus	CDS	YciE/YciF family protein		38711	39217	-					YciE/YciF family protein	annotation	genbank	18710
+CP021960__CP021960__1__plus	CDS	YciE/YciF family protein		39244	39738	-					YciE/YciF family protein	annotation	genbank	19243
+CP021960__CP021960__1__plus	CDS	stress-induced acidophilic repeat motif-		39829	40014	-					stress-induced acidophilic repeat motif-	annotation	genbank	19828
+CP021960__CP021960__1__plus	CDS	hypothetical protein		40234	40387	+					hypothetical protein	annotation	genbank	20233

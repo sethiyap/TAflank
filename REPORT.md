@@ -148,7 +148,7 @@ flowchart TD
     tsd --> figure
     jaccard --> figure
     plasmidfinder --> figure
-    figure["figures/colour_blocks.png\nfigures/is_matrix.png\nresults tables"]:::output
+    figure["figures/colour_blocks/colour_blocks.png\nfigures/colour_blocks/is_matrix.png\nresults tables"]:::output
 
     pangraphBuild["pangraph build\nN-way alignment graph\n(Noll, Molari & Neher 2023)"]:::pangraph
     pangraphBuild --> pangraphGroups["pangraph_groups.tsv\nunion-find @ shared_frac ≥0.85"]:::pangraph
@@ -490,7 +490,7 @@ At `shared_frac ≥ 0.85` over the **whole** ±20 kb window (not restricted to t
 vehicle + core the way §7's signature is), pangraph finds far fewer multi-member
 groups — these same groups are also the **11 unique up-/downstream contexts** drawn in
 `pangraph_context_summary.png` (§8) and tabulated in
-`results/pangraph_context_summary.xlsx`:
+`results/pangraph/pangraph_context_summary.xlsx`:
 
 | context | n | representative (medoid) | members | weakest internal pair |
 |---|---|---|---|---|
@@ -527,7 +527,7 @@ approximating one by chaining pairwise hits outward from the core.
 
 ## 8. The figure
 
-![relBE flanking architecture, aligned on the bait](figures/colour_blocks.png)
+![relBE flanking architecture, aligned on the bait](figures/colour_blocks/colour_blocks.png)
 
 Fourteen loci, one row each, aligned on the `relB` start codon (the dashed blue line at
 position 0). Reading guide:
@@ -549,12 +549,12 @@ position 0). Reading guide:
   the single fixed point in the whole dataset: **−1184 bp from relB in all nine loci
   that carry it, with zero variation.**
 
-A companion heatmap (`figures/is_matrix.png`) shows IS element presence/absence across
+A companion heatmap (`figures/colour_blocks/is_matrix.png`) shows IS element presence/absence across
 all 14 loci, columns grouped by ISfinder family.
 
 ### The same loci, summarised by sequence homology instead
 
-![pangraph: 11 unique contexts summarising 14 loci](figures/pangraph_context_summary.png)
+![pangraph: 11 unique contexts summarising 14 loci](figures/pangraph/pangraph_context_summary.png)
 
 This is §7b's pangraph check, drawn rather than just tabulated: the same 14 loci,
 collapsed into their **11 unique up-/downstream contexts**, one row per context, each
@@ -581,13 +581,13 @@ drawn from its most-typical ("medoid") member. Reading guide:
 Two further figures come from the same pangraph check, one row per
 **individual** locus this time rather than per context:
 
-![pangraph: sequence-homology blocks, one row per locus](figures/pangraph_blocks.png)
+![pangraph: sequence-homology blocks, one row per locus](figures/pangraph/pangraph_blocks.png)
 
 `pangraph_blocks.png` — same colour scheme as the context figure above (same
 colour = mutually alignable, pale pink = private), but every one of the 14
 loci gets its own row instead of being collapsed to its context's medoid.
 
-![pangraph background with gene/IS arrows overlaid](figures/pangraph_annotated.png)
+![pangraph background with gene/IS arrows overlaid](figures/pangraph/pangraph_annotated.png)
 
 `pangraph_annotated.png` — the gene/IS arrows from `colour_blocks.png` (§8,
 top) redrawn on top of this sequence-identity background instead of the

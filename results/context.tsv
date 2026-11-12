@@ -1,8 +1,15 @@
-locus_id	accession	replicon_type	vehicle_class	vehicle_ends	vehicle_interrupted	vehicle_edge_clipped	core_class	core_genes_present	core_edge_clipped	n_is	n_is_fragment	n_is_fragment_real	cargo_families	has_czc	has_cytb	has_hok_gef	czc_offset	hok_gef_offset	metal_module	note
-CP006642__CP006642__1__minus	CP006642	plasmid	VEHICLE-ABSENT			-	CORE-PARTIAL	relB,relE	-	13	4	4	ars,intI,relB,relE,sil	no	no	no			no	
-CP018961__CP018961__1__minus	CP018961	plasmid	VEHICLE-INTACT	ISEsa1,ISEsa2	ISEsa1	-	CORE-INTACT	cytb,czc,hok_gef,relB,relE	-	9	3	3	cytb,czc,hok_gef,qnr,relB,relE,tra	yes	yes	yes	-1184	600	yes	
-CP023893__CP023893__1__plus	CP023893	plasmid	VEHICLE-HALF	ISEsa1		-	CORE-PARTIAL	hok_gef,relB,relE	-	5	1	1	hok_gef,relB,relE,tra	no	no	yes		1697	no	
-CP028197__CP028197__1__plus	CP028197	plasmid	VEHICLE-INTACT	ISEsa1,ISEsa2		-	CORE-INTACT	cytb,czc,hok_gef,relB,relE	-	6	1	0	cytb,czc,hok_gef,relB,relE,tra	yes	yes	yes	-1184	596	yes	
-CP028537__CP028537__1__minus	CP028537	plasmid	VEHICLE-INTACT	ISEsa1,ISEsa2		-	CORE-INTACT	cytb,czc,hok_gef,relB,relE	-	5	1	0	cytb,czc,hok_gef,relB,relE,tra	yes	yes	yes	-1184	596	yes	
-LT991956__LT991956__1__plus	LT991956	plasmid	VEHICLE-HALF	ISEsa1		-	CORE-PARTIAL	hok_gef,relB,relE	-	3	1	1	ars,hok_gef,relB,relE,tra	no	no	yes		1697	no	
-MF344582__MF344582__1__minus	MF344582	plasmid	VEHICLE-DECAYED	ISEsa1,ISEsa2		-	CORE-INTACT	cytb,czc,hok_gef,relB,relE	-	4	1	1	cytb,czc,hok_gef,relB,relE,tra	yes	yes	yes	-1184	596	yes	
+locus_id	accession	organism	genus	replicon_type	vehicle_class	vehicle_ends	vehicle_interrupted	vehicle_edge_clipped	core_class	core_genes_present	core_edge_clipped	n_is	n_is_fragment	n_is_fragment_real	cargo_families	has_czc	has_cytb	has_hok_gef	czc_offset	hok_gef_offset	metal_module	note
+CP006642__CP006642__1__minus	CP006642	Escherichia coli PCN061	Escherichia	plasmid	VEHICLE-ABSENT			-	CORE-PARTIAL	relB,relE	-	13	4	4	ars,intI,relB,relE,sil	no	no	no			no	
+CP010512__CP010512__1__plus	CP010512	Enterobacter cloacae	Enterobacter	chromosome	VEHICLE-HALF	ISEsa1		-	CORE-INTACT	cytb,czc,hok_gef,relB,relE	-	7	2	2	cytb,czc,hok_gef,intI,relB,relE	yes	yes	yes	-1184	595	yes	
+CP012599__CP012599__1__plus	CP012599	Salmonella enterica subsp. enterica serovar Newport	Salmonella	chromosome	VEHICLE-INTACT	ISEsa1,ISEsa2		-	CORE-INTACT	cytb,czc,hok_gef,relB,relE	-	5	0	0	cytb,czc,hok_gef,intI,relB,relE,tra	yes	yes	yes	-1184	596	yes	
+CP017220__CP017220__1__minus	CP017220	Escherichia coli	Escherichia	chromosome	VEHICLE-ABSENT			-	CORE-PARTIAL	relB,relE	-	3	0	0	relB,relE	no	no	no			no	
+CP018961__CP018961__1__minus	CP018961	Escherichia coli	Escherichia	plasmid	VEHICLE-INTACT	ISEsa1,ISEsa2	ISEsa1	-	CORE-INTACT	cytb,czc,hok_gef,relB,relE	-	9	3	3	cytb,czc,hok_gef,qnr,relB,relE,tra	yes	yes	yes	-1184	600	yes	
+CP020841__CP020841__1__minus	CP020841	Klebsiella pneumoniae	Klebsiella	chromosome	VEHICLE-INTACT	ISEsa1,ISEsa2		-	CORE-INTACT	cytb,czc,hok_gef,relB,relE	-	5	1	1	cytb,czc,hok_gef,relB,relE	yes	yes	yes	-1184	1685	yes	
+CP021960__CP021960__1__plus	CP021960	Klebsiella pneumoniae	Klebsiella	chromosome	VEHICLE-INTACT	ISEsa1,ISEsa2		-	CORE-INTACT	cytb,czc,hok_gef,relB,relE	-	5	1	1	cytb,czc,hok_gef,relB,relE	yes	yes	yes	-1184	1685	yes	
+CP023893__CP023893__1__plus	CP023893	Klebsiella ornithinolytica	Klebsiella	plasmid	VEHICLE-HALF	ISEsa1		-	CORE-PARTIAL	hok_gef,relB,relE	-	5	1	1	hok_gef,relB,relE,tra	no	no	yes		1697	no	
+CP026216__CP026216__1__plus	CP026216	Citrobacter sp. CFNIH10	Citrobacter	chromosome	VEHICLE-HALF	ISEsa1		-	CORE-PARTIAL	cytb,czc,relB,relE	-	2	0	0	cytb,czc,relB,relE	yes	yes	no	-1184		yes	
+CP026975__CP026975__1__plus	CP026975	Enterobacter cloacae complex sp.	Enterobacter	chromosome	VEHICLE-HALF	ISEsa1		-	CORE-PARTIAL	hok_gef,relB,relE	-	2	0	0	hok_gef,relB,relE,ter,tra	no	no	yes		596	no	
+CP028197__CP028197__1__plus	CP028197	Salmonella enterica subsp. enterica serovar Concord	Salmonella	plasmid	VEHICLE-INTACT	ISEsa1,ISEsa2		-	CORE-INTACT	cytb,czc,hok_gef,relB,relE	-	6	1	0	cytb,czc,hok_gef,relB,relE,tra	yes	yes	yes	-1184	596	yes	
+CP028537__CP028537__1__minus	CP028537	Enterobacter hormaechei	Enterobacter	plasmid	VEHICLE-INTACT	ISEsa1,ISEsa2		-	CORE-INTACT	cytb,czc,hok_gef,relB,relE	-	5	1	0	cytb,czc,hok_gef,relB,relE,tra	yes	yes	yes	-1184	596	yes	
+LT991956__LT991956__1__plus	LT991956	Enterobacter hormaechei subsp. steigerwaltii	Enterobacter	plasmid	VEHICLE-HALF	ISEsa1		-	CORE-PARTIAL	hok_gef,relB,relE	-	3	1	1	ars,hok_gef,relB,relE,tra	no	no	yes		1697	no	
+MF344582__MF344582__1__minus	MF344582	Citrobacter freundii	Citrobacter	plasmid	VEHICLE-DECAYED	ISEsa1,ISEsa2		-	CORE-INTACT	cytb,czc,hok_gef,relB,relE	-	4	1	1	cytb,czc,hok_gef,relB,relE,tra	yes	yes	yes	-1184	596	yes	

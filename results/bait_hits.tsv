@@ -13,4 +13,4 @@ relBE	CP026975	99.810	527	1	0	1	527	2518190	2518716	0.0	947	527	4876999	Enteroba
 relBE	CP023893	99.810	527	1	0	1	527	74508	75034	0.0	947	527	231294	Klebsiella ornithinolytica strain FDAARGOS_431 plasmid unnamed1, complete sequence	100.0	plus	74508	75034	100.0	100.0	FULL	
 relBE	CP017220	99.431	527	3	0	1	527	1723530	1723004	0.0	938	527	4901993	Escherichia coli strain FAM21845, complete sequence	100.0	minus	1723004	1723530	100.0	100.0	FULL	
 relBE	CP006642	99.431	527	3	0	1	527	43487	42961	0.0	938	527	145722	Escherichia coli PCN061 plasmid PCN061p6, complete sequence	100.0	minus	42961	43487	100.0	100.0	FULL	
-relBE	CP006642	67.681	263	83	2	239	500	67857	67596	1.03e-15	85.1	527	145722	Escherichia coli PCN061 plasmid PCN061p6, complete sequence	49.72	minus	67596	67857	0.8	90.6	PARALOGUE	pident 67.681 < 85.0: superfamily background
+relBE	CP006642	67.681	263	83	2	239	500	67857	67596	1.03e-15	85.1	527	145722	Escherichia coli PCN061 plasmid PCN061p6, complete sequence	49.72	minus	67596	67857	0.8	90.6	PARALOGUE	pident 67.681 < 90.0: superfamily background

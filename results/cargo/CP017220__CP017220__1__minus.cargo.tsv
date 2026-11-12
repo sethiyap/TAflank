@@ -1,0 +1,3 @@
+locus_id	family	source	win_start	win_end	length	strand	pident	cov	clipped_at_window_edge	clip_cause	clipped_missing_bp	offset_from_bait	bitscore
+CP017220__CP017220__1__minus	relB	relB|CP017220|BHT24_08525|1723291-1723530	20003	20242	240	+	100.0	100.0	no	-	0	2	434.0
+CP017220__CP017220__1__minus	relE	relE|CP006642|PCN061_p6043|42961-43248	20242	20529	288	+	100.0	100.0	no	-	0	241	520.0

@@ -1,0 +1,65 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP012599__CP012599__1__plus	CDS	aminoglycoside 3-N-acetyltransferase		1	635	-					aminoglycoside 3-N-acetyltransferase	annotation	genbank	-20000
+CP012599__CP012599__1__plus	IS	IS1247	IS1380	656	2326	-	complete	no	no		IS1247	isfinder	genbank	-19345
+CP012599__CP012599__1__plus	CDS	transposase		877	2190	-					IS1247	isfinder	genbank	-19124
+CP012599__CP012599__1__plus	CDS	hypothetical protein		2287	2514	-					hypothetical protein	annotation	genbank	-17714
+CP012599__CP012599__1__plus	CDS	aminoglycoside adenylyltransferase		2720	3301	-					aminoglycoside adenylyltransferase	annotation	genbank	-17281
+CP012599__CP012599__1__plus	CDS	integrase		3464	4477	+					integrase	annotation	genbank	-16537
+CP012599__CP012599__1__plus	cargo	intI		3466	4479	+			no		intI	cargo	genbank	-16535
+CP012599__CP012599__1__plus	IS	IS26	IS6	5218	6037	-	complete	no	no		IS26	isfinder	genbank	-14783
+CP012599__CP012599__1__plus	CDS	transposase		5270	5974	-					IS26	isfinder	genbank	-14731
+CP012599__CP012599__1__plus	CDS	hypothetical protein		5965	6294	+					hypothetical protein	annotation	genbank	-14036
+CP012599__CP012599__1__plus	CDS	hypothetical protein		6284	7177	+					hypothetical protein	annotation	genbank	-13717
+CP012599__CP012599__1__plus	CDS	hypothetical protein		7352	7579	+					hypothetical protein	annotation	genbank	-12649
+CP012599__CP012599__1__plus	CDS	hypothetical protein		7758	8078	+					hypothetical protein	annotation	genbank	-12243
+CP012599__CP012599__1__plus	CDS	hypothetical protein		8175	8393	+					hypothetical protein	annotation	genbank	-11826
+CP012599__CP012599__1__plus	CDS	hypothetical protein		8595	8906	+					hypothetical protein	annotation	genbank	-11406
+CP012599__CP012599__1__plus	CDS	hypothetical protein		8911	9402	+					hypothetical protein	annotation	genbank	-11090
+CP012599__CP012599__1__plus	CDS	hypothetical protein		9955	10158	+					hypothetical protein	annotation	genbank	-10046
+CP012599__CP012599__1__plus	CDS	hypothetical protein		10213	10437	+					hypothetical protein	annotation	genbank	-9788
+CP012599__CP012599__1__plus	CDS	hypothetical protein		10477	10677	+					hypothetical protein	annotation	genbank	-9524
+CP012599__CP012599__1__plus	CDS	hypothetical protein		10900	11211	+					hypothetical protein	annotation	genbank	-9101
+CP012599__CP012599__1__plus	CDS	hypothetical protein		11587	11868	+					hypothetical protein	annotation	genbank	-8414
+CP012599__CP012599__1__plus	CDS	hypothetical protein		12085	12690	+					hypothetical protein	annotation	genbank	-7916
+CP012599__CP012599__1__plus	IS	ISKpn8	IS3	12976	14418	+	complete	no	no		ISKpn8	isfinder	genbank	-7025
+CP012599__CP012599__1__plus	CDS	DNA-binding protein		13023	13544	+					ISKpn8	isfinder	genbank	-6978
+CP012599__CP012599__1__plus	CDS	integrase		13541	14392	+					ISKpn8	isfinder	genbank	-6460
+CP012599__CP012599__1__plus	IS	ISEsa1	ISNCY	14507	16102	+	complete	no	no		ISEsa1	isfinder	genbank	-5494
+CP012599__CP012599__1__plus	CDS	transposase		14567	15907	+					ISEsa1	isfinder	genbank	-5434
+CP012599__CP012599__1__plus	IS	ISEsa2	IS110	16103	17595	+	complete	no	no		ISEsa2	isfinder	genbank	-3898
+CP012599__CP012599__1__plus	CDS	transposase		16329	17567	+					ISEsa2	isfinder	genbank	-3672
+CP012599__CP012599__1__plus	cargo	cytb		18041	18613	+			no		cytb	cargo	genbank	-1960
+CP012599__CP012599__1__plus	CDS	hypothetical protein		18043	18615	+					hypothetical protein	annotation	genbank	-1958
+CP012599__CP012599__1__plus	CDS	cation transporter		18815	19738	+					cation transporter	annotation	genbank	-1186
+CP012599__CP012599__1__plus	cargo	czc		18817	19740	+			no		czc	cargo	genbank	-1184
+CP012599__CP012599__1__plus	cargo	relB		19999	20238	+			no		relB	cargo	genbank	-2
+CP012599__CP012599__1__plus	CDS	bifunctional antitoxin/transcriptional r		20001	20240	+					bifunctional antitoxin/transcriptional r	annotation	genbank	0
+CP012599__CP012599__1__plus	CDS	addiction module toxin RelE		20240	20527	+					addiction module toxin RelE	annotation	genbank	239
+CP012599__CP012599__1__plus	cargo	relE		20242	20529	+			no		relE	cargo	genbank	241
+CP012599__CP012599__1__plus	cargo	hok_gef		20597	20755	+			no		hok_gef	cargo	genbank	596
+CP012599__CP012599__1__plus	CDS	hypothetical protein		20599	20757	+					hypothetical protein	annotation	genbank	598
+CP012599__CP012599__1__plus	CDS	hypothetical protein		21366	21686	-					hypothetical protein	annotation	genbank	1365
+CP012599__CP012599__1__plus	CDS	hypothetical protein		21968	22171	-					hypothetical protein	annotation	genbank	1967
+CP012599__CP012599__1__plus	CDS	hypothetical protein		22218	22568	-					hypothetical protein	annotation	genbank	2217
+CP012599__CP012599__1__plus	CDS	hypothetical protein		22628	23227	-					hypothetical protein	annotation	genbank	2627
+CP012599__CP012599__1__plus	CDS	hypothetical protein		23326	24270	-					hypothetical protein	annotation	genbank	3325
+CP012599__CP012599__1__plus	CDS	hypothetical protein		24763	24957	+					hypothetical protein	annotation	genbank	4762
+CP012599__CP012599__1__plus	CDS	DNA-binding protein		25374	26558	+					DNA-binding protein	annotation	genbank	5373
+CP012599__CP012599__1__plus	CDS	hypothetical protein		26624	26905	+					hypothetical protein	annotation	genbank	6623
+CP012599__CP012599__1__plus	CDS	hypothetical protein		27220	27921	+					hypothetical protein	annotation	genbank	7219
+CP012599__CP012599__1__plus	CDS	hypothetical protein		28056	28352	+					hypothetical protein	annotation	genbank	8055
+CP012599__CP012599__1__plus	CDS	hypothetical protein		28397	28834	+					hypothetical protein	annotation	genbank	8396
+CP012599__CP012599__1__plus	CDS	hypothetical protein		28902	29438	+					hypothetical protein	annotation	genbank	8901
+CP012599__CP012599__1__plus	CDS	hypothetical protein		29664	30032	+					hypothetical protein	annotation	genbank	9663
+CP012599__CP012599__1__plus	CDS	hypothetical protein		30465	30764	+					hypothetical protein	annotation	genbank	10464
+CP012599__CP012599__1__plus	CDS	hypothetical protein		31121	31405	+					hypothetical protein	annotation	genbank	11120
+CP012599__CP012599__1__plus	CDS	hypothetical protein		31471	31824	+					hypothetical protein	annotation	genbank	11470
+CP012599__CP012599__1__plus	CDS	nuclease		32111	32842	-					nuclease	annotation	genbank	12110
+CP012599__CP012599__1__plus	CDS	peptidase		32844	34025	-					peptidase	annotation	genbank	12843
+CP012599__CP012599__1__plus	cargo	tra		34034	34696	-			no		tra	cargo	genbank	14033
+CP012599__CP012599__1__plus	CDS	conjugal transfer protein TraJ		34036	34698	-					conjugal transfer protein TraJ	annotation	genbank	14035
+CP012599__CP012599__1__plus	CDS	hypothetical protein		34685	35794	-					hypothetical protein	annotation	genbank	14684
+CP012599__CP012599__1__plus	CDS	hypothetical protein		35794	37878	-					hypothetical protein	annotation	genbank	15793
+CP012599__CP012599__1__plus	cargo	tra		35796	37778	-			no		tra	cargo	genbank	15795
+CP012599__CP012599__1__plus	CDS	helicase		37878	40527	-					helicase	annotation	genbank	17877
+CP012599__CP012599__1__plus	cargo	tra		37880	40527	-			right		tra	cargo	genbank	17879

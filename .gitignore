@@ -45,5 +45,5 @@ results/_families_tmp/
 run_all_v2/
 run_flank10k/
 run_vX/
-results/pangraph/
+test_relBE_run/
 results/pairwise_evidence.tsv

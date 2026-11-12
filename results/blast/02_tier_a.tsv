@@ -1,4 +1,4 @@
-# filter: Tier A kept: pident>=95.0 qcov>=95.0 (FULL), orphans and partials retained; PARALOGUE (<85.0%) removed
+# filter: Tier A kept: pident>=90.0 (FULL and INCOMPLETE both retained here -- qcov<95.0 is a completeness flag, not a paralogy one); PARALOGUE (<90.0%) removed
 # 15 in -> 14 out
 # qseqid	sacc	pident	length	mismatch	gapopen	qstart	qend	sstart	send	evalue	bitscore	qlen	slen	stitle
 relBE	MF344582	100.000	527	0	0	1	527	319216	318690	0.0	951	527	354045	Citrobacter freundii strain NY2385 plasmid pNY2385-HI2, complete sequence

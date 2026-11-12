@@ -1,0 +1,4 @@
+accession	replicon	taxon_group	query_id	pident	qcovs	length	start	end	strand	bitscore
+CP012599	IncHI2	enterobacteriales	IncHI2_1__BX664015	100.0	100.0	327	83400	83726	-	590.0
+CP012599	IncHI2A	enterobacteriales	IncHI2A_1__BX664015	100.0	100.0	630	98592	99221	+	1137.0
+CP012599	IncC	enterobacteriales	IncC_1__JN157804	100.0	100.0	417	4462510	4462926	-	753.0

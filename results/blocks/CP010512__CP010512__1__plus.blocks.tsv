@@ -1,0 +1,62 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP010512__CP010512__1__plus	CDS	membrane protein		1	96	-					membrane protein	annotation	genbank	-20000
+CP010512__CP010512__1__plus	CDS	histidine kinase		166	2448	-					histidine kinase	annotation	genbank	-19835
+CP010512__CP010512__1__plus	CDS	D-ribose transporter ATP-binding protein		2630	4150	+					D-ribose transporter ATP-binding protein	annotation	genbank	-17371
+CP010512__CP010512__1__plus	CDS	ribose ABC transporter permease		4147	5142	+					ribose ABC transporter permease	annotation	genbank	-15854
+CP010512__CP010512__1__plus	CDS	transcriptional regulator		5175	6116	+					transcriptional regulator	annotation	genbank	-14826
+CP010512__CP010512__1__plus	CDS	sugar ABC transporter		6243	6929	+					sugar ABC transporter	annotation	genbank	-13758
+CP010512__CP010512__1__plus	CDS	hypothetical protein		6940	7800	+					hypothetical protein	annotation	genbank	-13061
+CP010512__CP010512__1__plus	CDS	sugar kinase		7800	8804	+					sugar kinase	annotation	genbank	-12201
+CP010512__CP010512__1__plus	CDS	aspartyl beta-hydroxylase		8948	9856	+					aspartyl beta-hydroxylase	annotation	genbank	-11053
+CP010512__CP010512__1__plus	CDS	histidine kinase		9860	10591	-					histidine kinase	annotation	genbank	-10141
+CP010512__CP010512__1__plus	CDS	spermidine/putrescine ABC transporter su		10847	11266	+					spermidine/putrescine ABC transporter su	annotation	genbank	-9154
+CP010512__CP010512__1__plus	CDS	formate dehydrogenase		11315	12994	+					formate dehydrogenase	annotation	genbank	-8686
+CP010512__CP010512__1__plus	IS	ISKpn8	IS3	13245	14687	+	complete	no	no		ISKpn8	isfinder	genbank	-6756
+CP010512__CP010512__1__plus	CDS	DNA-binding protein		13292	13813	+					ISKpn8	isfinder	genbank	-6709
+CP010512__CP010512__1__plus	CDS	integrase		13810	14661	+					ISKpn8	isfinder	genbank	-6191
+CP010512__CP010512__1__plus	IS	ISEsa1	ISNCY	14777	16368	+	complete	no	no		ISEsa1	isfinder	genbank	-5224
+CP010512__CP010512__1__plus	CDS	transposase		14837	16177	+					ISEsa1	isfinder	genbank	-5164
+CP010512__CP010512__1__plus	IS	ISCfr4	IS30	16353	17605	-	complete	no	no		ISCfr4	isfinder	genbank	-3648
+CP010512__CP010512__1__plus	CDS	integrase		16376	17536	-					ISCfr4	isfinder	genbank	-3625
+CP010512__CP010512__1__plus	CDS	hypothetical protein		17727	17939	-					hypothetical protein	annotation	genbank	-2274
+CP010512__CP010512__1__plus	cargo	cytb		18041	18613	+			no		cytb	cargo	genbank	-1960
+CP010512__CP010512__1__plus	CDS	hypothetical protein		18043	18615	+					hypothetical protein	annotation	genbank	-1958
+CP010512__CP010512__1__plus	CDS	cation transporter		18815	19738	+					cation transporter	annotation	genbank	-1186
+CP010512__CP010512__1__plus	cargo	czc		18817	19740	+			no		czc	cargo	genbank	-1184
+CP010512__CP010512__1__plus	cargo	relB		19999	20238	+			no		relB	cargo	genbank	-2
+CP010512__CP010512__1__plus	CDS	bifunctional antitoxin/transcriptional r		20001	20240	+					bifunctional antitoxin/transcriptional r	annotation	genbank	0
+CP010512__CP010512__1__plus	CDS	RelE toxin		20240	20527	+					RelE toxin	annotation	genbank	239
+CP010512__CP010512__1__plus	cargo	relE		20242	20529	+			no		relE	cargo	genbank	241
+CP010512__CP010512__1__plus	cargo	hok_gef		20596	20754	+			no		hok_gef	cargo	genbank	595
+CP010512__CP010512__1__plus	CDS	hypothetical protein		20989	21168	-					hypothetical protein	annotation	genbank	988
+CP010512__CP010512__1__plus	CDS	hypothetical protein		21235	21585	-					hypothetical protein	annotation	genbank	1234
+CP010512__CP010512__1__plus	CDS	hypothetical protein		21609	22178	-					hypothetical protein	annotation	genbank	1608
+CP010512__CP010512__1__plus	CDS	hypothetical protein		22223	22555	-					hypothetical protein	annotation	genbank	2222
+CP010512__CP010512__1__plus	CDS	hypothetical protein		22680	22889	-					hypothetical protein	annotation	genbank	2679
+CP010512__CP010512__1__plus	CDS	hypothetical protein		23728	24009	-					hypothetical protein	annotation	genbank	3727
+CP010512__CP010512__1__plus	CDS	hypothetical protein		24127	24543	-					hypothetical protein	annotation	genbank	4126
+CP010512__CP010512__1__plus	CDS	hypothetical protein		24543	24797	-					hypothetical protein	annotation	genbank	4542
+CP010512__CP010512__1__plus	CDS	hypothetical protein		25674	25868	+					hypothetical protein	annotation	genbank	5673
+CP010512__CP010512__1__plus	CDS	DNA-binding protein		26366	27571	+					DNA-binding protein	annotation	genbank	6365
+CP010512__CP010512__1__plus	CDS	hypothetical protein		27636	27917	+					hypothetical protein	annotation	genbank	7635
+CP010512__CP010512__1__plus	CDS	hypothetical protein		28296	28592	+					hypothetical protein	annotation	genbank	8295
+CP010512__CP010512__1__plus	CDS	hypothetical protein		28642	29079	+					hypothetical protein	annotation	genbank	8641
+CP010512__CP010512__1__plus	CDS	hypothetical protein		29161	29706	+					hypothetical protein	annotation	genbank	9160
+CP010512__CP010512__1__plus	CDS	hypothetical protein		29752	29988	+					hypothetical protein	annotation	genbank	9751
+CP010512__CP010512__1__plus	IS	IS26	IS6	30762	31581	+	complete	no	no		IS26	isfinder	genbank	10761
+CP010512__CP010512__1__plus	CDS	transposase		30825	31529	+					IS26	isfinder	genbank	10824
+CP010512__CP010512__1__plus	IS	IS15	IS6	31750	32570	-	fragment	yes	no		IS15	isfinder	genbank	11749
+CP010512__CP010512__1__plus	CDS	transposase		31803	32507	-					IS15	isfinder	genbank	11802
+CP010512__CP010512__1__plus	CDS	transposase		32484	32585	+					IS15	isfinder	genbank	12483
+CP010512__CP010512__1__plus	IS	ISArsp14	ISNCY	32913	32962	+	fragment	yes	no		ISArsp14	isfinder	genbank	12912
+CP010512__CP010512__1__plus	cargo	intI		33274	34287	-			no		intI	cargo	genbank	13273
+CP010512__CP010512__1__plus	CDS	integrase		33276	34289	-					integrase	annotation	genbank	13275
+CP010512__CP010512__1__plus	CDS	aminoglycoside adenylyltransferase		34432	35004	+					aminoglycoside adenylyltransferase	annotation	genbank	14431
+CP010512__CP010512__1__plus	CDS	gentamicin 3'-acetyltransferase		35080	35544	+					gentamicin 3'-acetyltransferase	annotation	genbank	15079
+CP010512__CP010512__1__plus	CDS	GCN5 family acetyltransferase		35663	36175	+					GCN5 family acetyltransferase	annotation	genbank	15662
+CP010512__CP010512__1__plus	CDS	hypothetical protein		36191	36496	+					hypothetical protein	annotation	genbank	16190
+CP010512__CP010512__1__plus	CDS	adenylyltransferase		36588	37379	+					adenylyltransferase	annotation	genbank	16587
+CP010512__CP010512__1__plus	CDS	ethidium bromide resistance protein		37543	37890	+					ethidium bromide resistance protein	annotation	genbank	17542
+CP010512__CP010512__1__plus	CDS	dihydropteroate synthase		37884	38723	+					dihydropteroate synthase	annotation	genbank	17883
+CP010512__CP010512__1__plus	CDS	transposase		39122	40527	+					ISVsa3	isfinder	genbank	19121
+CP010512__CP010512__1__plus	IS	ISVsa3	IS91	39662	40524	+	partial	no	no		ISVsa3	isfinder	genbank	19661

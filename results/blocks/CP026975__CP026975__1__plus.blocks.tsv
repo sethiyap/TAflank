@@ -1,0 +1,61 @@
+locus_id	feature_type	name	family	start	end	strand	cov_class	is_fragment	clipped_at_window_edge	nested_in	colour_key	colour_source	annot_source	offset_from_bait
+CP026975__CP026975__1__plus	CDS	IS3 family transposase		1	40527	-					IS3 family transposase	annotation	genbank	-20000
+CP026975__CP026975__1__plus	CDS	hypothetical protein		1	357	+					hypothetical protein	annotation	genbank	-20000
+CP026975__CP026975__1__plus	CDS	hypothetical protein		407	604	+					hypothetical protein	annotation	genbank	-19594
+CP026975__CP026975__1__plus	CDS	hypothetical protein		996	1244	-					hypothetical protein	annotation	genbank	-19005
+CP026975__CP026975__1__plus	CDS	hypothetical protein		1354	1626	+					hypothetical protein	annotation	genbank	-18647
+CP026975__CP026975__1__plus	CDS	hypothetical protein		1670	2035	+					hypothetical protein	annotation	genbank	-18331
+CP026975__CP026975__1__plus	CDS	nuclease		2103	4115	+					nuclease	annotation	genbank	-17898
+CP026975__CP026975__1__plus	CDS	conjugation system SOS inhibitor PsiB		4153	4587	+					conjugation system SOS inhibitor PsiB	annotation	genbank	-15848
+CP026975__CP026975__1__plus	CDS	plasmid SOS inhibition protein A		4584	5312	+					plasmid SOS inhibition protein A	annotation	genbank	-15417
+CP026975__CP026975__1__plus	CDS	theronine dehydrogenase		5309	5635	+					theronine dehydrogenase	annotation	genbank	-14692
+CP026975__CP026975__1__plus	CDS	hypothetical protein		5692	6066	+					hypothetical protein	annotation	genbank	-14309
+CP026975__CP026975__1__plus	IS	ISKpn8	IS3	6224	7666	+	complete	no	no		ISKpn8	isfinder	genbank	-13777
+CP026975__CP026975__1__plus	CDS	IS3-like element ISKpn8 family transposa		6271	7640	+					ISKpn8	isfinder	genbank	-13730
+CP026975__CP026975__1__plus	IS	ISEsa1	ISNCY	7757	9362	+	complete	no	no		ISEsa1	isfinder	genbank	-12244
+CP026975__CP026975__1__plus	CDS	transposase		7817	9157	+					ISEsa1	isfinder	genbank	-12184
+CP026975__CP026975__1__plus	CDS	hypothetical protein		9413	9823	-					hypothetical protein	annotation	genbank	-10588
+CP026975__CP026975__1__plus	CDS	nickel/cobalt efflux protein RcnA		9997	11127	-					nickel/cobalt efflux protein RcnA	annotation	genbank	-10004
+CP026975__CP026975__1__plus	CDS	metal resistance protein		11140	11409	-					metal resistance protein	annotation	genbank	-8861
+CP026975__CP026975__1__plus	CDS	MFS transporter		11515	12813	-					MFS transporter	annotation	genbank	-8486
+CP026975__CP026975__1__plus	CDS	Tat pathway signal sequence		13047	13805	-					Tat pathway signal sequence	annotation	genbank	-6954
+CP026975__CP026975__1__plus	CDS	hypothetical protein		13859	14779	-					hypothetical protein	annotation	genbank	-6142
+CP026975__CP026975__1__plus	CDS	hypothetical protein		14842	15213	-					hypothetical protein	annotation	genbank	-5159
+CP026975__CP026975__1__plus	CDS	MFS transporter		15338	15482	-					MFS transporter	annotation	genbank	-4663
+CP026975__CP026975__1__plus	CDS	chromate resistance protein		15614	16537	+					chromate resistance protein	annotation	genbank	-4387
+CP026975__CP026975__1__plus	CDS	chromate transporter		16491	17870	+					chromate transporter	annotation	genbank	-3510
+CP026975__CP026975__1__plus	CDS	transmembrane anchor protein		17901	18590	-					transmembrane anchor protein	annotation	genbank	-2100
+CP026975__CP026975__1__plus	CDS	hypothetical protein		18604	19341	-					hypothetical protein	annotation	genbank	-1397
+CP026975__CP026975__1__plus	CDS	hypothetical protein		19385	19750	-					hypothetical protein	annotation	genbank	-616
+CP026975__CP026975__1__plus	cargo	relB		19999	20238	+			no		relB	cargo	genbank	-2
+CP026975__CP026975__1__plus	CDS	type II toxin-antitoxin system antitoxin		20001	20240	+					type II toxin-antitoxin system antitoxin	annotation	genbank	0
+CP026975__CP026975__1__plus	CDS	mRNA interferase RelE		20240	20527	+					mRNA interferase RelE	annotation	genbank	239
+CP026975__CP026975__1__plus	cargo	relE		20242	20529	+			no		relE	cargo	genbank	241
+CP026975__CP026975__1__plus	cargo	hok_gef		20597	20755	+			no		hok_gef	cargo	genbank	596
+CP026975__CP026975__1__plus	CDS	Hok/Gef family protein		20599	20757	+					Hok/Gef family protein	annotation	genbank	598
+CP026975__CP026975__1__plus	CDS	hypothetical protein		21636	21950	+					hypothetical protein	annotation	genbank	1635
+CP026975__CP026975__1__plus	CDS	hypothetical protein		22010	22471	+					hypothetical protein	annotation	genbank	2009
+CP026975__CP026975__1__plus	CDS	hypothetical protein		22561	22761	+					hypothetical protein	annotation	genbank	2560
+CP026975__CP026975__1__plus	CDS	N-6 DNA methylase		22802	23593	+					N-6 DNA methylase	annotation	genbank	2801
+CP026975__CP026975__1__plus	CDS	hypothetical protein		23636	23971	+					hypothetical protein	annotation	genbank	3635
+CP026975__CP026975__1__plus	CDS	hypothetical protein		24661	24954	+					hypothetical protein	annotation	genbank	4660
+CP026975__CP026975__1__plus	CDS	DUF945 domain-containing protein		24971	25792	+					DUF945 domain-containing protein	annotation	genbank	4970
+CP026975__CP026975__1__plus	CDS	lytic transglycosylase		25821	26360	-					lytic transglycosylase	annotation	genbank	5820
+CP026975__CP026975__1__plus	CDS	traC		26686	28422	+					traC	annotation	genbank	6685
+CP026975__CP026975__1__plus	CDS	type-F conjugative transfer system prote		28419	28613	+					type-F conjugative transfer system prote	annotation	genbank	8418
+CP026975__CP026975__1__plus	cargo	tra		28623	29621	+			no		tra	cargo	genbank	8622
+CP026975__CP026975__1__plus	CDS	conjugal transfer protein TraU		28625	29623	+					conjugal transfer protein TraU	annotation	genbank	8624
+CP026975__CP026975__1__plus	cargo	tra		29695	31458	+			no		tra	cargo	genbank	9694
+CP026975__CP026975__1__plus	CDS	conjugal transfer protein TraI		29697	31460	+					conjugal transfer protein TraI	annotation	genbank	9696
+CP026975__CP026975__1__plus	CDS	DsbA family protein		31488	32276	+					DsbA family protein	annotation	genbank	11487
+CP026975__CP026975__1__plus	CDS	type II toxin-antitoxin system Phd/YefM 		32434	32661	+					type II toxin-antitoxin system Phd/YefM 	annotation	genbank	12433
+CP026975__CP026975__1__plus	CDS	plasmid stabilization protein		32688	33023	+					plasmid stabilization protein	annotation	genbank	12687
+CP026975__CP026975__1__plus	CDS	integrase		33633	34622	-					integrase	annotation	genbank	13632
+CP026975__CP026975__1__plus	CDS	heavy metal RND transporter permease		34813	35245	+					heavy metal RND transporter permease	annotation	genbank	14812
+CP026975__CP026975__1__plus	CDS	GNAT family N-acetyltransferase		35349	35712	+					GNAT family N-acetyltransferase	annotation	genbank	15348
+CP026975__CP026975__1__plus	CDS	DNA-binding protein		36184	36588	-					DNA-binding protein	annotation	genbank	16183
+CP026975__CP026975__1__plus	cargo	ter		37181	37669	-			no		ter	cargo	genbank	17180
+CP026975__CP026975__1__plus	CDS	tellurium resistance protein TerW		37183	37671	-					tellurium resistance protein TerW	annotation	genbank	17182
+CP026975__CP026975__1__plus	CDS	DUF4236 domain-containing protein		37674	38897	-					DUF4236 domain-containing protein	annotation	genbank	17673
+CP026975__CP026975__1__plus	CDS	citrate lyase subunit beta		38908	39864	-					citrate lyase subunit beta	annotation	genbank	18907
+CP026975__CP026975__1__plus	CDS	hypothetical protein		39864	40527	-					hypothetical protein	annotation	genbank	19863

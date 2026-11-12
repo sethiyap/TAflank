@@ -1,0 +1,15 @@
+locus_id	organism_short	group_id	group_colour	group_size	group_members	weakest_internal_pair	chained
+CP006642__CP006642__1__minus	Escherichia coli	SINGLETON	#cccccc	1	CP006642__CP006642__1__minus	1.000	no
+CP010512__CP010512__1__plus	Enterobacter cloacae	SINGLETON	#cccccc	1	CP010512__CP010512__1__plus	1.000	no
+CP012599__CP012599__1__plus	Salmonella enterica	Gf0426b	#ff7f00	3	CP012599__CP012599__1__plus,CP028197__CP028197__1__plus,CP028537__CP028537__1__minus	0.842	yes
+CP028197__CP028197__1__plus	Salmonella enterica	Gf0426b	#ff7f00	3	CP012599__CP012599__1__plus,CP028197__CP028197__1__plus,CP028537__CP028537__1__minus	0.842	yes
+CP028537__CP028537__1__minus	Enterobacter hormaechei	Gf0426b	#ff7f00	3	CP012599__CP012599__1__plus,CP028197__CP028197__1__plus,CP028537__CP028537__1__minus	0.842	yes
+CP017220__CP017220__1__minus	Escherichia coli	SINGLETON	#cccccc	1	CP017220__CP017220__1__minus	1.000	no
+CP018961__CP018961__1__minus	Escherichia coli	SINGLETON	#cccccc	1	CP018961__CP018961__1__minus	1.000	no
+CP020841__CP020841__1__minus	Klebsiella pneumoniae	Ge4d163	#66c2a5	2	CP020841__CP020841__1__minus,CP021960__CP021960__1__plus	0.995	no
+CP021960__CP021960__1__plus	Klebsiella pneumoniae	Ge4d163	#66c2a5	2	CP020841__CP020841__1__minus,CP021960__CP021960__1__plus	0.995	no
+CP023893__CP023893__1__plus	Klebsiella ornithinolytica	SINGLETON	#cccccc	1	CP023893__CP023893__1__plus	1.000	no
+CP026216__CP026216__1__plus	Citrobacter sp.	SINGLETON	#cccccc	1	CP026216__CP026216__1__plus	1.000	no
+CP026975__CP026975__1__plus	Enterobacter cloacae	SINGLETON	#cccccc	1	CP026975__CP026975__1__plus	1.000	no
+LT991956__LT991956__1__plus	Enterobacter hormaechei	SINGLETON	#cccccc	1	LT991956__LT991956__1__plus	1.000	no
+MF344582__MF344582__1__minus	Citrobacter freundii	SINGLETON	#cccccc	1	MF344582__MF344582__1__minus	1.000	no
