@@ -2,8 +2,8 @@
 #PBS -P rg42
 #PBS -q copyq
 #PBS -l walltime=02:00:00
-#PBS -l ncpus=4
-#PBS -l mem=8GB
+#PBS -l ncpus=1
+#PBS -l mem=4GB
 #PBS -l jobfs=10GB
 #PBS -l storage=gdata/rg42+scratch/rg42
 #PBS -l wd
@@ -93,7 +93,7 @@ if [ -s "$DB.nin" ] || [ -s "$DB.nal" ]; then
         --subregions 'relB:1-240,relE:240-527' \
         --full-qcov 95 --paralogue-max-pident 90 \
         --task megablast --evalue 1e-5 --max-target-seqs 100000 \
-        --num-threads 4 --taxonomy \
+        --num-threads 1 --taxonomy \
         --raw-out "$T/01_raw.tsv" --kept-out "$T/02_tier_a.tsv" \
         > "$T/log" 2>&1 \
         && echo "  OK  $(wc -l < "$T/bait_hits.tsv") hit row(s) -- no CSerialException" \
