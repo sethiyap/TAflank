@@ -46,18 +46,27 @@
 #
 # ONE-TIME SETUP (each needs network -- copyq or a login node -- because
 # compute nodes have none to pull a container or download a binary):
+#   qsub env/gadi_blast_setup.sh
 #   qsub env/gadi_bakta_setup.sh
 #   qsub env/gadi_viz_setup.sh
 #   qsub env/gadi_pangraph_setup.sh
-# This script assumes all three have already been run once; the full-stack
-# flags below (BAKTA/VIZ/PANGRAPH) default to true and will fail fast with a
-# readable message if their container/binary isn't found.
+# This script assumes all four have already been run once; the full-stack
+# flags below (BAKTA/VIZ/PANGRAPH) default to true, and BLAST_BIN_DIR is
+# always required, each failing fast with a readable message if its
+# container/binary isn't found.
+#
+# WHY gadi_blast_setup.sh: blast/2.11.0 -- the newest blastn Gadi has as a
+# MODULE -- cannot read nt_prok's current def-line format and dies with
+# CSerialException::eOverflow. There is no newer module to switch to
+# (blast/2.10.1 is the only other option, older still), so the fix is a
+# container, via a wrapper bin directory (see that script's own header).
 #
 # OTHER SETTINGS (same meaning as env/gadi_run.sh -- see its header for the
 # long version of each):
 #   BAIT=...      FLANK=20000      REPO=...      TIER=FULL
 #   SUBREGIONS=... (default relB:1-240,relE:240-527)
 #   ENDS=ISEsa1,ISEsa2
+#   BLAST_BIN_DIR=/g/data/rg42/blast_env/bin (default)
 #   BAKTA_DB=/g/data/rg42/bakta_db/db-light   BAKTA_SIF=...
 #   VIZ_SIF=...   PANGRAPH_BIN=...
 #   Set BAKTA=false / VIZ=false / PANGRAPH=false to drop any one of the three
@@ -74,6 +83,7 @@ SUBREGIONS="${SUBREGIONS-relB:1-240,relE:240-527}"   # no :- , '' is valid
 ENDS="${ENDS:-ISEsa1,ISEsa2}"
 TIER="${TIER:-FULL}"
 FLANK="${FLANK:-20000}"
+BLAST_BIN_DIR="${BLAST_BIN_DIR:-/g/data/rg42/blast_env/bin}"
 BAKTA="${BAKTA:-true}"
 BAKTA_DB="${BAKTA_DB:-/g/data/rg42/bakta_db/db-light}"
 BAKTA_SIF="${BAKTA_SIF:-}"
@@ -87,6 +97,11 @@ PANGRAPH_BIN="${PANGRAPH_BIN:-}"
 [ -s "$DB.nin" ] || [ -s "$DB.nal" ] || {
     echo "DB does not look like a BLAST nucleotide database: $DB" >&2
     echo "give the path WITHOUT an extension, e.g. /scratch/rg42/blastdb/nt_prok" >&2
+    exit 2; }
+[ -x "$BLAST_BIN_DIR/blastn" ] || {
+    echo "no working blastn found in $BLAST_BIN_DIR" >&2
+    echo "blast/2.11.0 (the Gadi module) cannot read $DB -- CSerialException::eOverflow" >&2
+    echo "run env/gadi_blast_setup.sh first, or pass BLAST_BIN_DIR=/path" >&2
     exit 2; }
 
 if [ "$BAKTA" = "true" ]; then
@@ -125,8 +140,9 @@ fi
 
 module purge
 module load nextflow/24.04.5
-module load blast/2.11.0
 module load singularity
+# NOT `module load blast/2.11.0` -- that module can't read nt_prok (see
+# BLAST_BIN_DIR check above). --blast_bin below overrides it completely.
 
 export NXF_OPTS='-Xms512m -Xmx4g'
 export NXF_HOME="${NXF_HOME:-/scratch/rg42/$USER/.nextflow}"
@@ -140,6 +156,7 @@ echo "bait     : $BAIT  ($(grep -c '^>' "$BAIT") sequence(s))"
 echo "subregion: ${SUBREGIONS:-<none>}"
 echo "ends     : $ENDS"
 echo "filters  : tier_a=$TIER  replicon_type=$REPLICON  flank=$FLANK"
+echo "blast_bin: $BLAST_BIN_DIR"
 echo "bakta    : $BAKTA  ${BAKTA_SIF:+image=$BAKTA_SIF}"
 echo "viz      : $VIZ  ${VIZ_SIF:+image=$VIZ_SIF}"
 echo "pangraph : $PANGRAPH  ${PANGRAPH_BIN:+bin=$PANGRAPH_BIN}"
@@ -147,6 +164,7 @@ echo
 
 ARGS=(-profile gadi
       --blastdb  "$DB" --genome_dir '' --blast_task megablast --taxonomy
+      --blast_bin "$BLAST_BIN_DIR"
       --outdir   "$OUT/results"
       --loci_dir "$OUT/loci"
       --bait     "$BAIT"

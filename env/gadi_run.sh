@@ -98,6 +98,7 @@ VIZ="${VIZ:-false}"
 VIZ_SIF="${VIZ_SIF:-}"
 PANGRAPH="${PANGRAPH:-false}"
 PANGRAPH_BIN="${PANGRAPH_BIN:-}"
+BLAST_BIN_DIR="${BLAST_BIN_DIR:-/g/data/rg42/blast_env/bin}"
 
 # Fail now, with a readable message, rather than 20 minutes into the queue.
 [ -s "$BAIT" ] || { echo "BAIT not found or empty: $BAIT" >&2; exit 2; }
@@ -105,6 +106,14 @@ if [ -n "$DB" ]; then
     [ -s "$DB.nin" ] || [ -s "$DB.nal" ] || {
         echo "DB does not look like a BLAST nucleotide database: $DB" >&2
         echo "give the path WITHOUT an extension, e.g. /scratch/rg42/blastdb/nt_prok" >&2
+        exit 2; }
+    # blast/2.11.0 (the module, below) cannot read a current externally-built
+    # db like nt_prok -- CSerialException::eOverflow. A FASTA-built db (the
+    # GENOMES branch) has no such mismatch since it's built by this same
+    # module, so the wrapper is only required here.
+    [ -x "$BLAST_BIN_DIR/blastn" ] || {
+        echo "no working blastn found in $BLAST_BIN_DIR" >&2
+        echo "run env/gadi_blast_setup.sh first, or pass BLAST_BIN_DIR=/path" >&2
         exit 2; }
 else
     [ -d "$GENOMES" ] || { echo "GENOMES is not a directory: $GENOMES" >&2; exit 2; }
@@ -154,8 +163,9 @@ fi
 
 module purge
 module load nextflow/24.04.5
-module load blast/2.11.0
-{ [ "$BAKTA" = "true" ] || [ "$VIZ" = "true" ]; } && module load singularity
+module load blast/2.11.0   # only actually used for the GENOMES branch below;
+                            # the DB branch overrides it via --blast_bin
+{ [ "$BAKTA" = "true" ] || [ "$VIZ" = "true" ] || [ -n "$DB" ]; } && module load singularity
 
 export NXF_OPTS='-Xms512m -Xmx4g'
 export NXF_HOME="${NXF_HOME:-/scratch/rg42/$USER/.nextflow}"
@@ -190,7 +200,8 @@ ARGS=(-profile gadi_single
 if [ -n "$DB" ]; then
     # Pre-formatted database (nt_prok): no FASTAs ship with it, so sequence is
     # pulled back out of the database itself with blastdbcmd.
-    ARGS+=(--blastdb "$DB" --genome_dir '' --blast_task megablast --taxonomy)
+    ARGS+=(--blastdb "$DB" --genome_dir '' --blast_task megablast --taxonomy \
+           --blast_bin "$BLAST_BIN_DIR")
 else
     ARGS+=(--genome_dir "$GENOMES" --gbk_dir "$REPO/data/public_16/gbk")
 fi

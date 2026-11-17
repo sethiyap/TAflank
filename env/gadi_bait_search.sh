@@ -31,6 +31,11 @@
 #
 # Usage:  qsub env/gadi_bait_search.sh
 #   override:  qsub -v BAIT=anchors/other.fa,TASK=blastn env/gadi_bait_search.sh
+#
+# NEEDS env/gadi_blast_setup.sh run first: blast/2.11.0 (the Gadi module)
+# cannot read nt_prok's current def-line format and dies with
+# CSerialException::eOverflow -- see that script's header. This script uses
+# the wrapper binaries it builds, not the module, for exactly that reason.
 
 set -euo pipefail
 
@@ -41,11 +46,16 @@ BAIT="${BAIT:-$REPO/anchors/relBE_seed.fa}"
 TASK="${TASK:-megablast}"
 OUT="${OUT:-/scratch/rg42/$USER/taflank_scope}"
 SUBREG="${SUBREG:-relB:1-240,relE:240-527}"
+BLAST_BIN_DIR="${BLAST_BIN_DIR:-/g/data/rg42/blast_env/bin}"
 
 module purge
-module load blast/2.11.0
+[ -x "$BLAST_BIN_DIR/blastn" ] || {
+    echo "no working blastn found in $BLAST_BIN_DIR" >&2
+    echo "run env/gadi_blast_setup.sh first, or pass BLAST_BIN_DIR=/path" >&2
+    exit 2; }
 
 export BLASTDB="$BLASTDB_DIR"
+export BLAST_BIN="$BLAST_BIN_DIR"
 mkdir -p "$OUT"
 cd "$REPO"
 
@@ -53,7 +63,8 @@ echo "repo     : $REPO"
 echo "database : $BLASTDB_DIR/$DB"
 echo "bait     : $BAIT  ($(grep -v '^>' "$BAIT" | tr -d '\n' | wc -c | tr -d ' ') bp)"
 echo "task     : $TASK   threads: ${PBS_NCPUS:-8}"
-blastdbcmd -db "$DB" -info 2>/dev/null | head -3
+echo "blast_bin: $BLAST_BIN_DIR"
+"$BLAST_BIN_DIR/blastdbcmd" -db "$DB" -info 2>/dev/null | head -3
 echo
 
 /usr/bin/time -v python3 scripts/bait_search.py \
