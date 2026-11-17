@@ -344,13 +344,16 @@ process PANGRAPH_ANNOTATED {
             path blocks_all
             path context_tsv
             path groups_tsv
+            path junctions_tsv
+            path summary_tsv
     output: path 'pangraph_annotated.png'
             path 'pangraph_annotated.svg'
     script:
     """
     ${PY_VIZ()} ${projectDir}/scripts/pangraph_annotated.py \\
         --graph ${graph_json} --blocks . --context ${context_tsv} \\
-        --groups ${groups_tsv} --outdir . --flank ${params.flank}
+        --groups ${groups_tsv} --junctions ${junctions_tsv} \\
+        --summary ${summary_tsv} --outdir . --flank ${params.flank}
     """
 }
 
@@ -380,6 +383,35 @@ process PANGRAPH_CONTEXT_SUMMARY {
         --pairwise ${pairwise_tsv} --context ${context_tsv} \\
         --outdir . --out-xlsx pangraph_context_summary.xlsx \\
         --flank ${params.flank}
+    """
+}
+
+process PANGRAPH_CONTEXT_SUMMARY_ANNOTATED {
+    // The one-row-per-context summary (above), but with colour_blocks.py's
+    // gene/IS arrows drawn on the representative locus's row instead of a
+    // plain sequence block -- so "what sits where" and "which loci share
+    // this DNA" are readable from a single figure, at the same reduced
+    // row count PANGRAPH_CONTEXT_SUMMARY uses.
+    publishDir "${params.figdir}/pangraph", mode: 'copy',
+              pattern: 'pangraph_context_summary_annotated.{png,svg}'
+    label 'viz'
+    when:   params.run_viz
+    input:  path graph_json
+            path blocks_all
+            path groups_tsv
+            path pairwise_tsv
+            path context_tsv
+            path junctions_tsv
+            path summary_tsv
+    output: path 'pangraph_context_summary_annotated.png'
+            path 'pangraph_context_summary_annotated.svg'
+    script:
+    """
+    ${PY_VIZ()} ${projectDir}/scripts/pangraph_context_summary_annotated.py \\
+        --graph ${graph_json} --blocks . --groups ${groups_tsv} \\
+        --pairwise ${pairwise_tsv} --context ${context_tsv} \\
+        --junctions ${junctions_tsv} --summary ${summary_tsv} \\
+        --outdir . --flank ${params.flank}
     """
 }
 
@@ -455,6 +487,7 @@ process COLOUR_BLOCKS {
             path metadata_tsv
             path groups_tsv
             path junctions_tsv
+            path summary_tsv
     output: path 'colour_blocks.png'
             path 'colour_blocks.svg'
             path 'is_matrix.png'
@@ -465,7 +498,8 @@ process COLOUR_BLOCKS {
         --blocks . --context ${context_tsv} --metadata ${metadata_tsv} \\
         --outdir . --flank ${params.flank} --vehicle-ends '${params.vehicle_ends}' \\
         --style '${params.colour_blocks_style}' \\
-        --groups ${groups_tsv} --junctions ${junctions_tsv}
+        --groups ${groups_tsv} --junctions ${junctions_tsv} \\
+        --summary ${summary_tsv}
     """
 }
 
@@ -475,13 +509,14 @@ process COLLATE {
     input:  path is_tsv
             path pf_tsv
             path loci_tsv
+            path junctions_tsv
     output: path 'mge_hits.tsv'
             path 'replicons.tsv'
             path 'summary.tsv'
     script:
     """
     ${PY()} ${projectDir}/scripts/collate.py \\
-        --is-dir . --pf-dir . --loci ${loci_tsv} \\
+        --is-dir . --pf-dir . --loci ${loci_tsv} --junctions ${junctions_tsv} \\
         --out-mge mge_hits.tsv --out-rep replicons.tsv --out-summary summary.tsv \
         --aliases ${projectDir}/assets/replicon_aliases.tsv
     """
@@ -556,7 +591,7 @@ workflow {
         Annotation (complementary layers, not alternatives to each other)
           --run_bakta BOOL             needs amrfinderplus -- no macOS build, cluster only [false]
           --run_viz BOOL               matplotlib/scipy figures, incl. colour_blocks.py
-                                        and the three pangraph figures [true]
+                                        and the four pangraph figures [true]
           --colour_blocks_style STR    simple | tracks -- colour_blocks.py's own --style;
                                         --groups/--junctions are wired in automatically
                                         either way (STRUCTURAL_GROUPS/RELBE_JUNCTIONS) [simple]
@@ -638,10 +673,15 @@ workflow {
 
     groups    = STRUCTURAL_GROUPS(blocks_ch.blocks.collect())
     junctions = RELBE_JUNCTIONS(is_ch.hits.collect(), loci_fa.collect())
-    COLOUR_BLOCKS(blocks_ch.blocks.collect(), CLASSIFY_CONTEXT.out.ctx, meta.meta,
-                  groups.groups, junctions.junctions)
 
-    collated = COLLATE(is_ch.hits.collect(), pf_ch.hits.collect(), loci.table)
+    // Moved ahead of COLOUR_BLOCKS/PANGRAPH_ANNOTATED: both now take
+    // collated[2] (summary.tsv, which carries plasmidfinder_replicons --
+    // the Inc-type badge) as an input, so COLLATE has to run first.
+    collated = COLLATE(is_ch.hits.collect(), pf_ch.hits.collect(), loci.table,
+                       junctions.junctions)
+
+    COLOUR_BLOCKS(blocks_ch.blocks.collect(), CLASSIFY_CONTEXT.out.ctx, meta.meta,
+                  groups.groups, junctions.junctions, collated[2])
 
     // pangraph: sequence-homology blocks (Stage 5's "careful pass"), using
     // the SAME filtered, extracted loci set everything above already built
@@ -656,9 +696,14 @@ workflow {
                                       CLASSIFY_CONTEXT.out.ctx)
     pangraph_groups = PANGRAPH_GROUPS(pangraph_blocks.pairwise)
     PANGRAPH_ANNOTATED(pangraph.graph, blocks_ch.blocks.collect(),
-                       CLASSIFY_CONTEXT.out.ctx, pangraph_groups.groups)
+                       CLASSIFY_CONTEXT.out.ctx, pangraph_groups.groups,
+                       junctions.junctions, collated[2])
     PANGRAPH_CONTEXT_SUMMARY(pangraph.graph, pangraph_groups.groups,
                             pangraph_blocks.pairwise, CLASSIFY_CONTEXT.out.ctx)
+    PANGRAPH_CONTEXT_SUMMARY_ANNOTATED(pangraph.graph, blocks_ch.blocks.collect(),
+                              pangraph_groups.groups, pangraph_blocks.pairwise,
+                              CLASSIFY_CONTEXT.out.ctx, junctions.junctions,
+                              collated[2])
 
     // Last: one readable account of what went in, what each filter removed,
     // and what came out at every layer. Gated on everything else finishing.

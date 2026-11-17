@@ -75,6 +75,8 @@ identical columns.
 | `offset_from_bait` | bp from the left edge of the bait. **Negative = upstream, positive = downstream.** This is the number the decisive test plots. |
 | `sub_start` / `sub_end` / `slen` | which part of the reference element matched, and its full length |
 | `nested_in` / `interrupts` | the element this one sits inside, if any |
+| `DR_seq` / `DR_len` | the target-site duplication found at this call's boundaries, joined in from `results/junctions.tsv` (`relbe_junctions.py`) — empty when no clean boundary pair was searched, or none was found |
+| `DR_same_locus_group` / `DR_same_locus_group_size` | set only when this exact `DR_seq` recurs in `>=2` loci (CLAUDE.md's "distinct DRs across loci = independent events") — a lone, unrepeated match leaves these blank |
 
 **No length cutoff is applied anywhere in this layer.** The whole
 ancestral-vehicle argument rests on a 64 bp ISEsa1 remnant, so a minimum length
@@ -347,23 +349,35 @@ The drawable block table and the up-/downstream context groupings behind
 core (relB/relE span) at offset zero, exactly as `blocks/*.blocks.tsv` uses
 the core as coordinate zero for gene calls.
 
-### `figures/pangraph/pangraph_blocks.png`, `pangraph_annotated.png`, `pangraph_context_summary.{png,xlsx}`
+### `figures/pangraph/pangraph_blocks.png`, `pangraph_annotated.png`, `pangraph_context_summary.{png,xlsx}`, `pangraph_context_summary_annotated.png`
 
-Three pangraph-based figures, one row per locus:
+Four pangraph-based figures:
 
-- **`pangraph_blocks.png`** — pure sequence-homology blocks, coloured by
-  content-addressed block identity (`scripts/pangraph_blocks.py`,
-  `--row-scale` default 0.5 packs rows to roughly half height so more loci
-  fit in one legible figure).
+- **`pangraph_blocks.png`** — pure sequence-homology blocks, one row per
+  locus, coloured by content-addressed block identity
+  (`scripts/pangraph_blocks.py`, `--row-scale` default 0.5 packs rows to
+  roughly half height so more loci fit in one legible figure).
 - **`pangraph_annotated.png`** — the same sequence-homology background with
   `colour_blocks.py`'s gene/IS/cargo arrows overlaid on top at the same
-  coordinate (`scripts/pangraph_annotated.py`). Bakta's calls appear here,
-  via `blocks/*.blocks.tsv`, whenever `--run_bakta true`; this figure never
-  runs Bakta itself.
+  coordinate (`scripts/pangraph_annotated.py`), one row per locus. Bakta's
+  calls appear here, via `blocks/*.blocks.tsv`, whenever `--run_bakta true`;
+  this figure never runs Bakta itself.
 - **`pangraph_context_summary.png`** (+ the companion
-  `results/pangraph/pangraph_context_summary.xlsx` two-sheet workbook) — loci
-  collapsed by shared up-/downstream context group, for a one-screen view of
-  which loci share a history on each side of the core independently.
+  `results/pangraph/pangraph_context_summary.xlsx` two-sheet workbook) —
+  one row per UNIQUE context, loci collapsed by shared up-/downstream
+  context group, for a one-screen view of which loci share a history on
+  each side of the core independently.
+- **`pangraph_context_summary_annotated.png`** — `pangraph_context_summary.png`'s
+  one-row-per-context layout with `pangraph_annotated.png`'s gene/IS/cargo
+  arrows drawn on each row's medoid (most-typical) locus instead of a plain
+  block (`scripts/pangraph_context_summary_annotated.py`) — the reduced row count
+  of the summary and the per-locus detail of the annotated figure together.
+
+All four mark a target-site duplication confirmed shared with another
+locus as a small triangle at the element's two edges (colour = which exact
+repeat, from `results/junctions.tsv`; a lone, unrepeated match is not
+marked), and a replicon type + Inc-type badge beside each row/label (from
+`results/context.tsv` + `results/summary.tsv`'s `plasmidfinder_replicons`).
 
 ### `figures/colour_blocks/is_matrix.tsv` — IS presence matrix
 

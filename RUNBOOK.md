@@ -968,14 +968,21 @@ report, when what happened is narrower than that.
 python3 scripts/colour_blocks.py ... --junctions results/junctions.tsv
 ```
 
-A `†` after an IS element's label means its TSD is an **exact match, shared
-with at least one other locus** -- never a lone, unrepeated short match,
-which at 2-5 bp is not evidence on its own. The marker is deliberately
-inline rather than a second line of text: a second line changed the
-label's rendered width in a way the label-stacking pass (STEP 12's
-`label_plan`) has no way to know about, and the real `ISKpn8 DR:ACC (2
-loci)` text collided directly into `ISEsa1`'s label beside it. A short
-same-line suffix can't widen a label enough to matter.
+(The real pipeline run wires this in automatically -- `COLOUR_BLOCKS` and
+all four pangraph figure processes already take `RELBE_JUNCTIONS`'
+`junctions.tsv` as `--junctions`, so this flag only needs passing by hand
+when hand-running one of these scripts outside `main.nf`.)
+
+A small triangle at an IS element's two edges (colour = which exact repeat,
+`same_dr_colour`) means its TSD is an **exact match, shared with at least
+one other locus** -- never a lone, unrepeated short match, which at 2-5 bp
+is not evidence on its own. It is a mark on the boundary itself rather than
+text beside the label, which is why it works the same way across all four
+figures (`colour_blocks.py`, `pangraph_annotated.py`,
+`pangraph_context_summary_annotated.py`) regardless of whether a given row
+has room for a label at all. The same `DR_seq`/`DR_len` also land in
+`results/mge_hits.tsv` (joined in by `collate.py --junctions`), so the
+repeat sequence itself is in a results table, not only on the figure.
 
 ### STEP 13 — Group isolates by shared history
 
@@ -1082,12 +1089,11 @@ multi-member group (the three singletons above) get no swatch.
 ### Styles
 
 `--style simple` is the default: **one row per locus**, IS and cargo on the
-same line, colour encoding **role and orientation only**.
+same line, colour encoding **role only**.
 
 | | colour |
 |---|---|
-| IS, forward | mustard `#d4a017` |
-| IS, reverse | yellow `#f5dd5d` |
+| IS | mustard `#d4a017` |
 | relB | green `#00b050` |
 | relE | red `#e8112d` |
 | cytb (cytochrome b561) | purple `#7030a0` |
@@ -1097,10 +1103,13 @@ same line, colour encoding **role and orientation only**.
 | sil, intI, qnr, hok_gef | light grey `#c9c9c9` — labelled, not singled out |
 | CDS | near-white, thin underlay |
 
-Which IS it is comes from the **label**, not the colour, so the two IS tones
-are free to carry orientation instead. That is the whole trade: you lose
-family at a glance and gain strand at a glance, and the figure answers one
-question rather than twenty-four.
+Which IS it is comes from the **label**, not the colour. Strand is NOT a
+colour either -- every block is pointed the way `gene_arrow()` draws it
+(the arrow's head), so an element on the `-` strand is still mustard, just
+pointing the other way. An earlier version used a second mustard/yellow
+tone for strand; that was dropped because the arrow already says it, and
+doubling it up read as two different elements instead of one on two
+strands.
 
 CDS stay as a thin pale underlay rather than disappearing, so the backbone is
 still visible and an IS can be seen to contain CDS rather than replace them.

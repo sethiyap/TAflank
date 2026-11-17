@@ -102,13 +102,15 @@ ACTIVE = {}
 
 # ---------------------------------------------------------------------------
 # SIMPLE style. Colour stops encoding identity and encodes only ROLE, so the
-# figure answers one question -- what kind of thing sits where, pointing which
-# way -- instead of twenty-four. Which IS it is comes from the label, not the
-# colour, so the two mustard/yellow tones carry orientation alone.
+# figure answers one question -- what kind of thing sits where -- instead of
+# twenty-four. Which IS it is comes from the label, not the colour. Strand is
+# NOT a colour here either: gene_arrow() already points every block the way
+# it is transcribed, so a second, colour-coded encoding of the same fact was
+# redundant -- and actively misleading, since two IS of the same element on
+# opposite strands then looked like two different elements.
 # ---------------------------------------------------------------------------
 SIMPLE = {
-    'is_fwd':   '#d4a017',   # mustard
-    'is_rev':   '#f5dd5d',   # yellow
+    'is':       '#d4a017',   # mustard -- direction comes from the arrow, not the colour
     'relB':     '#00b050',
     'relE':     '#e8112d',
     'czc':      '#2e75b6',   # cobalt-zinc-cadmium efflux
@@ -122,7 +124,7 @@ SIMPLE = {
 
 def simple_colour(ft, name, strand):
     if ft == 'IS':
-        return SIMPLE['is_fwd'] if strand == '+' else SIMPLE['is_rev']
+        return SIMPLE['is']
     return SIMPLE.get(name, SIMPLE['cargo'])
 
 # Family hues. ISNCY and IS110 keep the red/orange of the elements that made
@@ -214,7 +216,7 @@ def draw_schematic(ax, rows, y, x0, x1, head, h, ends):
     # overlap unless stacked -- downward here, away from the core bracket
     placed = []
     for c in veh + core:
-        col = (SIMPLE['is_fwd'] if c['kind'] == 'IS'
+        col = (SIMPLE['is'] if c['kind'] == 'IS'
                else SIMPLE.get(c['name'], SIMPLE['cargo']))
         ax.add_patch(Polygon(
             gene_arrow(c['offset'], c['length'], y, h, '+', head), closed=True,
@@ -344,6 +346,69 @@ def gene_arrow(x, w, y, h, strand, head):
                 (x + w, y - h / 2), (x + hd, y - h / 2)]
     return [(x, y - h / 2), (x + w - hd, y - h / 2), (x + w, y),
             (x + w - hd, y + h / 2), (x, y + h / 2)]
+
+
+def load_junctions(path):
+    """results/junctions.tsv -> {(locus_id, element, win_start, win_end): row},
+    restricted to hits whose exact DR is shared with >=1 OTHER locus. A lone,
+    unrepeated short match is not evidence (CLAUDE.md: "distinct DRs across
+    loci = independent events" needs a comparison, not one locus alone), so
+    it is never drawn, here or anywhere this table is used."""
+    out = {}
+    if not path or not os.path.exists(path):
+        return out
+    for r in read_tsv(path):
+        if r.get('same_dr_group_size') and int(r['same_dr_group_size']) >= 2:
+            out[(r['locus_id'], r['element'], r['win_start'],
+                r['win_end'])] = r
+    return out
+
+
+def dr_ticks(ax, o, w, y, h, colour, zorder=6):
+    """Small triangles at an IS call's two edges, marking a target-site
+    duplication confirmed shared with another locus (load_junctions()).
+    Coloured by that exact DR sequence (same_dr_colour, content-addressed
+    like structural_groups.py's group colour) -- so the SAME colour at the
+    same edge in another locus's row is the same repeat, not just "a" repeat.
+    A separate mark from the arrow itself: the arrow is the element, this is
+    evidence about how it got there.
+    """
+    ax.plot([o, o + w], [y + h / 2 + 0.03, y + h / 2 + 0.03],
+            marker='v', ms=4.2, markerfacecolor=colour,
+            markeredgecolor='#333333', markeredgewidth=0.4, ls='',
+            zorder=zorder, clip_on=False)
+
+
+VEHICLE_CLASS_ORDER = {'VEHICLE-INTACT': 0, 'VEHICLE-DECAYED': 1,
+                       'VEHICLE-HALF': 2, 'VEHICLE-ABSENT': 3}
+
+
+def esa1_offset(rows):
+    """rows = one locus's *.blocks.tsv records. The earliest (most
+    negative) ISEsa1 offset from the core, or +inf if this locus has none
+    -- the same tie-break architecture_order() below uses."""
+    offs = [int(r['offset_from_bait']) for r in rows
+           if r['feature_type'] == 'IS' and r['name'] == 'ISEsa1']
+    return min(offs) if offs else 1 << 30
+
+
+def architecture_order(loci, feats_by_locus, ctx):
+    """Vehicle class, then the ISEsa1 offset, then locus id -- loci (or
+    locus-like keys, e.g. a context's medoid) that share an architecture
+    sit next to each other, and a shared offset reads as a vertical line
+    rather than needing to be hunted for. feats_by_locus[l] is l's
+    *.blocks.tsv rows; ctx[l] is its results/context.tsv row.
+
+    A gene/IS-architecture axis, specific to this figure. The pangraph
+    context-summary figures (pangraph_context_summary.py and its
+    _annotated variant) order by shared sequence instead -- the same
+    shared_up_bp/shared_down_bp signal that decides their own block
+    colours -- via seq_blocks.cluster_order(), not this function."""
+    def key(l):
+        vc = ctx.get(l, {}).get('vehicle_class', '')
+        return (VEHICLE_CLASS_ORDER.get(vc, 9),
+               esa1_offset(feats_by_locus.get(l, [])), l)
+    return sorted(loci, key=key)
 
 
 def cds_family_colour(fid):
@@ -477,6 +542,11 @@ def main():
     p.add_argument('--blocks', required=True, help='directory of *.blocks.tsv')
     p.add_argument('--context', required=True)
     p.add_argument('--metadata', default='')
+    p.add_argument('--summary', default='',
+                   help='results/summary.tsv (collate.py) -- keyed on '
+                        'locus_id, carries plasmidfinder_replicons so the '
+                        'replicon badge can show the Inc-type, not just '
+                        'plasmid/chromosome')
     p.add_argument('--outdir', default='figures')
     p.add_argument('--flank', type=int, default=20000)
     p.add_argument('--families', default='',
@@ -494,8 +564,9 @@ def main():
                    help='omit the idealised-architecture panel at the bottom')
     p.add_argument('--style', choices=['simple', 'tracks'], default='simple',
                    help="'simple' = one row per locus, colour by role, IS "
-                        "mustard forward / yellow reverse; 'tracks' = IS, CDS "
-                        "and cargo on separate lines, colour by family")
+                        "mustard (direction from the arrow, not the colour); "
+                        "'tracks' = IS, CDS and cargo on separate lines, "
+                        "colour by family")
     p.add_argument('--label-is',
                    choices=['all', 'distinct', 'key', 'none'], default='',
                    help="which IS blocks get a name drawn on the figure")
@@ -541,16 +612,15 @@ def main():
     if a.metadata and os.path.exists(a.metadata):
         for r in read_tsv(a.metadata):
             meta[r['accession']] = r
+    summary = {}
+    if a.summary and os.path.exists(a.summary):
+        for r in read_tsv(a.summary):
+            summary[r['locus_id']] = r
     groups = {}
     if a.groups and os.path.exists(a.groups):
         for r in read_tsv(a.groups):
             groups[r['locus_id']] = r
-    junctions = {}
-    if a.junctions and os.path.exists(a.junctions):
-        for r in read_tsv(a.junctions):
-            if r.get('same_dr_group_size') and int(r['same_dr_group_size']) >= 2:
-                junctions[(r['locus_id'], r['element'],
-                          r['win_start'], r['win_end'])] = r
+    junctions = load_junctions(a.junctions)
 
     # element -> family, and a colour per element: family hue, element shade
     fam_of = {r['name']: (r['family'] or 'unclassified')
@@ -577,19 +647,12 @@ def main():
         by_locus.setdefault(r['locus_id'], []).append(r)
 
     # Order loci by vehicle class, then by the ISEsa1 offset -- so loci that
-    # share an architecture sit next to each other and a shared offset reads as
-    # a vertical line rather than needing to be hunted for.
-    CLASS_ORDER = {'VEHICLE-INTACT': 0, 'VEHICLE-DECAYED': 1,
-                  'VEHICLE-HALF': 2, 'VEHICLE-ABSENT': 3}
-
-    def esa1_offset(lid):
-        offs = [int(r['offset_from_bait']) for r in by_locus[lid]
-                if r['feature_type'] == 'IS' and r['name'] == 'ISEsa1']
-        return min(offs) if offs else 1 << 30
-
-    loci = sorted(by_locus, key=lambda l: (
-        CLASS_ORDER.get(ctx.get(l, {}).get('vehicle_class', ''), 9),
-        esa1_offset(l), l))
+    # share an architecture sit next to each other and a shared offset reads
+    # as a vertical line rather than needing to be hunted for. This is a
+    # gene/IS-architecture axis, specific to this figure; the pangraph
+    # context-summary figures order by shared sequence instead (same signal
+    # as their own block colours), not by architecture_order().
+    loci = architecture_order(list(by_locus), by_locus, ctx)
 
     # ---- figure geometry is settled BEFORE drawing, so the legend gets a real
     # gridspec row instead of being hung off the bottom with negative
@@ -605,11 +668,10 @@ def main():
     if simple:
         blocks = [
             ('insertion sequences', '#333333', [
-                ('IS, forward', dict(facecolor=SIMPLE['is_fwd'])),
-                ('IS, reverse', dict(facecolor=SIMPLE['is_rev'])),
-                ('fragment <50% cov', dict(facecolor=SIMPLE['is_fwd'],
+                ('IS (arrow = strand)', dict(facecolor=SIMPLE['is'])),
+                ('fragment <50% cov', dict(facecolor=SIMPLE['is'],
                                            hatch='///')),
-                ('runs off the window', dict(facecolor=SIMPLE['is_fwd'],
+                ('runs off the window', dict(facecolor=SIMPLE['is'],
                                              linestyle=(0, (1.4, 1.0)))),
             ]),
             ('the TA pair', '#333333', [
@@ -662,8 +724,14 @@ def main():
     # anywhere that headroom is wasted, so only pay for it when one exists.
     has_bracket = any(
         r.get('nested_in') for rs in by_locus.values() for r in rs)
+    # The Inc-type line sits a third stack-step below the locus label (cls,
+    # then ccls, then this) -- without extra headroom it lands on the next
+    # row's own label stack.
+    has_inc = any(summary.get(l, {}).get('plasmidfinder_replicons', '')
+                 not in ('', '-') for l in loci)
     PITCH = ((0.52 if simple else 1.20)
-             + 0.26 * (deepest + (1 if has_bracket else 0)))
+             + 0.26 * (deepest + (1 if has_bracket else 0))
+             + (0.22 if has_inc else 0))
     NCOL = 6
     n_lrow = -(-len(blocks) // NCOL)
     leg_h = 0.20 * sum(max(len(b[2]) for b in blocks[i * NCOL:(i + 1) * NCOL]) + 1.45
@@ -745,21 +813,16 @@ def main():
                 edgecolor='black' if not clipped else '#555555', lw=0.9,
                 linestyle='-' if not clipped else (0, (1.4, 1.0)),
                 hatch='///' if frag else None, alpha=0.95, zorder=3))
+            dr = junctions.get((lid, nm, r['start'], r['end']))
+            if dr:
+                dr_ticks(ax, o, w, yy, h, dr['same_dr_colour'])
+                any_dr_drawn = True
             # name the vehicle and the small-but-decisive fragments
             if fi in plan:
                 lvl = plan[fi]
                 emph = nm in ends or nm in ('relB', 'relE')
-                dr = junctions.get((lid, nm, r['start'], r['end']))
-                # An inline suffix, not a second line: a second line changed
-                # the label's rendered width, which the stacking pass above
-                # had no way to know about, and ISKpn8's real "DR:ACC (2
-                # loci)" collided straight into ISEsa1's label beside it.
-                # A short, same-line marker can't widen the label enough to
-                # matter.
-                dr_txt = ' †' if dr else ''
-                any_dr_drawn = any_dr_drawn or bool(dr)
                 ax.annotate(
-                    (f'{nm}\n{w} bp' if frag else nm) + dr_txt,
+                    f'{nm}\n{w} bp' if frag else nm,
                     (o + w / 2, y + (IS_DY if ft == 'IS' else CARGO_DY)
                      + h / 2 + 0.12 + 0.26 * lvl),
                     ha='center', va='bottom',
@@ -826,6 +889,18 @@ def main():
                     color={'CORE-INTACT': '#1a7f1a',
                            'CORE-DEGRADED': '#b8860b',
                            'CORE-PARTIAL': '#d2691e'}.get(ccls, '#999999'))
+        # Inc-type, from PlasmidFinder on the WHOLE parent replicon
+        # (summary.tsv's plasmidfinder_replicons -- CLAUDE.md slide 11 calls
+        # out IncFIB turning up twice, which the bare plasmid/chromosome dot
+        # below can't distinguish).
+        inc = summary.get(lid, {}).get('plasmidfinder_replicons', '')
+        if inc and inc != '-':
+            incs = inc.split(',')
+            inc_txt = ', '.join(incs[:2]) + (f' +{len(incs) - 2}'
+                                             if len(incs) > 2 else '')
+            ax.text(X1 + XW * 0.02, y - 0.48, inc_txt, ha='left',
+                    va='center', fontsize=5.2, color='#666666',
+                    style='italic')
 
     ytop = (len(loci) - 1) * PITCH
     if not simple:
@@ -943,13 +1018,15 @@ def main():
     scope = (f'   [{kinds.pop()}s only — {len(loci)} loci]'
              if len(kinds) == 1 and next(iter(kinds), '') else
              f'   [{len(loci)} loci]')
-    dr_note = ('\n† = exact target-site duplication shared with another '
-              'locus (relbe_junctions.py, results/junctions*.tsv) -- a lone, '
-              'unrepeated match is not marked here' if any_dr_drawn else '')
+    dr_note = ('\n▽▽ at an element\'s edges = exact target-site '
+              'duplication shared with another locus (relbe_junctions.py, '
+              'results/junctions*.tsv, colour = which exact repeat) -- a '
+              'lone, unrepeated match is not marked here'
+              if any_dr_drawn else '')
     ax.set_title(('relBE flanking architecture, aligned on the bait'
                   + scope + zoom_note + '\n'
-                  'IS mustard = forward, yellow = reverse (type is in the '
-                  'label, not the colour); strand is the way each block points'
+                  'IS = mustard (which element is in the label, not the '
+                  'colour); strand is the way each block points, not a colour'
                   + dr_note
                   if simple else
                   f'relBE flanking architecture, aligned on the bait'

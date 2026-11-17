@@ -490,17 +490,23 @@ replicon type.
 Fourteen loci, one row each, aligned on the `relB` start codon (the dashed blue line at
 position 0). Reading guide:
 
-- **IS elements**: mustard = forward strand, yellow = reverse strand (which named
-  element it is comes from the label above the block, not the colour).
+- **IS elements**: mustard (which named element it is comes from the label
+  above the block, not the colour — the arrow's point is the strand, not a
+  second colour, so an element on the `-` strand is still mustard, just
+  pointing left).
 - **Cargo genes**: `relB`/`relE` green/red; `cytb`/`czc` purple/blue (labelled "the
   conserved core"); other cargo in neutral grey.
-- **● / —** beside the classification badge marks plasmid vs chromosome.
+- **● / —** beside the classification badge marks plasmid vs chromosome; the
+  Inc-type (`plasmidfinder_replicons`, PlasmidFinder on the whole parent
+  replicon, not just the window) prints underneath in small italics, e.g.
+  "IncC, IncHI2 +1".
 - **VEHICLE-\* / CORE-\*** two-line badge on the right is the independent two-axis
   classification from §5.
 - **Coloured swatch** beside the locus name marks membership in one of the groups
   above.
-- **†** after an IS label marks a target-site duplication shared, letter for letter,
-  with another locus (§6).
+- A **small triangle** at an IS element's two edges marks a target-site
+  duplication shared, letter for letter, with another locus (§6); its
+  colour is which exact repeat.
 - The **"idealised architecture" panel** at the bottom is not asserted — every element
   in it is placed at the **median offset** measured across the real loci that carry it,
   and is marked "same in all N" only where that offset is genuinely invariant. `czc` is
@@ -597,11 +603,18 @@ loci gets its own row instead of being collapsed to its context's medoid.
 
 `pangraph_annotated.png` — the gene/IS arrows from `colour_blocks.png` (§7)
 redrawn on top of this sequence-identity background instead of the
-flat idealised schematic. The same arrow colour on a *different* background
-colour is the same named element sitting on genuinely different DNA — e.g.
+flat idealised schematic, plus the same replicon/Inc-type badge and
+shared-TSD tick marks §7's figure carries. The same arrow colour on a
+*different* background colour is the same named element sitting on
+genuinely different DNA — e.g.
 `czc` (blue arrow) appears on blue, green, magenta and plain pink
 backgrounds across different loci, meaning it is conserved as a *named gene*
 far more widely than any single stretch of flanking DNA around it is.
+
+(A fourth pangraph figure, `pangraph_context_summary_annotated.png` — this same
+annotation layer drawn on `pangraph_context_summary.png`'s one-row-per-context
+rows instead of one row per locus — is generated automatically too; see
+OUTPUTS.md.)
 
 ## 8. Next steps: scaling to the whole of NCBI
 

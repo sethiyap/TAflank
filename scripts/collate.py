@@ -3,8 +3,14 @@
 Gather per-locus IS calls and per-record replicon types into the deliverables.
 
   collate.py --is-dir results/is --pf-dir results/pf --loci results/loci.tsv \
+             --junctions results/junctions.tsv \
              --out-mge results/mge_hits.tsv --out-rep results/replicons.tsv \
              --out-summary results/summary.tsv
+
+--junctions (relbe_junctions.py's output) adds the DR_seq/DR_len columns
+CLAUDE.md's own Stage 3 spec names for mge_hits.tsv -- joined one row per IS
+call, same key both files already share (locus_id, element, win_start,
+win_end), since both are built from the exact same *.is.tsv inputs.
 
 CENSUS rule: every locus in loci.tsv must appear in the summary, even if a
 layer produced nothing for it, so a silent drop shows up as a visible gap
@@ -36,6 +42,9 @@ def main():
     a.add_argument('--out-rep', required=True)
     a.add_argument('--out-summary', required=True)
     a.add_argument('--aliases', default='')
+    a.add_argument('--junctions', default='',
+                   help='results/junctions.tsv (relbe_junctions.py) -- adds '
+                        'DR_seq/DR_len/DR_same_locus_group to mge_hits.tsv')
     a = a.parse_args()
 
     loci = read_tsv(a.loci)
@@ -57,13 +66,28 @@ def main():
     for f in sorted(glob.glob(os.path.join(a.pf_dir, '*.pf.tsv'))):
         pf_rows += read_tsv(f)
 
+    junc_cols = ['dr_seq', 'dr_len', 'same_dr_group', 'same_dr_group_size']
+    junc_rename = {'dr_seq': 'DR_seq', 'dr_len': 'DR_len',
+                  'same_dr_group': 'DR_same_locus_group',
+                  'same_dr_group_size': 'DR_same_locus_group_size'}
+    junc_by_key = {}
+    if a.junctions and os.path.exists(a.junctions):
+        for r in read_tsv(a.junctions):
+            junc_by_key[(r['locus_id'], r['element'], r['win_start'],
+                        r['win_end'])] = r
+
     if is_rows:
         cols = list(is_rows[0].keys())
+        out_cols = cols + [junc_rename[c] for c in junc_cols]
         with open(a.out_mge, 'w') as fh:
-            fh.write('\t'.join(cols) + '\n')
+            fh.write('\t'.join(out_cols) + '\n')
             for r in sorted(is_rows, key=lambda x: (x['locus_id'],
                                                     int(x['win_start']))):
-                fh.write('\t'.join(r.get(c, '') for c in cols) + '\n')
+                jr = junc_by_key.get((r['locus_id'], r['element'],
+                                      r['win_start'], r['win_end']), {})
+                fh.write('\t'.join([r.get(c, '') for c in cols]
+                                   + [jr.get(c, '') for c in junc_cols])
+                         + '\n')
 
     if pf_rows:
         cols = list(pf_rows[0].keys())
@@ -121,7 +145,9 @@ def main():
     ix = {k: i for i, k in enumerate(hdr)}
     missing = [r[ix['locus_id']] for r in out if r[ix['n_is']] == 0]
     clipped = sum(r[ix['n_is_fragment_clipped']] for r in out)
-    print(f'{len(is_rows)} IS calls across {len(is_by_locus)} loci -> {a.out_mge}')
+    dr_note = (f' (+ DR_seq from {a.junctions})' if junc_by_key else '')
+    print(f'{len(is_rows)} IS calls across {len(is_by_locus)} loci -> '
+          f'{a.out_mge}{dr_note}')
     print(f'{len(pf_rows)} replicon hits -> {a.out_rep}')
     print(f'{len(out)} loci -> {a.out_summary}')
     if clipped:

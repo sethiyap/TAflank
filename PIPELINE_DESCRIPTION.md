@@ -304,14 +304,18 @@ Target-site-duplication scan at each IS boundary — writes
 
 The gene-identity figure (`figures/colour_blocks/colour_blocks.png` +
 `is_matrix.{png,tsv}`) — named IS/cargo blocks, `vehicle_class`/`core_class`
-badges, replicon type — as opposed to the pangraph figures' sequence-identity
-view. Gated by `run_viz`, same as the three pangraph figures below. Was a
-hand-run-only script for a while (`--blocks`/`--context`/`--metadata` taken
-directly from the command line); wired in as a real process once it became
-clear that anything not produced automatically is easy to not know exists at
-all. Takes `STRUCTURAL_GROUPS`'/`RELBE_JUNCTIONS`' outputs as `--groups`/
-`--junctions` automatically, so the grouping swatch and shared-TSD markers
-appear in the automatic figure too, not only in a hand-run invocation.
+badges, replicon type + Inc-type — as opposed to the pangraph figures'
+sequence-identity view. Gated by `run_viz`, same as the four pangraph
+figures below. Was a hand-run-only script for a while
+(`--blocks`/`--context`/`--metadata` taken directly from the command line);
+wired in as a real process once it became clear that anything not produced
+automatically is easy to not know exists at all. Takes
+`STRUCTURAL_GROUPS`'/`RELBE_JUNCTIONS`' outputs as `--groups`/`--junctions`
+automatically, so the grouping swatch and shared-TSD markers (small
+triangles at an IS call's two edges) appear in
+the automatic figure too, not only in a hand-run invocation; `COLLATE`'s
+`summary.tsv` is wired in as `--summary` for the same reason, so the
+Inc-type badge (`plasmidfinder_replicons`) needs no manual lookup either.
 `--style` (`params.colour_blocks_style`, default `simple`) is the one thing
 still worth overriding by hand for the richer `tracks` view.
 
@@ -471,17 +475,27 @@ since each depends on the one before).
   whenever `run_bakta=true` — on top of the pangraph sequence-homology
   background, at the same coordinate. Takes `pangraph_groups.tsv` only for
   its swatch colour (visual only — it does not reorder rows, to avoid a
-  circular dependency on `PANGRAPH_BLOCKS`'s own pairwise output).
+  circular dependency on `PANGRAPH_BLOCKS`'s own pairwise output). Also
+  takes `RELBE_JUNCTIONS`'/`COLLATE`'s outputs as `--junctions`/`--summary`
+  (shared-TSD tick marks, replicon type + Inc-type badge), the same inputs
+  `COLOUR_BLOCKS` takes.
 - **`PANGRAPH_CONTEXT_SUMMARY`** (`scripts/pangraph_context_summary.py`,
   `when: params.run_viz`) collapses loci by shared context group into one
   figure plus a two-sheet `pangraph_context_summary.xlsx` workbook. Needs
   `openpyxl` specifically, checked (warn-only) by
-  `env/gadi_viz_setup.sh` alongside matplotlib/scipy for the other two.
+  `env/gadi_viz_setup.sh` alongside matplotlib/scipy for the others.
+- **`PANGRAPH_CONTEXT_SUMMARY_ANNOTATED`** (`scripts/pangraph_context_summary_annotated.py`,
+  `when: params.run_viz`) is `PANGRAPH_CONTEXT_SUMMARY`'s one-row-per-context
+  layout with `PANGRAPH_ANNOTATED`'s gene/IS arrows (and its same
+  `--junctions`/`--summary` TSD ticks and replicon badge) drawn on each
+  row's medoid locus, instead of a plain sequence block — the reduced row
+  count of the summary figure and the per-locus detail of the annotated one
+  in a single figure.
 
 The shared drawing/colouring primitives (`cluster_order`, content-addressed
-`colour_for`, `draw_figure`) that these three figure scripts all import live
-in `scripts/seq_blocks.py` — the renamed, slimmed survivor of the retired
-pairwise method's own block-drawing code.
+`colour_for`, `draw_figure`) that the pangraph figure scripts all import
+live in `scripts/seq_blocks.py` — the renamed, slimmed survivor of the
+retired pairwise method's own block-drawing code.
 
 ---
 
@@ -758,7 +772,7 @@ figure. All offsets assume the bait on `+`.
 | `results/pangraph/pangraph_pairwise.tsv` | locus pair | `locus_a, locus_b, shared_frac` |
 | `results/pangraph/pangraph_groups.tsv` | locus | same shape as `structural_groups.tsv`, grouped by `shared_frac` instead of gene-Jaccard |
 | `results/pangraph/pangraph_blocks.tsv`, `pangraph_context_groups.tsv` | block / locus | the sequence-homology figures' own input |
-| `figures/pangraph/pangraph_blocks.png`, `pangraph_annotated.png`, `pangraph_context_summary.{png,xlsx}` | — | see §3's pangraph stage for what each shows. All pangraph outputs live under one `pangraph/` subfolder (both `results/` and `figures/`) |
+| `figures/pangraph/pangraph_blocks.png`, `pangraph_annotated.png`, `pangraph_context_summary.{png,xlsx}`, `pangraph_context_summary_annotated.png` | — | see §3's pangraph stage for what each shows. All pangraph outputs live under one `pangraph/` subfolder (both `results/` and `figures/`) |
 | `figures/colour_blocks/colour_blocks.png`, `is_matrix.{png,tsv}` | — | `COLOUR_BLOCKS` (§3) — the gene-identity counterpart to the pangraph figures, named IS/cargo blocks and `vehicle_class`/`core_class` badges rather than sequence homology. Own subfolder, same reasoning |
 
 Read any of these with `scripts/tsvcols.py <file> <column> ...`, which selects

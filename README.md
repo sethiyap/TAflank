@@ -79,8 +79,9 @@ cd TAflank
    automatically on those clusters; there is no local-mac equivalent script
    yet, so fetch the binary by hand and note where you put it).
 4. **Python for the figures** — the core pipeline needs only the standard
-   library, but `colour_blocks.py`/`pangraph_blocks.py`/`pangraph_annotated.py`
-   need `matplotlib`+`scipy`, and `pangraph_context_summary.py` additionally
+   library, but `colour_blocks.py`/`pangraph_blocks.py`/`pangraph_annotated.py`/
+   `pangraph_context_summary_annotated.py` need `matplotlib`+`scipy`, and
+   `pangraph_context_summary.py` additionally
    needs `openpyxl`. Any Python 3 with those installed works (a venv +
    `pip install matplotlib scipy openpyxl`, or a conda/anaconda environment);
    note its path for the next step.
@@ -164,7 +165,7 @@ every resolved parameter with its live value instead (no descriptions).
 | `results/record_metadata.tsv` | source record, with replicon type and the evidence for it |
 | `results/loci_selected.tsv` | hit, with flank availability and why it was or was not selected |
 | `results/loci.tsv` | extracted window |
-| `results/mge_hits.tsv` | IS call, including fragments and nesting |
+| `results/mge_hits.tsv` | IS call, including fragments and nesting, plus `DR_seq`/`DR_len`/`DR_same_locus_group[_size]` joined in from `junctions.tsv` |
 | `results/replicons.tsv` | PlasmidFinder replicon hit |
 | `results/context.tsv` | locus, with **two independent verdicts**: `vehicle_class` (VEHICLE-INTACT/-DECAYED/-HALF/-ABSENT, from ISEsa1/ISEsa2 coverage only) and `core_class` (CORE-INTACT/-DEGRADED/-PARTIAL/-ABSENT, from cytb/czc/relB/relE/hok_gef — never the vehicle). The two can and do disagree: CP010512 is VEHICLE-HALF with a fully intact core |
 | `results/blocks/*.blocks.tsv` | drawable feature — the figure's input |
@@ -204,7 +205,14 @@ gene/IS arrows (Bakta's calls among them, when `run_bakta=true`) on top of
 that same sequence-identity background, one coordinate system, via
 `scripts/pangraph_annotated.py`. `figures/pangraph/pangraph_context_summary.png`
 (+ `.svg` and a two-sheet `results/pangraph/pangraph_context_summary.xlsx`)
-summarises loci by shared up/downstream context group. This is now the
+summarises loci by shared up/downstream context group.
+`figures/pangraph/pangraph_context_summary_annotated.png` is the two combined: the
+same one-row-per-context summary, but with each row's gene/IS arrows drawn
+on top (`scripts/pangraph_context_summary_annotated.py`). All four figures mark a
+target-site duplication confirmed shared with another locus (small
+triangles at the element's two edges, colour = which exact repeat,
+`relbe_junctions.py`) and the replicon type/Inc-type badge beside each row.
+This is now the
 **sole** sequence-homology method — an earlier pairwise dc-megablast
 cross-check ("flanker") was retired once pangraph's real alignment graph
 proved to subsume it; see `main.nf`'s comment above `BUILD_PANGRAPH_GRAPH`
@@ -224,8 +232,8 @@ different data.
 - BLAST+ ≥ 2.17
 - Python 3 (standard library only — no biopython, no pandas) plus `matplotlib`
   and `scipy` for the figures (`colour_blocks.py`, `structural_groups.py`,
-  `pangraph_blocks.py`, `pangraph_annotated.py`), plus `openpyxl` for
-  `pangraph_context_summary.py`'s workbook
+  `pangraph_blocks.py`, `pangraph_annotated.py`, `pangraph_context_summary_annotated.py`),
+  plus `openpyxl` for `pangraph_context_summary.py`'s workbook
 - `pangraph` (native binary, no build needed — `env/gadi_pangraph_setup.sh`
   / `env/firefly_pangraph_setup.sh` fetch it) for the sequence-homology
   alignment graph
@@ -279,9 +287,9 @@ working on real data, inconclusive for the vehicle itself, see
 alongside `vehicle_class`, so "vehicle intact but core missing" and the
 reverse are both nameable, not just visually inferable; and pangraph
 (`build_pangraph_graph.py`/`pangraph_blocks.py`/`pangraph_annotated.py`/
-`pangraph_context_summary.py`) — a true N-way sequence-homology alignment
-graph, giving a second, independent grouping and three figures alongside the
-gene-annotation ones.
+`pangraph_context_summary.py`/`pangraph_context_summary_annotated.py`) — a true N-way
+sequence-homology alignment graph, giving a second, independent grouping and
+four figures alongside the gene-annotation ones.
 
 **[`REPORT.md`](REPORT.md)** walks through all of this on the actual
 16-record pilot: the full pipeline flowchart, the Tier A/B/C filter numbers,

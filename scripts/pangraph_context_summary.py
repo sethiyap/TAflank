@@ -13,13 +13,24 @@ pangraph's blocks.
 Medoid-representative logic: the member whose worst-case shared_frac to the
 rest of its group is largest is drawn as that context's one representative
 row.
+
+Row order: cluster_order() (seq_blocks.py) on each context's medoid, using
+the same pairwise shared_up_bp/shared_down_bp that decides the blocks'
+colours -- "similar" means "the block colours line up", not a gene/IS
+architecture axis, so contexts whose medoids actually share sequence (e.g.
+CP028197/MF344582 at shared_frac 0.60, despite one being VEHICLE-INTACT and
+the other VEHICLE-DECAYED) end up adjacent rather than separated by vehicle
+class. The context NUMBER stays size-ranked regardless (it is each
+context's stable identity, used in the xlsx), so numbers will not always
+run in sequence top to bottom.
 """
 import argparse, os, sys
 from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fetch_metadata import short_organism  # noqa: E402
-from seq_blocks import colour_for, CORE_COLOUR, PRIVATE_COLOUR, read_tsv  # noqa: E402
+from seq_blocks import cluster_order, colour_for, CORE_COLOUR, \
+    PRIVATE_COLOUR, read_tsv  # noqa: E402
 from pangraph_blocks import load_graph, locus_walk, core_range, \
     build_blocks_from_walk  # noqa: E402
 
@@ -88,6 +99,11 @@ def main():
     pairwise_rows = read_tsv(a.pairwise)
     shared_frac = {(r['locus_a'], r['locus_b']): float(r['shared_frac'])
                   for r in pairwise_rows}
+    mutual = {}
+    for r in pairwise_rows:
+        la, lb = r['locus_a'], r['locus_b']
+        mutual[(min(la, lb), max(la, lb))] = {
+            'up': float(r['shared_up_bp']), 'down': float(r['shared_down_bp'])}
 
     ctx = {}
     if a.context and os.path.exists(a.context):
@@ -106,6 +122,18 @@ def main():
             'colour': group_meta[key]['group_colour'],
             'weakest': group_meta[key].get('weakest_internal_pair', '1.000'),
         })
+
+    # Context NUMBER (above) stays size-ranked -- it is each context's
+    # identity, referenced in the xlsx and across runs. Figure ROW ORDER is
+    # a separate concern (same split groups.py already makes for the
+    # structural-groups swatch vs. pangraph_blocks.py's own row order):
+    # cluster_order() on each context's medoid, using the same shared-bp
+    # data that decides the blocks' own colours -- "similar" here means
+    # "shares sequence with", the thing the figure is actually showing, not
+    # a gene/IS architecture that colour_blocks.py's own figure reads for.
+    rep_to_ctx = {c['rep']: c for c in contexts}
+    draw_order = cluster_order(list(rep_to_ctx), mutual, a.flank)
+    contexts_drawn = [rep_to_ctx[rep] for rep in draw_order]
 
     # ---------------- Excel workbook ----------------
     import openpyxl
@@ -170,7 +198,9 @@ def main():
     fig_h = PITCH * len(contexts) + 2.2
     fig, ax = plt.subplots(figsize=(14, fig_h))
 
-    for i, c in enumerate(contexts):
+    label_rows = []   # (y, text object, swatch colour) -- swatch is placed
+                       # AFTER the text is rendered and measured, see below
+    for i, c in enumerate(contexts_drawn):
         y = (len(contexts) - 1 - i) * PITCH
         rep = c['rep']
         for side, bl in (('up', blocks_up[rep]), ('down', blocks_down[rep])):
@@ -186,10 +216,6 @@ def main():
         ax.add_patch(Rectangle((core_lo, y - H / 2), core_hi - core_lo, H,
                                facecolor=CORE_COLOUR, edgecolor='white',
                                lw=0.5, zorder=3))
-        ax.add_patch(Rectangle((-a.flank * 1.30, y - 0.26 * a.row_scale),
-                               a.flank * 0.045, 0.52 * a.row_scale,
-                               facecolor=c['colour'], edgecolor='black',
-                               lw=0.5, clip_on=False))
         acc = rep.split('__')[0]
         n = len(c['members'])
         MAX_SHOWN = 10
@@ -198,9 +224,19 @@ def main():
         mem_str = ', '.join(shown)
         if len(accs) > MAX_SHOWN:
             mem_str += f', +{len(accs) - MAX_SHOWN} more'
-        ax.text(-a.flank * 1.27, y,
+        # Right-anchored just left of the plotted data, so the text grows
+        # LEFTWARD and can never collide with the arrows/blocks to its right
+        # regardless of how long the member list is -- the same convention
+        # colour_blocks.py/pangraph_annotated.py use for their row labels.
+        # The swatch (below) is placed by MEASURING this text's rendered
+        # width, not a fixed data-unit offset guess, which is what put the
+        # swatch on top of the text itself in an earlier version of this
+        # figure.
+        label_obj = ax.text(-a.flank * 1.02, y,
                 f"Context {c['number']:02d}  (n={n})\n{mem_str}",
-                ha='left', va='center', fontsize=label_fontsize, linespacing=1.3)
+                ha='right', va='center', fontsize=label_fontsize,
+                linespacing=1.3)
+        label_rows.append((y, label_obj, c['colour']))
 
     ax.annotate('relB + relE\n(the anchor)',
                ((core_lo + core_hi) / 2, (len(contexts) - 1) * PITCH + 0.75),
@@ -211,6 +247,23 @@ def main():
     ax.axvline(0, color='#999999', lw=0.6, ls=':', zorder=1)
     ax.set_xlim(-a.flank * 1.32, a.flank * 1.12)
     ax.set_ylim(-0.8, (len(contexts) - 1) * PITCH + 1.9)
+
+    # Context-group swatch, placed a MEASURED gap to the left of each
+    # label's own rendered width -- see the comment where label_obj is
+    # created above.
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    for y, label_obj, colour in label_rows:
+        bbox = label_obj.get_window_extent(renderer=renderer)
+        y_px = ax.transData.transform((0, y))[1]
+        inv = ax.transData.inverted()
+        (x_right, _) = inv.transform((bbox.x0 - 6, y_px))   # 6 px gap
+        x_left = x_right - a.flank * 0.045                  # fixed swatch width
+        ax.add_patch(Rectangle((x_left, y - 0.26 * a.row_scale),
+                               x_right - x_left, 0.52 * a.row_scale,
+                               facecolor=colour, edgecolor='black',
+                               lw=0.5, clip_on=False))
+
     step = 5000
     ticks = list(range(-a.flank, a.flank + 1, step))
     ax.set_xticks(ticks)
@@ -228,7 +281,10 @@ def main():
         'in each context\n'
         'block colour = pangraph sequence identity (same colour = same set '
         'of loci sharing that exact block); pale pink = private to this '
-        'context; left-edge swatch = context-group colour',
+        'context; left-edge swatch = context-group colour\n'
+        'row order = shared sequence (same signal as the block colours) -- '
+        'contexts with numbers out of sequence sit next to the one they '
+        'share the most DNA with, not ranked by size top to bottom',
         fontsize=10, pad=16)
 
     legend_items = [

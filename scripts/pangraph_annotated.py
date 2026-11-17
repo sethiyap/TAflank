@@ -23,7 +23,8 @@ from matplotlib.patches import Rectangle, Polygon
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fetch_metadata import short_organism  # noqa: E402
-from colour_blocks import gene_arrow, simple_colour, SIMPLE  # noqa: E402
+from colour_blocks import gene_arrow, simple_colour, SIMPLE, \
+    load_junctions, dr_ticks  # noqa: E402
 from seq_blocks import cluster_order, colour_for, CORE_COLOUR, \
     PRIVATE_COLOUR, read_tsv  # noqa: E402
 from pangraph_blocks import load_graph, locus_walk, core_range, \
@@ -40,6 +41,12 @@ def main():
                    help='dir of *.blocks.tsv (GENE_BLOCKS output)')
     p.add_argument('--context', default='')
     p.add_argument('--groups', default='')
+    p.add_argument('--junctions', default='',
+                   help='results/junctions.tsv (relbe_junctions.py) -- small '
+                        'triangle markers at a shared target-site '
+                        'duplication, see colour_blocks.py\'s dr_ticks()')
+    p.add_argument('--summary', default='',
+                   help='results/summary.tsv (collate.py) -- Inc-type badge')
     p.add_argument('--outdir', default='figures')
     p.add_argument('--flank', type=int, default=20000,
                    help='x-axis scale/ticks only, see pangraph_blocks.py')
@@ -73,6 +80,10 @@ def main():
     groups = {}
     if a.groups and os.path.exists(a.groups):
         groups = {r['locus_id']: r for r in read_tsv(a.groups)}
+    junctions = load_junctions(a.junctions)
+    summary = {}
+    if a.summary and os.path.exists(a.summary):
+        summary = {r['locus_id']: r for r in read_tsv(a.summary)}
 
     def org_of(l):
         return short_organism(ctx.get(l, {}).get('organism', '') if ctx else '')
@@ -91,6 +102,7 @@ def main():
     fig_h = 1.0 * PITCH * len(loci) + 2.6
     fig, ax = plt.subplots(figsize=(14, fig_h))
 
+    any_dr_drawn = False
     label_rows = []
     for i, l in enumerate(order):
         y = (len(order) - 1 - i) * PITCH
@@ -134,6 +146,10 @@ def main():
                 gene_arrow(o, w, y, h, strand, HEAD), closed=True,
                 facecolor=c, edgecolor='black', lw=0.7,
                 hatch='///' if frag else None, zorder=4))
+            dr = junctions.get((l, nm, r['start'], r['end']))
+            if dr:
+                dr_ticks(ax, o, w, y, h, dr['same_dr_colour'])
+                any_dr_drawn = True
 
         acc = l.split('__')[0]
         org = org_of(l)
@@ -145,6 +161,18 @@ def main():
         if vclass:
             ax.text(a.flank * 1.03, y, vclass, ha='left', va='center',
                     fontsize=6.5, color='#777777')
+        # Replicon: plasmid/chromosome (context.tsv) + Inc-type (summary.tsv,
+        # PlasmidFinder on the whole parent replicon) -- CLAUDE.md slide 11
+        # calls out IncFIB turning up twice, invisible from plasmid/
+        # chromosome alone.
+        rep = ctx.get(l, {}).get('replicon_type', '') if ctx else ''
+        inc = summary.get(l, {}).get('plasmidfinder_replicons', '')
+        rep_bits = [b for b in (rep, (inc if inc not in ('', '-') else ''))
+                   if b]
+        if rep_bits:
+            ax.text(a.flank * 1.03, y - 0.26, '  '.join(rep_bits),
+                    ha='left', va='center', fontsize=6.0, color='#999999',
+                    style='italic')
 
     ax.annotate('relB + relE\n(the anchor)',
                ((core_lo + core_hi) / 2, (len(order) - 1) * PITCH + 0.75),
@@ -182,6 +210,9 @@ def main():
     for sp in ('top', 'right', 'left'):
         ax.spines[sp].set_visible(False)
     ax.set_xlabel('distance from relB start (bp)', fontsize=9)
+    dr_note = ('\n▽▽ at an element\'s edges = exact target-site duplication '
+              'shared with another locus (relbe_junctions.py), colour = '
+              'which exact repeat' if any_dr_drawn else '')
     ax.set_title(
         f'relBE flanking architecture: annotation on top of pangraph '
         f'sequence identity, {len(loci)} loci\n'
@@ -189,15 +220,15 @@ def main():
         'pale pink = private, nothing shared beyond this point\n'
         'arrows = named IS/cargo/CDS (colour_blocks.py, "simple" style) -- '
         'the SAME arrow colour on a DIFFERENT background is the same named '
-        'element on different DNA',
+        'element on different DNA; strand is the way each arrow points, not '
+        'its colour' + dr_note,
         fontsize=9.5, pad=14)
 
     legend_items = [
         ('sequence: shared', dict(facecolor='#6baed6')),
         ('sequence: private', dict(facecolor=PRIVATE_COLOUR)),
         ('sequence: core (relB+relE)', dict(facecolor=CORE_COLOUR)),
-        ('IS, forward', dict(facecolor=SIMPLE['is_fwd'])),
-        ('IS, reverse', dict(facecolor=SIMPLE['is_rev'])),
+        ('IS (arrow = strand)', dict(facecolor=SIMPLE['is'])),
         ('relB', dict(facecolor=SIMPLE['relB'])),
         ('relE', dict(facecolor=SIMPLE['relE'])),
         ('cytb', dict(facecolor=SIMPLE['cytb'])),
