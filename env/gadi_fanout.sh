@@ -1,28 +1,34 @@
 #!/bin/bash
 #PBS -P rg42
-#PBS -q copyq
+#PBS -q normal
 #PBS -l walltime=10:00:00
-#PBS -l ncpus=1
-#PBS -l mem=4GB
+#PBS -l ncpus=4
+#PBS -l mem=8GB
 #PBS -l storage=gdata/rg42+scratch/rg42
 #PBS -l wd
 #PBS -N taflank_fanout
 #PBS -j oe
 #
-# Submit the TAflank Nextflow HEAD process to copyq, which (unlike the normal
-# compute queues) has outbound network -- needed because this head process
-# submits and polls one PBS job per task via -profile gadi. The tasks
-# themselves still land on normal/other queues per configs/gadi.config; only
-# the orchestrator runs here.
+# Submit the TAflank Nextflow HEAD process to normal, which submits and polls
+# one PBS job per task via -profile gadi. The tasks themselves still land on
+# normal/other queues per configs/gadi.config; only the orchestrator runs
+# here.
+#
+# Was copyq (outbound network, but capped at ncpus=1). Switched to normal
+# because this run needs no runtime network -- meta_source defaults to
+# 'blast' (no NCBI calls) and the Bakta/viz/pangraph containers/binaries are
+# all pre-staged by the one-time gadi_*_setup.sh scripts -- and normal lets
+# the head job request enough CPUs (ncpus=4 above) for the SELECT_LOCI /
+# COLLATE / FETCH_METADATA steps, which run under Nextflow's `local` executor
+# INSIDE this job and inherit `cpus = 4` from configs/gadi.config. On copyq's
+# ncpus=1 cap those steps crash immediately with "Process requirement
+# exceeds available CPUs -- req: 4; avail: 1". If a future run sets
+# meta_source=ncbi (live E-utilities calls) or needs to pull a container it
+# hasn't staged yet, switch this back to copyq (and ncpus back to 1, or check
+# whether copyq allows more).
 #
 # This is the nt_prok-scale sweep. For the small curated set use
 # env/gadi_run.sh (-profile gadi_single, one PBS job, no fan-out) instead.
-#
-# copyq's walltime cap is tighter than a compute job's -- check the current
-# limit with `qstat -Qf copyq` and raise/lower the #PBS -l walltime above to
-# match. If the sweep outlives it, this job is killed but nothing is lost:
-# every task that finished stays on disk, and resubmitting this same script
-# (it always passes -resume) continues from there instead of restarting.
 #
 # Usage:
 #   qsub -v REPLICON=plasmid    env/gadi_fanout.sh
