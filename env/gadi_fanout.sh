@@ -33,6 +33,7 @@
 # Usage:
 #   qsub -v REPLICON=plasmid    env/gadi_fanout.sh
 #   qsub -v REPLICON=chromosome env/gadi_fanout.sh
+#   qsub -v REPLICON=chromosome,ORGANISM="Escherichia coli,Klebsiella pneumoniae" env/gadi_fanout.sh
 #
 # Run env/gadi_bait_search.sh FIRST (also on copyq or a login node) to see
 # how many hits the search space actually has before committing to the full
@@ -70,6 +71,12 @@
 # OTHER SETTINGS (same meaning as env/gadi_run.sh -- see its header for the
 # long version of each):
 #   BAIT=...      FLANK=20000      REPO=...      TIER=FULL
+#   ORGANISM=...  comma-separated, case-insensitive substrings matched
+#                 against the organism field, e.g. "Escherichia coli,
+#                 Klebsiella pneumoniae". Default 'all' keeps every organism --
+#                 use this AFTER a replicon-type sweep finishes, to narrow the
+#                 already-selected loci down to specific species, rather than
+#                 re-running BAIT_SEARCH.
 #   SUBREGIONS=... (default relB:1-240,relE:240-527)
 #   ENDS=ISEsa1,ISEsa2
 #   BLAST_BIN_DIR=/g/data/rg42/blast_env/bin (default)
@@ -83,6 +90,7 @@ set -euo pipefail
 REPO="${REPO:-/g/data/rg42/TAflank}"
 DB="${DB:-/scratch/rg42/blastdb/nt_prok}"
 REPLICON="${REPLICON:-plasmid}"
+ORGANISM="${ORGANISM:-all}"
 OUT="${OUT:-/scratch/rg42/$USER/taflank_fanout_$REPLICON}"
 BAIT="${BAIT:-$REPO/anchors/relBE_seed.fa}"
 SUBREGIONS="${SUBREGIONS-relB:1-240,relE:240-527}"   # no :- , '' is valid
@@ -161,7 +169,7 @@ echo "database : $DB"
 echo "bait     : $BAIT  ($(grep -c '^>' "$BAIT") sequence(s))"
 echo "subregion: ${SUBREGIONS:-<none>}"
 echo "ends     : $ENDS"
-echo "filters  : tier_a=$TIER  replicon_type=$REPLICON  flank=$FLANK"
+echo "filters  : tier_a=$TIER  replicon_type=$REPLICON  organism=$ORGANISM  flank=$FLANK"
 echo "blast_bin: $BLAST_BIN_DIR"
 echo "bakta    : $BAKTA  ${BAKTA_SIF:+image=$BAKTA_SIF}"
 echo "viz      : $VIZ  ${VIZ_SIF:+image=$VIZ_SIF}"
@@ -178,6 +186,7 @@ ARGS=(-profile gadi
       --vehicle_ends "$ENDS"
       --tier_a   "$TIER"
       --replicon_type "$REPLICON"
+      --organism "$ORGANISM"
       --flank    "$FLANK"
       -work-dir  "$OUT/work"
       -resume)

@@ -23,6 +23,7 @@
 #   qsub env/gadi_run.sh                              # defaults below
 #   qsub -v REPLICON=chromosome env/gadi_run.sh       # chromosomes instead
 #   qsub -v TIER=all,REPLICON=all env/gadi_run.sh     # keep everything
+#   qsub -v REPLICON=chromosome,ORGANISM="Escherichia coli,Klebsiella pneumoniae" env/gadi_run.sh
 #
 # WHAT TO SEARCH (the subject; pick one, not both):
 #   qsub -v GENOMES=/path/to/fasta_dir env/gadi_run.sh      # build a db from FASTAs
@@ -78,6 +79,13 @@
 #   adds cov_<part> reporting columns, and only earns its keep with TIER=all,
 #   where a half hit resolves to ORPHAN_<part> instead of a flat PARTIAL.
 #   SUBREGIONS=none is a perfectly good way to run this.
+#
+#   ORGANISM=...  comma-separated, case-insensitive substrings matched
+#                 against the organism field, e.g. "Escherichia coli,
+#                 Klebsiella pneumoniae". Default 'all' keeps every organism --
+#                 use this AFTER a replicon-type sweep finishes, to narrow the
+#                 already-selected loci down to specific species, rather than
+#                 re-running BAIT_SEARCH.
 
 set -euo pipefail
 
@@ -90,6 +98,7 @@ SUBREGIONS="${SUBREGIONS-relB:1-240,relE:240-527}"   # no :- , '' is valid
 ENDS="${ENDS:-ISEsa1,ISEsa2}"
 TIER="${TIER:-FULL}"
 REPLICON="${REPLICON:-plasmid}"
+ORGANISM="${ORGANISM:-all}"
 FLANK="${FLANK:-20000}"
 BAKTA="${BAKTA:-false}"
 BAKTA_DB="${BAKTA_DB:-/g/data/rg42/bakta_db/db-light}"
@@ -179,7 +188,7 @@ echo "database : ${DB:-<built from $GENOMES>}"
 echo "bait     : $BAIT  ($(grep -c '^>' "$BAIT") sequence(s))"
 echo "subregion: ${SUBREGIONS:-<none>}"
 echo "ends     : $ENDS"
-echo "filters  : tier_a=$TIER  replicon_type=$REPLICON  flank=$FLANK"
+echo "filters  : tier_a=$TIER  replicon_type=$REPLICON  organism=$ORGANISM  flank=$FLANK"
 echo "bakta    : $BAKTA${BAKTA:+  ${BAKTA_SIF:+image=$BAKTA_SIF}}"
 echo "viz      : $VIZ${VIZ:+  ${VIZ_SIF:+image=$VIZ_SIF}}"
 echo "pangraph : $PANGRAPH${PANGRAPH:+  ${PANGRAPH_BIN:+bin=$PANGRAPH_BIN}}"
@@ -193,6 +202,7 @@ ARGS=(-profile gadi_single
       --vehicle_ends "$ENDS"
       --tier_a   "$TIER"
       --replicon_type "$REPLICON"
+      --organism "$ORGANISM"
       --flank    "$FLANK"
       -work-dir  "$TMPDIR/work"
       -resume)

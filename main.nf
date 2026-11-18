@@ -124,7 +124,8 @@ process SELECT_LOCI {
     ${PY()} ${projectDir}/scripts/select_loci.py \\
         --hits ${hits} --meta ${meta} --out loci_selected.tsv \\
         --flank ${params.flank} --tier-a '${filterOf(params.tier_a)}' \\
-        --replicon-type '${filterOf(params.replicon_type)}' --min-flank ${params.min_flank} \\
+        --replicon-type '${filterOf(params.replicon_type)}' \\
+        --organism '${filterOf(params.organism)}' --min-flank ${params.min_flank} \\
         --summary-out filter_summary.tsv \\
         --blast-out blast/03_selected.tsv
     """
@@ -577,6 +578,10 @@ workflow {
 
         Tier B -- record filters ('all' disables a filter -- '' means something else, see below)
           --replicon_type STR         plasmid | chromosome | all [plasmid]
+          --organism STR              comma-separated, case-insensitive substrings
+                                       matched against the organism field, e.g.
+                                       'Escherichia coli,Klebsiella pneumoniae';
+                                       all | '' keeps every organism [all]
           --tier_a STR                FULL | all [FULL]
           --min_flank N               0 keeps short-flank loci and records them [0]
           --flank N                   window half-width, bp -- shared by extraction AND

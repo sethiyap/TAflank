@@ -70,12 +70,23 @@ def write_summary(path, rows, hdr, hits, a):
     for k, v in sorted(tally(ri).items()):
         keep = (not a.replicon_type) or k in a.replicon_type
         out.append(('replicon_type', k, v, 'kept' if keep else 'dropped'))
+    # organism is free text (hundreds of distinct values), not a small set of
+    # categories like replicon_type -- a pass/fail count, not a full tally,
+    # keeps this audit readable.
+    if a.organism:
+        oi = hdr.index('organism')
+        n_org_drop = sum(1 for r in rows
+                         if not any(t in r[oi].lower() for t in a.organism))
+        out.append(('organism', f'matches {sorted(a.organism)}',
+                    len(rows) - n_org_drop, 'kept'))
+        out.append(('organism', 'no match', n_org_drop, 'dropped'))
     for k, v in sorted(reasons.items(), key=lambda x: -x[1]):
         out.append(('deselect_reason', k, v, 'dropped'))
     nsel = sum(1 for r in rows if r[si] == 'yes')
     out.append(('output', 'selected loci', nsel, ''))
     out.append(('params', f'tier_a={a.tier_a or "all"} '
                           f'replicon_type={a.replicon_type or "all"} '
+                          f'organism={",".join(sorted(a.organism)) or "all"} '
                           f'min_flank={a.min_flank} flank={a.flank}', '', ''))
 
     with open(path, 'w') as fh:
@@ -95,6 +106,10 @@ def main():
                    help='comma-separated tier_a classes to keep')
     p.add_argument('--replicon-type', default='',
                    help='comma-separated; empty keeps all')
+    p.add_argument('--organism', default='',
+                   help='comma-separated, case-insensitive substrings matched '
+                        'against the organism field, e.g. "Escherichia coli,'
+                        'Klebsiella pneumoniae"; empty keeps all')
     p.add_argument('--min-flank', type=int, default=0,
                    help='0 keeps short-flank loci and records how much was got')
     p.add_argument('--require-complete', action='store_true')
@@ -107,6 +122,10 @@ def main():
 
     keep_tier = {x.strip() for x in a.tier_a.split(',') if x.strip()}
     keep_rep = {x.strip() for x in a.replicon_type.split(',') if x.strip()}
+    # Reassigned onto `a` (same pattern isn't used for tier_a/replicon_type,
+    # which stay raw strings -- but organism's audit line needs the parsed
+    # set, not the raw CLI string, to report back the terms that matched).
+    a.organism = {x.strip().lower() for x in a.organism.split(',') if x.strip()}
 
     _, hits = read_tsv(a.hits)
     _, meta = read_tsv(a.meta)
@@ -148,6 +167,9 @@ def main():
         rt = md.get('replicon_type', 'unknown')
         if keep_rep and rt not in keep_rep:
             why.append(f'replicon_type={rt}')
+        org = md.get('organism', '')
+        if a.organism and not any(t in org.lower() for t in a.organism):
+            why.append(f'organism={org or "unknown"}')
         if a.min_flank and min(up, dn) < a.min_flank:
             why.append(f'flank {min(up, dn)} < {a.min_flank}')
         if a.require_complete and md.get('is_complete') != 'yes':
