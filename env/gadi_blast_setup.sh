@@ -70,10 +70,28 @@ fi
 echo
 
 echo "=== 2. wrapper scripts ==="
+# Under high fan-out (PLASMIDFINDER/IS_SEARCH/CARGO_SEARCH run hundreds of
+# these concurrently on the same node), independent `singularity exec`
+# calls against this one .sif can race to mount it and one loses with
+# "failed to mount squashfs filesystem: file exists" -- a transient clash,
+# not a real tool failure. It surfaces as plain exit status 1, which the
+# retry list in configs/gadi.config (125/126/255 only) does not catch, so
+# it must be retried HERE, inside the wrapper, not left to Nextflow.
 for tool in blastn blastdbcmd makeblastdb; do
     cat > "$BIN/$tool" <<WRAP
 #!/bin/bash
-exec singularity exec -B /g/data/rg42,/scratch/rg42 "$SIF" $tool "\$@"
+img="$SIF"
+tmp=\$(mktemp)
+trap 'rm -f "\$tmp"' EXIT
+for attempt in 1 2 3 4 5; do
+    singularity exec -B /g/data/rg42,/scratch/rg42 "\$img" $tool "\$@" 2>"\$tmp"
+    status=\$?
+    cat "\$tmp" >&2
+    [ \$status -eq 0 ] && exit 0
+    grep -q 'failed to mount squashfs filesystem: file exists' "\$tmp" || exit \$status
+    sleep "0.\$((RANDOM % 9 + 1))\$((RANDOM % 9))"
+done
+exit \$status
 WRAP
     chmod +x "$BIN/$tool"
     echo "  wrote $BIN/$tool"
