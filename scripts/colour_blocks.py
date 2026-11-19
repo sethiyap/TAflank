@@ -793,12 +793,21 @@ def main():
 
             if ft == 'CDS':
                 fid = cds_fam.get((lid, r['start'], r['end']))
+                # A recurring family (>=min-family-loci, from gene_families.tsv)
+                # gets its hash colour in EITHER style, not just 'tracks' --
+                # otherwise a block like the RcnA/chromate cassette (named by
+                # Bakta/GenBank, not by the curated cargo regex) is invisible
+                # in the default 'simple' figure precisely because it has no
+                # cargo-tier name, the same gap that left it unlabelled.
+                # Singletons (no fid) keep flat grey either way: with only one
+                # occurrence, a colour would assert a recurring pattern that
+                # was never tested.
                 ax.add_patch(Polygon(
                     gene_arrow(o, w, y, H_CDS, r['strand'], HEAD), closed=True,
-                    facecolor=(SIMPLE['cds'] if simple else
-                               cds_family_colour(fid) if fid else '#f0f0f0'),
-                    edgecolor='#cccccc' if simple else
-                              ('#9e9e9e' if fid else '#bdbdbd'),
+                    facecolor=(cds_family_colour(fid) if fid else
+                               (SIMPLE['cds'] if simple else '#f0f0f0')),
+                    edgecolor=('#9e9e9e' if fid else
+                              ('#cccccc' if simple else '#bdbdbd')),
                     lw=0.3 if simple else 0.35, zorder=1))
                 continue
 
