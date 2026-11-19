@@ -61,6 +61,11 @@ def main():
     p.add_argument('--summary', default='',
                    help='results/summary.tsv (collate.py) -- adds '
                         'plasmidfinder_replicons to the Loci sheet')
+    p.add_argument('--replicons', default='',
+                   help='results/replicons.tsv (collate.py) -- the raw '
+                        'per-hit PlasmidFinder rows, appended to the Loci '
+                        'sheet as one joined plasmidfinder_detail column '
+                        '(a locus can carry >1 hit, e.g. CP006642 has 3)')
     p.add_argument('--outdir', default='figures')
     p.add_argument('--out-xlsx', required=True)
     p.add_argument('--flank', type=int, default=20000,
@@ -114,6 +119,16 @@ def main():
     summary = {}
     if a.summary and os.path.exists(a.summary):
         summary = {r['locus_id']: r for r in read_tsv(a.summary)}
+    # keyed by ACCESSION, not locus_id -- replicons.tsv is typed on the
+    # whole parent replicon (CLAUDE.md note 1), one row per PlasmidFinder
+    # hit, so a locus with >1 hit (e.g. CP006642: IncFIB(K)/IncN/IncX1) is
+    # several rows here, joined into one cell per locus below.
+    replicons_by_acc = defaultdict(list)
+    if a.replicons and os.path.exists(a.replicons):
+        for r in read_tsv(a.replicons):
+            replicons_by_acc[r['accession']].append(
+                f"{r['replicon']}:{r['pident']}:{r['qcovs']}:{r['length']}:"
+                f"{r['start']}-{r['end']}:{r['strand']}")
 
     def org_of(l):
         return short_organism(ctx.get(l, {}).get('organism', '') if ctx else '')
@@ -169,7 +184,7 @@ def main():
     ws2 = wb.create_sheet('Loci')
     ctx_hdr = ['accession', 'organism', 'genus', 'replicon_type',
               'vehicle_class', 'core_class', 'cargo_families', 'n_is',
-              'plasmidfinder_replicons']
+              'plasmidfinder_replicons', 'plasmidfinder_detail']
     ws2.append(['context_number', 'is_representative', 'locus_id'] + ctx_hdr)
     for c in ws2[1]:
         c.font = Font(bold=True)
@@ -178,14 +193,18 @@ def main():
         c = loci_to_ctx.get(l)
         # plasmidfinder_replicons comes from summary.tsv (collate.py), not
         # context.tsv -- merged here so ctx_hdr can list both by name.
-        row = {**ctx.get(l, {}), **summary.get(l, {})}
+        # plasmidfinder_detail is keyed by accession, not locus_id, since
+        # replicons.tsv is typed on the whole parent replicon.
+        acc = l.split('__')[0]
+        row = {**ctx.get(l, {}), **summary.get(l, {}),
+              'plasmidfinder_detail': '; '.join(replicons_by_acc.get(acc, []))}
         ws2.append([
             c['number'] if c else '', 'yes' if c and c['rep'] == l else 'no', l,
         ] + [row.get(k, '') for k in ctx_hdr])
         if c:
             ws2.cell(row=ws2.max_row, column=1).fill = PatternFill(
                 'solid', fgColor=c['colour'].lstrip('#'))
-    for i, w in enumerate((14, 15, 34, 12, 34, 14, 14, 14, 24, 6, 28), 1):
+    for i, w in enumerate((14, 15, 34, 12, 34, 14, 14, 14, 24, 6, 28, 70), 1):
         ws2.column_dimensions[get_column_letter(i)].width = w
     ws2.freeze_panes = 'A2'
     ws1.freeze_panes = 'A2'
