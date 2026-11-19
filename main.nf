@@ -374,6 +374,7 @@ process PANGRAPH_CONTEXT_SUMMARY {
             path groups_tsv
             path pairwise_tsv
             path context_tsv
+            path summary_tsv
     output: path 'pangraph_context_summary.png'
             path 'pangraph_context_summary.svg'
             path 'pangraph_context_summary.xlsx'
@@ -382,6 +383,7 @@ process PANGRAPH_CONTEXT_SUMMARY {
     ${PY_VIZ()} ${projectDir}/scripts/pangraph_context_summary.py \\
         --graph ${graph_json} --groups ${groups_tsv} \\
         --pairwise ${pairwise_tsv} --context ${context_tsv} \\
+        --summary ${summary_tsv} \\
         --outdir . --out-xlsx pangraph_context_summary.xlsx \\
         --flank ${params.flank}
     """
@@ -704,7 +706,8 @@ workflow {
                        CLASSIFY_CONTEXT.out.ctx, pangraph_groups.groups,
                        junctions.junctions, collated[2])
     PANGRAPH_CONTEXT_SUMMARY(pangraph.graph, pangraph_groups.groups,
-                            pangraph_blocks.pairwise, CLASSIFY_CONTEXT.out.ctx)
+                            pangraph_blocks.pairwise, CLASSIFY_CONTEXT.out.ctx,
+                            collated[2])
     PANGRAPH_CONTEXT_SUMMARY_ANNOTATED(pangraph.graph, blocks_ch.blocks.collect(),
                               pangraph_groups.groups, pangraph_blocks.pairwise,
                               CLASSIFY_CONTEXT.out.ctx, junctions.junctions,

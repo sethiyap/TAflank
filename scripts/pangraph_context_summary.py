@@ -58,6 +58,9 @@ def main():
     p.add_argument('--pairwise', required=True,
                    help='results/pangraph_pairwise.tsv (pangraph_blocks.py)')
     p.add_argument('--context', default='')
+    p.add_argument('--summary', default='',
+                   help='results/summary.tsv (collate.py) -- adds '
+                        'plasmidfinder_replicons to the Loci sheet')
     p.add_argument('--outdir', default='figures')
     p.add_argument('--out-xlsx', required=True)
     p.add_argument('--flank', type=int, default=20000,
@@ -108,6 +111,9 @@ def main():
     ctx = {}
     if a.context and os.path.exists(a.context):
         ctx = {r['locus_id']: r for r in read_tsv(a.context)}
+    summary = {}
+    if a.summary and os.path.exists(a.summary):
+        summary = {r['locus_id']: r for r in read_tsv(a.summary)}
 
     def org_of(l):
         return short_organism(ctx.get(l, {}).get('organism', '') if ctx else '')
@@ -162,21 +168,24 @@ def main():
 
     ws2 = wb.create_sheet('Loci')
     ctx_hdr = ['accession', 'organism', 'genus', 'replicon_type',
-              'vehicle_class', 'core_class', 'cargo_families', 'n_is']
+              'vehicle_class', 'core_class', 'cargo_families', 'n_is',
+              'plasmidfinder_replicons']
     ws2.append(['context_number', 'is_representative', 'locus_id'] + ctx_hdr)
     for c in ws2[1]:
         c.font = Font(bold=True)
     loci_to_ctx = {m: c for c in contexts for m in c['members']}
     for l in loci:
         c = loci_to_ctx.get(l)
-        row = ctx.get(l, {})
+        # plasmidfinder_replicons comes from summary.tsv (collate.py), not
+        # context.tsv -- merged here so ctx_hdr can list both by name.
+        row = {**ctx.get(l, {}), **summary.get(l, {})}
         ws2.append([
             c['number'] if c else '', 'yes' if c and c['rep'] == l else 'no', l,
         ] + [row.get(k, '') for k in ctx_hdr])
         if c:
             ws2.cell(row=ws2.max_row, column=1).fill = PatternFill(
                 'solid', fgColor=c['colour'].lstrip('#'))
-    for i, w in enumerate((14, 15, 34, 12, 34, 14, 14, 14, 24, 6), 1):
+    for i, w in enumerate((14, 15, 34, 12, 34, 14, 14, 14, 24, 6, 28), 1):
         ws2.column_dimensions[get_column_letter(i)].width = w
     ws2.freeze_panes = 'A2'
     ws1.freeze_panes = 'A2'
