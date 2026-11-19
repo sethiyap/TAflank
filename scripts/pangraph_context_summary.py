@@ -126,9 +126,13 @@ def main():
     replicons_by_acc = defaultdict(list)
     if a.replicons and os.path.exists(a.replicons):
         for r in read_tsv(a.replicons):
+            # labelled field=value, not a bare colon-joined tuple -- a reader
+            # of the sheet should not have to hold the column order in mind
+            # to know which number is identity vs. coverage vs. length.
             replicons_by_acc[r['accession']].append(
-                f"{r['replicon']}:{r['pident']}:{r['qcovs']}:{r['length']}:"
-                f"{r['start']}-{r['end']}:{r['strand']}")
+                f"replicon={r['replicon']} identity%={r['pident']} "
+                f"coverage%={r['qcovs']} length={r['length']}bp "
+                f"pos={r['start']}-{r['end']} strand={r['strand']}")
 
     def org_of(l):
         return short_organism(ctx.get(l, {}).get('organism', '') if ctx else '')
