@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -P rg42
 #PBS -q normal
-#PBS -l walltime=10:00:00
+#PBS -l walltime=24:00:00
 #PBS -l ncpus=4
 #PBS -l mem=8GB
 #PBS -l storage=gdata/rg42+scratch/rg42
@@ -26,6 +26,14 @@
 # meta_source=ncbi (live E-utilities calls) or needs to pull a container it
 # hasn't staged yet, switch this back to copyq (and ncpus back to 1, or check
 # whether copyq allows more).
+#
+# Was walltime=10:00:00: at ~1031 loci x 5 fanned-out process types, plus
+# this account's existing queue backlog, the head job (which only submits
+# and polls -- no heavy compute of its own, ~1GB RSS, a few CPU-minutes)
+# did not finish polling before PBS killed it on walltime alone, no error
+# ("job killed: walltime 36003 exceeded limit 36000"). -resume means a
+# re-submission after a walltime kill just continues (cached work is not
+# re-run), so this only needed raising, not a logic fix.
 #
 # This is the nt_prok-scale sweep. For the small curated set use
 # env/gadi_run.sh (-profile gadi_single, one PBS job, no fan-out) instead.
