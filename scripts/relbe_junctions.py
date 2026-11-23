@@ -49,21 +49,44 @@ with even one bad boundary is excluded outright, with the reason recorded.
 
 NOT EVERY IS FAMILY MAKES A TSD AT ALL -- AND THIS MATTERS FOR OUR VEHICLE
 ------------------------------------------------------------------------------
-IS110 (serine-recombinase-like, site-specific) and IS481 do not generate TSDs
-by the staggered-cut mechanism above; a conserved sequence flanking an IS110
-hit is more likely a conserved target motif the recombinase recognises (or
-simply conserved host sequence the element happens to sit in) than a
-duplication signature. ISEsa2 IS IS110. A clean, repeatable TSD is therefore
-only informative for ISEsa1 (ISNCY); for ISEsa2 the script still reports
-whatever it finds (`tsd_expected=no`) but that finding cannot distinguish one
-ancestral insertion from several independent ones landing on the same
-targeted site, and should not be read as if it could.
+IS110 (serine-recombinase-like, site-specific) does not generate TSDs by the
+staggered-cut mechanism above; a conserved sequence flanking an IS110 hit is
+more likely a conserved target motif the recombinase recognises (or simply
+conserved host sequence the element happens to sit in) than a duplication
+signature. ISEsa2 IS IS110, and (per DR_LEN_BY_ELEMENT below) makes no DR at
+all. A clean, repeatable TSD is therefore only informative for ISEsa1 (ISNCY).
+
+IS481, by contrast, DOES make a TSD for at least one member of this project's
+own vehicle, ISKpn28 (5 bp, per Pooja's reference notes) -- the family-level
+"no TSD" rule that held for the generic IS481 case does not hold for this
+specific element. DR_LEN_BY_ELEMENT overrides TSD_BY_FAMILY per-element for
+exactly this reason: a family-level mechanistic default is a prior, not a
+fact, and a specific element can contradict it.
+
+EXPECTED-LENGTH CHECK, SEPARATE FROM THE BLIND SCAN
+------------------------------------------------------------------------------
+`dr_seq`/`dr_len`/`dr_id` come from a blind scan of every length from
+`--min-k` to `--max-k`, reported only once it clears `--min-id` (default
+90%) -- that is deliberately conservative, so a chance similarity between
+two short sequences does not get called a TSD. But a known DR with a single
+degraded base in one copy reads as a near-miss under that same conservative
+scan (e.g. ISKpn28's 5 bp DR at 80% id, one mismatched base, below the 90%
+cutoff) and would otherwise disappear silently.
+`expected_dr_len`/`expected_dr_pid`/`expected_dr_seq` run a SECOND, narrower
+check: for elements with an entry in DR_LEN_BY_ELEMENT, the identity AT
+THAT SPECIFIC LENGTH ONLY, reported regardless of `--min-id`, labelled with
+its own `%id` so it is never mistaken for a confident call. This surfaces
+exactly the near-misses the blind scan is designed to hide.
 
 CROSS-LOCUS COMPARISON IS THE POINT
 ---------------------------------------
 For each element name, loci sharing an EXACT TSD are grouped (`same_dr_group`,
 content-addressed like `structural_groups.py`, so colour is stable). Loci
-whose TSD differs, or where none was found, are left ungrouped.
+whose TSD differs, or where none was found, are left ungrouped. This grouping
+still only uses the confident `dr_seq` column -- `expected_dr_seq` is a
+diagnostic for manual review, not grouped, because accepting a
+single-mismatch sequence into content-addressed grouping would quietly
+change what "same DR" means.
 """
 
 import argparse, csv, glob, hashlib, os, sys
@@ -73,6 +96,30 @@ SPARE = ['#1b9e77', '#d95f02', '#7570b3', '#e7298a', '#66a61e', '#e6ab02',
          '#a6761d', '#666666', '#1f78b4', '#b2182b']
 
 TSD_BY_FAMILY = {'IS110': 'no', 'IS481': 'no', 'IS200/IS605': 'no'}
+
+# Per-ELEMENT expected DR/TSD length, from Pooja's own reference notes
+# (ISfinder + her own analysis for the two marked below), supplied 2026-11-24.
+# This OVERRIDES TSD_BY_FAMILY's family-level default when an element has its
+# own entry here -- notably ISKpn28, which is IS481 family. TSD_BY_FAMILY says
+# IS481 makes no TSD (site-specific recombinase, not a staggered cut), but
+# Pooja's notes say ISKpn28 specifically DOES, at 5 bp. The family-level 'no'
+# was wrong for this element; the fix is to trust the more specific source,
+# not to change the IS481 family default for every OTHER IS481 member too.
+# 0 means no DR at all (ISEsa2 -- consistent with its IS110 family default,
+# kept here anyway so this table is self-contained). A tuple is a range
+# (ISEcp1: usually 5, but 4-7 bp).
+DR_LEN_BY_ELEMENT = {
+    'IS26': 8, 'IS903': 9, 'ISCfr4': 2, 'ISEcp1': (4, 5, 6, 7),
+    'ISEsa2': 0, 'ISKpn8': 3, 'ISKpn21': 5, 'ISKpn26': 4,
+    'ISKpn28': 5, 'ISKpn38': 4, 'ISSen3': 5, 'ISSen4': 4,
+}
+DR_NOTE_BY_ELEMENT = {
+    'IS26': 'mechanism means the DR is frequently absent even on a genuine '
+            'insertion -- a length-0 result here is not evidence against it',
+    'ISCfr4': "ISfinder's end coordinates for this element are wrong, so its "
+               '2 bp DR length is unreliable (Pooja, for the record only)',
+    'ISSen4': 'not stated in ISfinder; 4 bp is from manual analysis',
+}
 
 
 def dr_colour(seq):
@@ -89,6 +136,18 @@ def read_fasta_one(path):
                 break
             seq.append(line.strip())
     return ''.join(seq)
+
+
+def id_at_k(left, right, k):
+    """%id of a SPECIFIC length, independent of --min-id -- so a DR at the
+    one length actually expected for this element is visible even when it
+    falls under the blind scan's confidence cutoff (e.g. ISKpn28's 5 bp DR
+    with a single degraded base: 80% id, below the default 90% min-id)."""
+    if k <= 0 or k > len(left) or k > len(right):
+        return None, ''
+    a, b = left[-k:], right[:k]
+    pid = sum(1 for x, y in zip(a, b) if x.upper() == y.upper()) / k
+    return pid, b
 
 
 def best_match(left, right, min_k, max_k, min_id):
@@ -181,14 +240,20 @@ def main():
             if frag and not right_is_outer:
                 excl.append('fragment_internal:right')
 
+            dr_exp = DR_LEN_BY_ELEMENT.get(h['element'])
+            tsd_exp = ('no' if dr_exp == 0 else 'yes' if dr_exp is not None
+                      else TSD_BY_FAMILY.get(h['family'], 'yes'))
             row = {'locus_id': lid, 'element': h['element'],
                   'family': h['family'], 'win_start': ws, 'win_end': we,
                   'strand': strand, 'cov_class': h['cov_class'],
-                  'tsd_expected': TSD_BY_FAMILY.get(h['family'], 'yes')}
+                  'tsd_expected': tsd_exp}
+            exp_note = DR_NOTE_BY_ELEMENT.get(h['element'], '')
 
             if excl:
                 row.update(excluded_reason=';'.join(excl), dr_seq='', dr_len=0,
-                          dr_id='', left_flank='', right_flank='')
+                          dr_id='', left_flank='', right_flank='',
+                          expected_dr_len='', expected_dr_pid='',
+                          expected_dr_seq='', expected_dr_note=exp_note)
                 rows_out.append(row)
                 continue
 
@@ -198,9 +263,23 @@ def main():
             right_flank = win[we:hi]
             k, pid, seq, profile = best_match(left_flank, right_flank,
                                               a.min_k, a.max_k, a.min_id)
+
+            exp_len = exp_pid = exp_seq = ''
+            if dr_exp:
+                ks = dr_exp if isinstance(dr_exp, tuple) else (dr_exp,)
+                best = None
+                for ek in ks:
+                    epid, eseq = id_at_k(left_flank, right_flank, ek)
+                    if epid is not None and (best is None or epid > best[0]):
+                        best = (epid, ek, eseq)
+                if best:
+                    exp_pid, exp_len, exp_seq = round(best[0] * 100, 1), best[1], best[2]
+
             row.update(excluded_reason='', dr_seq=seq, dr_len=k,
                       dr_id=f'{pid * 100:.0f}' if k else '',
-                      left_flank=left_flank, right_flank=right_flank)
+                      left_flank=left_flank, right_flank=right_flank,
+                      expected_dr_len=exp_len, expected_dr_pid=exp_pid,
+                      expected_dr_seq=exp_seq, expected_dr_note=exp_note)
             rows_out.append(row)
             for kk, idp in profile:
                 profile_out.append({'locus_id': lid, 'element': h['element'],
@@ -219,8 +298,9 @@ def main():
 
     cols = ['locus_id', 'element', 'family', 'win_start', 'win_end', 'strand',
             'cov_class', 'tsd_expected', 'dr_seq', 'dr_len', 'dr_id',
-            'same_dr_group', 'same_dr_group_size', 'same_dr_colour',
-            'left_flank', 'right_flank', 'excluded_reason']
+            'expected_dr_len', 'expected_dr_pid', 'expected_dr_seq',
+            'expected_dr_note', 'same_dr_group', 'same_dr_group_size',
+            'same_dr_colour', 'left_flank', 'right_flank', 'excluded_reason']
     os.makedirs(os.path.dirname(a.out) or '.', exist_ok=True)
     with open(a.out, 'w') as fh:
         fh.write('\t'.join(cols) + '\n')
@@ -244,6 +324,17 @@ def main():
           f'touches another IS / fragment-internal boundary)')
     print(f'  {len(searched)} searched, {len(found)} with a candidate TSD '
           f'(>= {a.min_id:.0%} id, {a.min_k}-{a.max_k} bp)')
+    near = [r for r in searched if not r['dr_seq'] and r['expected_dr_pid'] != ''
+            and r['expected_dr_pid'] >= 50]
+    if near:
+        print(f'  {len(near)} below {a.min_id:.0%} id blind, but checked AT the '
+              f'element-specific expected length anyway (see expected_dr_* '
+              f'columns) -- a known DR with one degraded base reads exactly '
+              f'like this:')
+        for r in near:
+            print(f"    {r['locus_id']:<35} {r['element']:<10} "
+                  f"{r['expected_dr_len']} bp, {r['expected_dr_pid']}% id "
+                  f"({r['expected_dr_seq']})")
 
     print(f'\ncross-locus agreement, by element:')
     by_elem = defaultdict(list)
@@ -253,7 +344,7 @@ def main():
         seqs = defaultdict(list)
         for r in rs:
             seqs[r['dr_seq'].upper()].append(r['locus_id'].split('__')[0])
-        exp = TSD_BY_FAMILY.get(rs[0]['family'], 'yes')
+        exp = rs[0]['tsd_expected']
         warn = ('  (not mechanistically expected -- site-specific family, '
                 'see docstring)' if exp == 'no' else '')
         print(f'  {elem}{warn}')
