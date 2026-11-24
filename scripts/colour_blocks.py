@@ -61,6 +61,7 @@ import colorsys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fetch_metadata import short_organism  # noqa: E402
+from seq_blocks import savefig_capped  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Palettes lifted from the project's own decks, by reading the shape fills out
@@ -1065,8 +1066,8 @@ def main():
 
     os.makedirs(a.outdir, exist_ok=True)
     for ext in ('png', 'svg'):
-        fig.savefig(os.path.join(a.outdir, f'colour_blocks.{ext}'),
-                    dpi=200, bbox_inches='tight')
+        savefig_capped(fig, os.path.join(a.outdir, f'colour_blocks.{ext}'),
+                      dpi=200, bbox_inches='tight')
     plt.close(fig)
 
     # ---------------- panel B: IS presence/absence heatmap ----------------
@@ -1126,8 +1127,8 @@ def main():
                                label=k) for k, v in CMAP.items()],
                loc='upper center', bbox_to_anchor=(0.5, -0.30), ncol=3,
                fontsize=7, frameon=False)
-    figb.savefig(os.path.join(a.outdir, 'is_matrix.png'), dpi=200,
-                 bbox_inches='tight')
+    savefig_capped(figb, os.path.join(a.outdir, 'is_matrix.png'), dpi=200,
+                   bbox_inches='tight')
     plt.close(figb)
 
     with open(os.path.join(a.outdir, 'is_matrix.tsv'), 'w') as fh:

@@ -35,6 +35,29 @@ def read_tsv(path):
         return list(csv.DictReader(fh, delimiter='\t'))
 
 
+def savefig_capped(fig, path, dpi=200, **kwargs):
+    """fig.savefig(), capping dpi so a PNG never exceeds the Agg backend's
+    hard per-side limit (< 2**16 px). At hundreds of loci -- a full nt_prok
+    sweep, vs. the dozen or so these figures were designed around -- a
+    row-per-locus figure's height alone can blow past that at 200 dpi, and
+    savefig raises ValueError, losing the PNG and everything after it in
+    the pipeline. Uses the figure's CURRENT size (before bbox_inches='tight'
+    crops it further), so the cap is conservative, never insufficient.
+    Irrelevant for .svg -- vector, no pixel limit -- so dpi there is
+    whatever the caller already passes (usually none)."""
+    if path.lower().endswith('.png'):
+        w_in, h_in = fig.get_size_inches()
+        MAX_PX = 65000
+        longest = max(w_in, h_in)
+        if longest * dpi > MAX_PX:
+            capped = max(1, int(MAX_PX / longest))
+            print(f'  figure {w_in:.0f}x{h_in:.0f}in exceeds the Agg '
+                  f"backend's pixel limit at {dpi} dpi; {os.path.basename(path)} "
+                  f'reduced to {capped} dpi to still render')
+            dpi = capped
+    fig.savefig(path, dpi=dpi, **kwargs)
+
+
 def colour_for(members):
     if len(members) == 1:
         return PRIVATE_COLOUR, PRIVATE_EDGE
@@ -223,8 +246,8 @@ def draw_figure(a, loci, order, blocks_up, blocks_down, ctx, groups, org_of,
         fontsize=10, pad=12)
 
     os.makedirs(a.outdir, exist_ok=True)
-    fig.savefig(os.path.join(a.outdir, f'{filename_stem}.png'), dpi=200,
-               bbox_inches='tight')
-    fig.savefig(os.path.join(a.outdir, f'{filename_stem}.svg'),
-               bbox_inches='tight')
+    savefig_capped(fig, os.path.join(a.outdir, f'{filename_stem}.png'),
+                   dpi=200, bbox_inches='tight')
+    savefig_capped(fig, os.path.join(a.outdir, f'{filename_stem}.svg'),
+                   bbox_inches='tight')
     plt.close(fig)

@@ -30,7 +30,7 @@ from collections import defaultdict
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fetch_metadata import short_organism  # noqa: E402
 from seq_blocks import cluster_order, colour_for, CORE_COLOUR, \
-    PRIVATE_COLOUR, read_tsv  # noqa: E402
+    PRIVATE_COLOUR, read_tsv, savefig_capped  # noqa: E402
 from pangraph_blocks import load_graph, locus_walk, core_range, \
     build_blocks_from_walk  # noqa: E402
 
@@ -338,10 +338,10 @@ def main():
                clip_on=False)
 
     os.makedirs(a.outdir, exist_ok=True)
-    fig.savefig(os.path.join(a.outdir, 'pangraph_context_summary.png'),
-               dpi=200, bbox_inches='tight')
-    fig.savefig(os.path.join(a.outdir, 'pangraph_context_summary.svg'),
-               bbox_inches='tight')
+    savefig_capped(fig, os.path.join(a.outdir, 'pangraph_context_summary.png'),
+                  dpi=200, bbox_inches='tight')
+    savefig_capped(fig, os.path.join(a.outdir, 'pangraph_context_summary.svg'),
+                  bbox_inches='tight')
     plt.close(fig)
     print(f'-> {a.outdir}/pangraph_context_summary.png  .svg')
 
