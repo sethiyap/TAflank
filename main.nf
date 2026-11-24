@@ -307,6 +307,19 @@ process PANGRAPH_BLOCKS {
     // matplotlib is not yet verified. --no-figure skips only the .png/.svg,
     // which is why they are declared optional.
     //
+    // The figure-drawing BRANCH still needs matplotlib, though, and on a
+    // containerised profile (gadi/firefly) that only exists inside
+    // params.viz_container -- the container every OTHER matplotlib process
+    // gets via `label 'viz'` (configs/gadi.config's withLabel: 'viz').
+    // This process can't just take that label: it must also run with NO
+    // container when run_viz=false, for the --no-figure/table-only branch,
+    // on profiles where params.viz_container was never pulled. Hence a
+    // directive straight on this process rather than a label: matches
+    // `label 'viz'`'s container exactly when run_viz=true, and is a no-op
+    // (empty string, same as no container) otherwise. Caught 2026-11-24 on
+    // Gadi: ran as bare host python3, "No module named 'matplotlib'".
+    container { params.run_viz ? params.viz_container : null }
+    //
     // NO --groups here, deliberately: PANGRAPH_GROUPS consumes THIS
     // process's own pairwise.tsv output, so taking pangraph_groups.tsv as
     // an input here would be circular. --groups is swatch-only (see
