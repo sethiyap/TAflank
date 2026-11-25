@@ -26,7 +26,7 @@ from fetch_metadata import short_organism  # noqa: E402
 from colour_blocks import gene_arrow, simple_colour, SIMPLE, \
     load_junctions, dr_ticks  # noqa: E402
 from seq_blocks import cluster_order, colour_for, CORE_COLOUR, \
-    PRIVATE_COLOUR, read_tsv  # noqa: E402
+    PRIVATE_COLOUR, read_tsv, savefig_capped, cap_fig_dpi  # noqa: E402
 from pangraph_blocks import load_graph, locus_walk, core_range, \
     build_blocks_from_walk, mutual_from_blocks  # noqa: E402
 
@@ -101,6 +101,7 @@ def main():
     PITCH = 1.0
     fig_h = 1.0 * PITCH * len(loci) + 2.6
     fig, ax = plt.subplots(figsize=(14, fig_h))
+    cap_fig_dpi(fig)
 
     any_dr_drawn = False
     label_rows = []
@@ -244,10 +245,10 @@ def main():
         ax.text(xx + a.flank * 0.045, yy, label, fontsize=6.5, va='center',
                clip_on=False)
 
-    fig.savefig(os.path.join(a.outdir, 'pangraph_annotated.png'), dpi=200,
-               bbox_inches='tight')
-    fig.savefig(os.path.join(a.outdir, 'pangraph_annotated.svg'),
-               bbox_inches='tight')
+    savefig_capped(fig, os.path.join(a.outdir, 'pangraph_annotated.png'),
+                   dpi=200, bbox_inches='tight')
+    savefig_capped(fig, os.path.join(a.outdir, 'pangraph_annotated.svg'),
+                   bbox_inches='tight')
     plt.close(fig)
     print(f'{len(loci)} loci -> {a.outdir}/pangraph_annotated.png  .svg')
 

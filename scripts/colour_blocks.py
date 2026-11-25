@@ -61,7 +61,7 @@ import colorsys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fetch_metadata import short_organism  # noqa: E402
-from seq_blocks import savefig_capped  # noqa: E402
+from seq_blocks import savefig_capped, cap_fig_dpi  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Palettes lifted from the project's own decks, by reading the shape fills out
@@ -741,6 +741,7 @@ def main():
     grp_h = 0.34 * (len(group_rows) + 1.3) if group_rows else 0
 
     fig = plt.figure(figsize=(15, main_h + leg_h + grp_h))
+    cap_fig_dpi(fig)
     if group_rows:
         gs = fig.add_gridspec(3, 1, height_ratios=[main_h, grp_h, leg_h],
                               hspace=0.08 + 0.7 / main_h)

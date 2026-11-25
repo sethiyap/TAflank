@@ -33,7 +33,7 @@ from fetch_metadata import short_organism  # noqa: E402
 from colour_blocks import gene_arrow, simple_colour, SIMPLE, \
     load_junctions, dr_ticks  # noqa: E402
 from seq_blocks import cluster_order, colour_for, CORE_COLOUR, \
-    PRIVATE_COLOUR, read_tsv, savefig_capped  # noqa: E402
+    PRIVATE_COLOUR, read_tsv, savefig_capped, cap_fig_dpi  # noqa: E402
 from pangraph_blocks import load_graph, locus_walk, core_range, \
     build_blocks_from_walk  # noqa: E402
 from pangraph_context_summary import medoid  # noqa: E402
@@ -136,6 +136,7 @@ def main():
     PITCH = 1.0
     fig_h = PITCH * len(contexts) + 2.6
     fig, ax = plt.subplots(figsize=(14, fig_h))
+    cap_fig_dpi(fig)
 
     any_dr_drawn = False
     label_rows = []   # (y, text object, swatch colour)

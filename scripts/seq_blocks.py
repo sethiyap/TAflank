@@ -58,6 +58,31 @@ def savefig_capped(fig, path, dpi=200, **kwargs):
     fig.savefig(path, dpi=dpi, **kwargs)
 
 
+def cap_fig_dpi(fig, dpi=200):
+    """Lowers fig.dpi (in place) only far enough to keep fig.canvas.draw()
+    under the Agg backend's pixel limit -- called by every figure here that
+    measures a label's rendered width to place a group swatch beside it.
+    draw() uses fig.dpi directly; savefig_capped's own cap only takes effect
+    at save time, which is too late for a canvas.draw() that already
+    crashed earlier while positioning swatches. Call this right after the
+    figure is created, before anything draws to it.
+
+    Leaves fig.dpi untouched (matplotlib's default, currently 100) when no
+    cap is needed, rather than bumping it up to `dpi` -- text metrics are
+    measured at whatever dpi draw() actually runs at, so forcing fig.dpi to
+    200 on an ordinary-sized figure would shift those measurements (and so
+    swatch placement) by a dpi-100-vs-200 rounding difference versus the
+    figure this fix didn't need to touch."""
+    w_in, h_in = fig.get_size_inches()
+    MAX_PX = 65000
+    longest = max(w_in, h_in)
+    if longest * dpi > MAX_PX:
+        capped = max(1, int(MAX_PX / longest))
+        fig.dpi = capped
+        return capped
+    return fig.dpi
+
+
 def colour_for(members):
     if len(members) == 1:
         return PRIVATE_COLOUR, PRIVATE_EDGE
@@ -160,6 +185,7 @@ def draw_figure(a, loci, order, blocks_up, blocks_down, ctx, groups, org_of,
     label_fontsize = 7.5 * (0.5 + 0.5 * row_scale)
     fig_h = PITCH * len(loci) + 2.6
     fig, ax = plt.subplots(figsize=(14, fig_h))
+    cap_fig_dpi(fig)
 
     label_rows = []   # (locus_id, y, label_obj) -- swatch placed after
                        # axis limits are final, see the note below the loop

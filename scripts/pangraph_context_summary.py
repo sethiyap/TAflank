@@ -30,7 +30,7 @@ from collections import defaultdict
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fetch_metadata import short_organism  # noqa: E402
 from seq_blocks import cluster_order, colour_for, CORE_COLOUR, \
-    PRIVATE_COLOUR, read_tsv, savefig_capped  # noqa: E402
+    PRIVATE_COLOUR, read_tsv, savefig_capped, cap_fig_dpi  # noqa: E402
 from pangraph_blocks import load_graph, locus_walk, core_range, \
     build_blocks_from_walk  # noqa: E402
 
@@ -229,6 +229,7 @@ def main():
     label_fontsize = 7.2 * (0.5 + 0.5 * a.row_scale)
     fig_h = PITCH * len(contexts) + 2.2
     fig, ax = plt.subplots(figsize=(14, fig_h))
+    cap_fig_dpi(fig)
 
     label_rows = []   # (y, text object, swatch colour) -- swatch is placed
                        # AFTER the text is rendered and measured, see below
