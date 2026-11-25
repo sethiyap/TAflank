@@ -191,6 +191,7 @@ ARGS=(-profile gadi
       --blastdb  "$DB" --genome_dir '' --blast_task megablast --taxonomy
       --blast_bin "$BLAST_BIN_DIR"
       --outdir   "$OUT/results"
+      --figdir   "$OUT/figures"
       --loci_dir "$OUT/loci"
       --bait     "$BAIT"
       --subregions "$SUBREGIONS"
