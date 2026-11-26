@@ -77,7 +77,27 @@ def core_range(walks):
     offset 0, i.e. relB start), then the UNION across all loci -- so every
     row draws the core band at the same coordinates, and a locus whose own
     core-block alignment is a few bp narrower than another's doesn't make
-    its neighbouring blocks misclassified as core/non-core."""
+    its neighbouring blocks misclassified as core/non-core.
+
+    A locus that shares NO block with anything else anywhere in its window
+    becomes one giant private pangraph block spanning the whole extraction
+    (there's nowhere else for pangraph to put a breakpoint) -- and that
+    block trivially covers offset 0 too, so it looks like an ordinary
+    "core-covering" span here. At full NCBI sweep scale (1031 loci) this
+    happened for 5 of them: 1026 resolved a span of <=644 bp (median 142
+    bp), consistent with the real conserved core, then a sharp jump straight
+    to 16-40 kb -- essentially the FULL +/-20kb window -- for the other 5.
+    Blindly including those in the union blows the GLOBAL core out to
+    nearly the whole window for EVERY locus, not just the outliers, which
+    silently zeroes out shared_up_bp/shared_down_bp pipeline-wide (every
+    pairwise shared_frac came out ~0, independent of any downstream
+    similarity threshold, until this was caught). Spans more than
+    OUTLIER_FACTOR x the median width are excluded from the union; such a
+    locus is still processed normally afterwards -- build_blocks_from_walk
+    just trims its outsized block at the resulting (correct, narrow) global
+    boundary like any other block straddling the core -- it just doesn't
+    get a vote on where that boundary is."""
+    OUTLIER_FACTOR = 10
     spans = {}
     for lid, entries in walks.items():
         for bid, o0, o1, strand in entries:
@@ -88,7 +108,13 @@ def core_range(walks):
             sys.exit(f'{lid}: no block covers offset 0 (relB start) -- '
                      f'check --graph was built from windows with relB at '
                      f'the same place in every fasta')
-    return min(s for s, _ in spans.values()), max(e for _, e in spans.values())
+    widths = sorted(e - o for o, e in spans.values())
+    median_w = widths[len(widths) // 2]
+    cap = median_w * OUTLIER_FACTOR
+    trusted = {lid: se for lid, se in spans.items() if se[1] - se[0] <= cap}
+    if not trusted:
+        trusted = spans  # degenerate: everything is an "outlier" -- fall back
+    return min(s for s, _ in trusted.values()), max(e for _, e in trusted.values())
 
 
 def build_blocks_from_walk(walks, block_members, core_lo, core_hi):
